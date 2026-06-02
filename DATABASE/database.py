@@ -7,7 +7,7 @@ class DataBase:
     def create_tables(self):
         cursor.execute("""CREATE TABLE IF NOT EXISTS rational_proposal (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                       name TEXT,
+                       name TEXT UNIQUE,
                        path TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                        )""")
@@ -22,11 +22,13 @@ class DataBase:
         db.commit()
     
     def add_rational_proposal(self, name, path):
-        cursor.execute("INSERT INTO rational_proposal (name, path) VALUES (?, ?)",
-                       (name, path))
-        db.commit()
-    
-    def get_
+        try:
+            cursor.execute("INSERT INTO rational_proposal (name, path) VALUES (?, ?)",
+                        (name, path))
+            db.commit()
+        except sqlite3.IntegrityError:
+            error = "ERROR"
+            return error
 
 if __name__ == "__main__":
     start = DataBase()
