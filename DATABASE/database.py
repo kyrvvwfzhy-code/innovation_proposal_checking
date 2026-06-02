@@ -29,6 +29,14 @@ class DataBase:
         except sqlite3.IntegrityError:
             error = "ERROR"
             return error
+    
+    def get_loaded_rp(self):
+        try:
+            cursor.execute("SELECT name, path FROM rational_proposal")
+            path = cursor.fetchone()
+            return path
+        except Exception as e:
+            print(f"Error {e}")
 
 if __name__ == "__main__":
     start = DataBase()

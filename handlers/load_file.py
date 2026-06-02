@@ -28,4 +28,4 @@ class Load_file:
         self.label.setObjectName("Label")
         self.label.setText(filename)
         self.label.show()
-        self.db.add_rational_proposal(filename,file_path)
+        self.db.add_rational_proposal(filename[:-4], file_path)
