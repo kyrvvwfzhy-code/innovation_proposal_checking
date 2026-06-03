@@ -5,6 +5,8 @@ import sys
 from GUI.gui import Ui_MainWindow
 from handlers.load_file import Load_file
 from DATABASE.database import DataBase
+from OCR.conversion import Conversion
+# from OCR.ocr_main import OCR_main
 
 class RPC(QMainWindow):
     def __init__(self):
@@ -16,12 +18,14 @@ class RPC(QMainWindow):
         self.db.create_tables()
         self.gui = Ui_MainWindow()
         self.gui.setupUi(self)
+        self.ocr = Conversion()
         self.handlers()
     
+
     def handlers(self):
         self.load = Load_file(self)
-        self.gui.pushButton.clicked.connect(self.load.open_file_manager)       
-
+        self.gui.pushButton.clicked.connect(self.load.open_file_manager)      
+        self.gui.pushButton_2.clicked.connect(self.ocr.pdf_png) 
 def start_app():
     App = QApplication(sys.argv)
     Window = RPC()
