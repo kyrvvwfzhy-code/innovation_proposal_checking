@@ -1,8 +1,8 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QFileDialog 
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import os
 
-from DATABASE.database import DataBase
+from db.database import DataBase
 
 class Load_file:
     def __init__(self, parent):
@@ -23,9 +23,20 @@ class Load_file:
             print("Файл не выбран")
     
     def create_getFile_label(self, filename, file_path):
-        self.label = QtWidgets.QLabel(self.parent)
-        self.label.setGeometry(QtCore.QRect(580, 80, 100, 20))
-        self.label.setObjectName("Label")
-        self.label.setText(filename)
+        if hasattr(self, "label") and self.label is not None:
+            self.label.setText(filename)
+        else:
+            self.label = QtWidgets.QLabel(self.parent)
+            self.label.setGeometry(QtCore.QRect(580, 80, 100, 20))
+            self.label.setObjectName("Label")
+            self.label.setText(filename)
+
         self.label.show()
-        self.db.add_rational_proposal(filename[:-4], file_path)
+        exist = self.db.add_rational_proposal(filename[:-4], file_path)
+        if exist != None:
+            self.logg_box(exist)
+    
+    def logg_box(self, exist):
+        QMessageBox.information(self.parent, "Информация", exist)
+
+    
