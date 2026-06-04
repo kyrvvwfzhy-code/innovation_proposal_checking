@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 import pytesseract
+import os
 
 class Recognition_Thread(QThread):
     recognition_finished = pyqtSignal(str)

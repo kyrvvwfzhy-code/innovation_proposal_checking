@@ -25,7 +25,7 @@ class RPC(QMainWindow):
         self.load = Load_file(self)
         self.ocr = OCR_main(self)
         self.gui.pushButton.clicked.connect(self.load.open_file_manager)
-        self.gui.pushButton_2.clicked.connect(self.ocr)
+        self.gui.pushButton_2.clicked.connect(self.ocr.start_ocr)
 
 def start_app():
     App = QApplication(sys.argv)

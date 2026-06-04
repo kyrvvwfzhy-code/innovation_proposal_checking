@@ -20,6 +20,7 @@ class Conversion_Thread(QThread):
             self.conversion_error.emit(f"Error - {e}")
 
     def conversion(self):
+        self.db = DataBase()
         pdf_path = self.db.get_loaded_rp()
         images = convert_from_path(pdf_path[1])
 
