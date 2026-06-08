@@ -3,13 +3,15 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import os
 
 from db.database import DataBase
+from ocr.ocr_main import OCR_main
 
 class Load_file:
     def __init__(self, parent):
         self.parent = parent
         self.db = DataBase()
+        self.ocr = OCR_main(parent)
     
-    def open_file_manager(self):
+    def start(self):
         file_path, _ = QFileDialog.getOpenFileName(self.parent,
                                                    "Выберите файл",
                                                    "",
@@ -23,18 +25,18 @@ class Load_file:
             print("Файл не выбран")
     
     def create_getFile_label(self, filename, file_path):
-        if hasattr(self, "label") and self.label is not None:
-            self.label.setText(filename)
+        if hasattr(self, 'parent') and hasattr(self.parent, 'gui') and hasattr(self.parent.gui, 'label_4') and self.parent.gui.label_4 is not None:
+            self.parent.gui.label_4.setText(filename)
         else:
-            self.label = QtWidgets.QLabel(self.parent)
-            self.label.setGeometry(QtCore.QRect(580, 80, 100, 20))
-            self.label.setObjectName("Label")
-            self.label.setText(filename)
+            self.parent.gui.label_4.setText(filename)
 
-        self.label.show()
+        self.parent.gui.label_4.show()
         exist = self.db.add_rational_proposal(filename[:-4], file_path)
         if exist != None:
             self.logg_box(exist)
+        else:
+            self.ocr.start_ocr()
+        
     
     def logg_box(self, exist):
         QMessageBox.information(self.parent, "Информация", exist)

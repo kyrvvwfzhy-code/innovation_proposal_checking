@@ -33,7 +33,6 @@ class Processing_Thread(QThread):
             cropped = result[1470:1600, 0:2000]
             final_path = os.path.join("OCR_TMP", f"page_{i+1}_processed.png")
             cv2.imwrite(final_path, cropped)
-            # os.remove(image)
         
         result = "Обработка завершена."
         return result

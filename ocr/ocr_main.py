@@ -13,15 +13,16 @@ class OCR_main:
         self.conversion_thread()
     
     def conversion_thread(self):
-        self.parent.gui.pushButton_2.setEnabled(False)
-        self.parent.gui.pushButton_2.setText("КОНВЕРТАЦИЯ...")
-        self.thread = Conversion_Thread()
+        self.parent.gui.pushButton.setEnabled(False)
+        self.parent.gui.pushButton.setText("КОНВЕРТАЦИЯ...")
+        filename = self.parent.gui.label_4.text()
+        self.thread = Conversion_Thread(filename)
         self.thread.conversion_finished.connect(self.conversion_finished)
         self.thread.conversion_error.connect(self.conversion_error)
         self.thread.start()
     
     def conversion_finished(self):
-        self.parent.gui.pushButton_2.setText("ОБРАБОТКА...")
+        self.parent.gui.pushButton.setText("ОБРАБОТКА...")
         self.thread.deleteLater()
         self.processing_thread()
     
@@ -36,7 +37,7 @@ class OCR_main:
         self.thread.start()
 
     def processing_finished(self):
-        self.parent.gui.pushButton_2.setText("РАСПОЗНОВАНИЕ...")
+        self.parent.gui.pushButton.setText("РАСПОЗНОВАНИЕ...")
         self.thread.deleteLater()
         self.recognition_thread()
 
@@ -51,8 +52,8 @@ class OCR_main:
         self.thread.start()
     
     def recognition_finished(self, result):
-        self.parent.gui.pushButton_2.setEnabled(True)
-        self.parent.gui.pushButton_2.setText("Начать проверку")
+        self.parent.gui.pushButton.setEnabled(True)
+        self.parent.gui.pushButton.setText("Начать проверку")
         self.parent.gui.plainTextEdit.setPlainText(result)
         self.thread.deleteLater()
         self.clear_folder()
@@ -63,15 +64,14 @@ class OCR_main:
         self.clear_folder()
 
     def clear_folder(self):
-        pass
-        # folder_path = "OCR_TMP"
-        # if os.path.exists(folder_path):
-        #     paths = []
-        #     for filename in os.listdir(folder_path):
-        #         full_path = os.path.join(folder_path, filename)
-        #         if os.path.isfile(full_path):
-        #             paths.append(full_path)
-        #             os.remove(full_path)
+        folder_path = "OCR_TMP"
+        if os.path.exists(folder_path):
+            paths = []
+            for filename in os.listdir(folder_path):
+                full_path = os.path.join(folder_path, filename)
+                if os.path.isfile(full_path):
+                    paths.append(full_path)
+                    os.remove(full_path)
 
 if __name__ == "__main__":
     OCR_main()

@@ -6,8 +6,6 @@ from db.database import DataBase
 from gui.gui import Ui_MainWindow
 
 from handlers.load_file import Load_file
-from ocr.ocr_main import OCR_main
-
 
 class RPC(QMainWindow):
     def __init__(self):
@@ -23,9 +21,8 @@ class RPC(QMainWindow):
     
     def handlers(self):
         self.load = Load_file(self)
-        self.ocr = OCR_main(self)
-        self.gui.pushButton.clicked.connect(self.load.open_file_manager)
-        self.gui.pushButton_2.clicked.connect(self.ocr.start_ocr)
+        self.gui.pushButton.clicked.connect(self.load.start)
+        # self.gui.pushButton_2.clicked.connect()
 
 def start_app():
     App = QApplication(sys.argv)

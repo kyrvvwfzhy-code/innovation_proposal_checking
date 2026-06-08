@@ -14,18 +14,41 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(721, 414)
+        MainWindow.resize(701, 431)
+        MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(560, 20, 141, 51))
+        self.pushButton.setGeometry(QtCore.QRect(430, 70, 261, 51))
         self.pushButton.setObjectName("pushButton")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(560, 120, 141, 51))
+        self.pushButton_2.setGeometry(QtCore.QRect(430, 150, 261, 51))
         self.pushButton_2.setObjectName("pushButton_2")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit.setGeometry(QtCore.QRect(10, 10, 541, 391))
+        self.plainTextEdit.setGeometry(QtCore.QRect(10, 60, 401, 361))
         self.plainTextEdit.setObjectName("plainTextEdit")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(430, 10, 261, 51))
+        self.label.setStyleSheet("font: 16pt \"MS Shell Dlg 2\";")
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(10, 10, 341, 51))
+        self.label_2.setStyleSheet("font: 16pt \"MS Shell Dlg 2\";")
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(430, 200, 261, 51))
+        self.label_3.setStyleSheet("font: 16pt \"MS Shell Dlg 2\";")
+        self.label_3.setObjectName("label_3")
+        self.plainTextEdit_2 = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.plainTextEdit_2.setGeometry(QtCore.QRect(430, 250, 261, 171))
+        self.plainTextEdit_2.setObjectName("plainTextEdit_2")
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(430, 121, 261, 31))
+        self.label_4.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+"color: rgb(0, 130, 15);")
+        self.label_4.setText("")
+        self.label_4.setIndent(70)
+        self.label_4.setObjectName("label_4")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -33,9 +56,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Проверка рационализаторских предложений"))
         self.pushButton.setText(_translate("MainWindow", "Загрузить документ"))
         self.pushButton_2.setText(_translate("MainWindow", "Начать проверку"))
+        self.label.setText(_translate("MainWindow", "ПАНЕЛЬ ИНСТРУМЕНТОВ:"))
+        self.label_2.setText(_translate("MainWindow", "РЕЗУЛЬТАТЫ РАСПОЗНОВАНИЯ:"))
+        self.label_3.setText(_translate("MainWindow", "РЕЗУЛЬТАТЫ ПРОВЕРКИ:"))
 
 
 if __name__ == "__main__":

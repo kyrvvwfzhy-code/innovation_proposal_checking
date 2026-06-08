@@ -1,3 +1,6 @@
 DATA/
+OCR_TMP/
+
 RPC.db
+
 __pycache__
