@@ -25,10 +25,12 @@ class Conversion_Thread(QThread):
         pdf_path = self.db.get_loaded_rp(self.filename)
         images = convert_from_path(pdf_path[0])
 
+        first_page = 1
         os.makedirs("OCR_TMP", exist_ok = True)
         for i, image in enumerate(images):
-            output_path = os.path.join("OCR_TMP", f"page_{self.filename}_{i+1}.png")
-            image.save(output_path, "PNG")
+            if i+1 == first_page:
+                output_path = os.path.join("OCR_TMP", f"page_{self.filename}_{i+1}.png")
+                image.save(output_path, "PNG")
         
         result = "Конвертация завершена."
         return result

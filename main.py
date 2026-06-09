@@ -2,10 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
 
-from db.database import DataBase
-from gui.gui import Ui_MainWindow
-
-from handlers.load_file import Load_file
+from GUI.gui_main import GUI_main
 
 class RPC(QMainWindow):
     def __init__(self):
@@ -13,16 +10,8 @@ class RPC(QMainWindow):
         self.init()
     
     def init(self):
-        self.db = DataBase()
-        self.db.create_tables()
-        self.gui = Ui_MainWindow()
-        self.gui.setupUi(self)
-        self.handlers()
-    
-    def handlers(self):
-        self.load = Load_file(self)
-        self.gui.pushButton.clicked.connect(self.load.start)
-        # self.gui.pushButton_2.clicked.connect()
+        self.main = GUI_main(self)
+        self.gui = self.main.gui
 
 def start_app():
     App = QApplication(sys.argv)
