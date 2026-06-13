@@ -2,7 +2,8 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
 
-from GUI.gui_main import GUI_main
+from db.database import DataBase
+from gui.gui_main import GUI_main
 
 class RPC(QMainWindow):
     def __init__(self):
@@ -10,8 +11,9 @@ class RPC(QMainWindow):
         self.init()
     
     def init(self):
+        self.db = DataBase()
+        self.db.create_tables()
         self.main = GUI_main(self)
-        self.gui = self.main.gui
 
 def start_app():
     App = QApplication(sys.argv)

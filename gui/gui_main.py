@@ -1,24 +1,15 @@
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QWidget
 
-from GUI.gui import Ui_Form
-from db.database import DataBase
-from handlers.load_file import Load_file
-from embedding.test import Embedding
+from gui.base_window import Base_window
+from gui.data_window import Data_window
 
-class GUI_main:
+class GUI_main(QWidget):
     def __init__(self, parent):
+        super().__init__()
         self.parent = parent
         self.init()
     
     def init(self):
-        self.db = DataBase()
-        self.db.create_tables()
-        self.gui = Ui_Form()
-        self.gui.setupUi(self.parent)
-        self.handlers()
-    
-    def handlers(self):
-        self.load = Load_file(self.parent)
-        self.checking = Embedding(self.parent)
-        self.gui.pushButton.clicked.connect(self.load.start)
-        self.gui.pushButton_2.clicked.connect(self.checking.start)
+        self.base_window = Base_window(self.parent)
+        self.data_window = Data_window()
+        self.base_window.gui.pushButton_3.clicked.connect(self.data_window.open)

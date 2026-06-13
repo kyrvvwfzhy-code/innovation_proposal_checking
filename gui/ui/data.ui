@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>813</width>
+    <height>611</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Хранилище</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>10</y>
+     <width>291</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>ЗАГРУЖЕННЫЕ ДОКУМЕНТЫ</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
+     <width>791</width>
+     <height>531</height>
+    </rect>
+   </property>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOn</enum>
+   </property>
+   <property name="horizontalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOff</enum>
+   </property>
+   <property name="tabKeyNavigation">
+    <bool>true</bool>
+   </property>
+   <property name="showDropIndicator" stdset="0">
+    <bool>true</bool>
+   </property>
+   <property name="dragDropOverwriteMode">
+    <bool>true</bool>
+   </property>
+   <property name="showGrid">
+    <bool>true</bool>
+   </property>
+   <property name="sortingEnabled">
+    <bool>false</bool>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+   <property name="cornerButtonEnabled">
+    <bool>true</bool>
+   </property>
+   <property name="rowCount">
+    <number>2</number>
+   </property>
+   <property name="columnCount">
+    <number>3</number>
+   </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="horizontalHeaderCascadingSectionResizes">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="horizontalHeaderMinimumSectionSize">
+    <number>65</number>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>270</number>
+   </attribute>
+   <attribute name="horizontalHeaderHighlightSections">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="horizontalHeaderStretchLastSection">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="verticalHeaderVisible">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="verticalHeaderCascadingSectionResizes">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="verticalHeaderMinimumSectionSize">
+    <number>21</number>
+   </attribute>
+   <attribute name="verticalHeaderDefaultSectionSize">
+    <number>30</number>
+   </attribute>
+   <attribute name="verticalHeaderHighlightSections">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+    <bool>false</bool>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>11</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>12</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>№</string>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Новый столбец</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Наименование</string>
+    </property>
+   </column>
+   <item row="0" column="0">
+    <property name="text">
+     <string>щту</string>
+    </property>
+   </item>
+   <item row="0" column="1">
+    <property name="text">
+     <string>еуые</string>
+    </property>
+   </item>
+   <item row="0" column="2">
+    <property name="text">
+     <string>еуые</string>
+    </property>
+   </item>
+   <item row="1" column="0">
+    <property name="text">
+     <string>wdwd</string>
+    </property>
+   </item>
+   <item row="1" column="1">
+    <property name="text">
+     <string>wdwd</string>
+    </property>
+   </item>
+   <item row="1" column="2">
+    <property name="text">
+     <string>wdwd</string>
+    </property>
+   </item>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
