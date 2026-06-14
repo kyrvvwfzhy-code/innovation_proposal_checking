@@ -5,7 +5,7 @@ import sys
 from db.database import DataBase
 from gui.gui_main import GUI_main
 
-class RPC(QMainWindow):
+class IPC(QMainWindow):
     def __init__(self):
         super().__init__()
         self.init()
@@ -17,7 +17,7 @@ class RPC(QMainWindow):
 
 def start_app():
     App = QApplication(sys.argv)
-    Window = RPC()
+    Window = IPC()
     Window.show()
     sys.exit(App.exec_())
 

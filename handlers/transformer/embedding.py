@@ -11,7 +11,7 @@
 #         sentences = self.parent.gui.label_3.text()
 #         print(sentences)
 #         embeddings = model_en.encode(sentences)
-#         print(embeddings)
+#         self.parent.gui.plainTextEdit_2.setPlainText(embeddings)
 
 class Embedding:
     def __init__(self, parent):

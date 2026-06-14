@@ -1,11 +1,11 @@
 import sqlite3
 import threading
 
-db = sqlite3.connect("RPC.db")
+db = sqlite3.connect("IPC.db")
 cursor = db.cursor()
 
 class DataBase:
-    def __init__(self, db_path="RPC.db"):
+    def __init__(self, db_path="IPC.db"):
         self.db_path = db_path
         self._local = threading.local()
 
