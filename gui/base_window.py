@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget
 
 from gui.ui.base import Ui_Form
 
-from handlers.load_file_handler import Load_file
+from handlers.ocr.ocr_main import OCR_main
 from handlers.transformer.embedding import Embedding 
 
 class Base_window(QWidget):
@@ -17,7 +17,7 @@ class Base_window(QWidget):
         self.handlers()
 
     def handlers(self):
-        self.load = Load_file(self)
+        self.ocr = OCR_main(self)
         self.checking = Embedding(self)
-        self.gui.pushButton.clicked.connect(self.load.start)
+        self.gui.pushButton.clicked.connect(self.ocr.start)
         self.gui.pushButton_2.clicked.connect(self.checking.start)

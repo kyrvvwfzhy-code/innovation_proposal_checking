@@ -1,16 +1,23 @@
+from handlers.ocr.load_file import Load_file
 from handlers.ocr.conversion import Conversion_Thread
 from handlers.ocr.processing import Processing_Thread
 from handlers.ocr.recognition import Recognition_Thread
 import os
 
+from db.database import DataBase
+
 class OCR_main:
     def __init__(self, parent = None):
         self.parent = parent
+        self.db = DataBase()
         self.ocr_result = None
         self.thread = None
     
-    def start_ocr(self):
-        self.conversion_thread()
+    def start(self):
+        self.load_file = Load_file(self.parent)
+        signal = self.load_file.start()
+        if signal == None:
+            self.conversion_thread()
     
     def conversion_thread(self):
         self.parent.gui.pushButton.setEnabled(False)
@@ -61,6 +68,7 @@ class OCR_main:
 
         text = f"{registered}\n\n{name}\n\n{author}"
         
+        self.db.add_key_information(registered, name, author)
         self.parent.gui.plainTextEdit.setPlainText(text)
         self.thread.deleteLater()
         self.clear_folder()

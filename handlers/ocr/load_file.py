@@ -1,0 +1,45 @@
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
+import os
+
+from db.database import DataBase
+
+class Load_file:
+    def __init__(self, parent):
+        self.parent = parent
+        self.db = DataBase()
+    
+    def start(self):
+        file_path, _ = QFileDialog.getOpenFileName(self.parent,
+                                                   "Выберите файл",
+                                                   "",
+                                                   "(*.pdf)"
+                                                   )
+
+        if file_path:
+            filename = os.path.basename(file_path)
+            result = self.create_getFile_label(filename, file_path)
+        else:
+            result = print("Файл не выбран")
+            
+        return result
+    
+    def create_getFile_label(self, filename, file_path):
+        if hasattr(self, 'parent') and hasattr(self.parent, 'gui') and hasattr(self.parent.gui, 'label_4') and self.parent.gui.label_4 is not None:
+            self.parent.gui.label_4.setText(filename)
+        else:
+            self.parent.gui.label_4.setText(filename)
+
+        self.parent.gui.label_4.show()
+        exist = self.db.add_innovation_proposal(filename[:-4], file_path)
+        if exist != None:
+            self.logg_box(exist)
+        else:
+            pass
+
+        return exist
+        
+    
+    def logg_box(self, exist):
+        QMessageBox.information(self.parent, "Информация", exist)
+
+    

@@ -27,10 +27,9 @@ class DataBase:
         cursor.execute("""CREATE TABLE IF NOT EXISTS key_information (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        innovation_proposal_id,
-                       number TEXT,
+                       registered TEXT,
                        name TEXT,
                        author TEXT,
-                       date TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
                        )""")
@@ -60,13 +59,23 @@ class DataBase:
 
 #--------------------------------------------key_information--------------------------------------------
     
-    # def add_key_information(self, number, name, author, date):
-
-
-
-
-
-
+    def add_key_information(self, registered, name, author):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("INSERT INTO key_information (registered, name, author) VALUES (?, ?, ?)",
+                           (registered, name, author))
+            conn.commit()
+        except Exception as e:
+            print(f"Error {e}")
+    
+    def get_key_information(self):
+        conn, cursor = self._get_connection()
+        try:
+            result = cursor.execute("SELECT id, registered, name, author FROM key_information")
+            data = result.fetchall()
+            return data
+        except Exception as e:
+            print(f"Eror {e}")
 
 if __name__ == "__main__":
     start = DataBase()

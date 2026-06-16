@@ -14,4 +14,4 @@ class Data_window(QWidget):
         self.show()
     
     def loaded(self):
-        self.loaded_documents = Loaded_documents()
+        self.loaded_documents = Loaded_documents(self)
