@@ -2,9 +2,11 @@ from handlers.ocr.load_file import Load_file
 from handlers.ocr.conversion import Conversion_Thread
 from handlers.ocr.processing import Processing_Thread
 from handlers.ocr.recognition import Recognition_Thread
+from handlers.ocr.extraction import Extraction
 import os
 
 from db.database import DataBase
+from data.data import ocr_result
 
 class OCR_main:
     def __init__(self, parent = None):
@@ -17,6 +19,8 @@ class OCR_main:
         self.load_file = Load_file(self.parent)
         signal = self.load_file.start()
         if signal == None:
+            pass
+        elif signal == True:
             self.conversion_thread()
     
     def conversion_thread(self):
@@ -66,9 +70,12 @@ class OCR_main:
         name = result[1]
         author = result[2]
 
-        text = f"{registered}\n\n{name}\n\n{author}"
+        self.extraction = Extraction()
+        number, date = self.extraction.extrection(registered)
         
-        self.db.add_key_information(registered, name, author)
+        filename = self.parent.gui.label_4.text()
+        self.db.add_key_information(filename[:-4], number, date, name, author)
+        text = ocr_result(number, date, name, author)
         self.parent.gui.plainTextEdit.setPlainText(text)
         self.thread.deleteLater()
         self.clear_folder()

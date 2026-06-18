@@ -16,14 +16,15 @@ class Loaded_documents:
         self.table = QTableWidget(self.parent)
         self.table_setup()
         data = self.db.get_key_information()
+        print(data)
         if data:
             self.add_data(data)
         else:
             pass
 
     def table_setup(self):
-        self.table.setGeometry(QtCore.QRect(10, 70, 791, 531))
-        headers = ["№", "Зарегестрировано", "Наименование", "Автор"]
+        self.table.setGeometry(QtCore.QRect(10, 70, 1180,620))
+        headers = ["№", "Имя файла", "Путь файла", "Номер регистрации", "Дата Регистрации", "Наименование", "Автор"]
         self.table.setColumnCount(len(headers))
         self.table.setHorizontalHeaderLabels(headers)
         self.table.verticalHeader().setVisible(False)
@@ -33,7 +34,6 @@ class Loaded_documents:
             header.setSectionResizeMode(i, QHeaderView.Stretch)
 
     def add_data(self, data):
-        print(data)
         self.table.setRowCount(len(data))
         for row, record in enumerate(data):
             for col, value in enumerate(record):

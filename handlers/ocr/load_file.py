@@ -19,7 +19,8 @@ class Load_file:
             filename = os.path.basename(file_path)
             result = self.create_getFile_label(filename, file_path)
         else:
-            result = print("Файл не выбран")
+            result = None
+            return result
             
         return result
     
@@ -33,10 +34,9 @@ class Load_file:
         exist = self.db.add_innovation_proposal(filename[:-4], file_path)
         if exist != None:
             self.logg_box(exist)
+            return False
         else:
-            pass
-
-        return exist
+            return True
         
     
     def logg_box(self, exist):

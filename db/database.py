@@ -27,7 +27,8 @@ class DataBase:
         cursor.execute("""CREATE TABLE IF NOT EXISTS key_information (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        innovation_proposal_id,
-                       registered TEXT,
+                       number TEXT,
+                       date TEXT,
                        name TEXT,
                        author TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -59,11 +60,16 @@ class DataBase:
 
 #--------------------------------------------key_information--------------------------------------------
     
-    def add_key_information(self, registered, name, author):
+    def add_key_information(self, filename, number, date, name, author):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("INSERT INTO key_information (registered, name, author) VALUES (?, ?, ?)",
-                           (registered, name, author))
+            id = cursor.execute("SELECT id FROM innovation_proposal WHERE filename = ?",
+                           (filename,))
+            if id:
+                id = id.fetchone() 
+            
+            cursor.execute("INSERT INTO key_information (innovation_proposal_id, number, date, name, author) VALUES (?, ?, ?, ?, ?)",
+                        (id[0], number, date, name, author))
             conn.commit()
         except Exception as e:
             print(f"Error {e}")
@@ -71,7 +77,16 @@ class DataBase:
     def get_key_information(self):
         conn, cursor = self._get_connection()
         try:
-            result = cursor.execute("SELECT id, registered, name, author FROM key_information")
+            result = cursor.execute("""SELECT key_information.id,
+                                    innovation_proposal.filename,
+                                    innovation_proposal.path,
+                                    key_information.number,
+                                    key_information.date,
+                                    key_information.name, 
+                                    key_information.author
+                                    FROM innovation_proposal
+                                    LEFT JOIN key_information ON innovation_proposal.id = innovation_proposal.id
+                                    """)
             data = result.fetchall()
             return data
         except Exception as e:

@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(813, 611)
+        Form.resize(1200, 700)
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(270, 10, 291, 51))
+        self.label.setGeometry(QtCore.QRect(460, 10, 291, 51))
         self.label.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label.setObjectName("label")
 

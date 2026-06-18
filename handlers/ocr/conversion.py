@@ -39,9 +39,6 @@ class Conversion_Thread(QThread):
                 output_path = os.path.join("OCR_TMP", f"2_last_page_{self.filename}.png")
                 image.save(output_path, "PNG")
 
-        result = "Конвертация завершена."
-        return result
-
 if __name__ == "__main__":
     start = Conversion_Thread()
     start.conversion_finished.connect(lambda ad: print(f"conversion_finished {ad}"))
