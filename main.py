@@ -1,3 +1,4 @@
+import torch
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
@@ -18,7 +19,7 @@ class IPC(QMainWindow):
 def start_app():
     App = QApplication(sys.argv)
     Window = IPC()
-    Window.show()
+    Window.show() 
     sys.exit(App.exec_())
 
 if __name__ == "__main__":

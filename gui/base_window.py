@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget
 from gui.ui.base import Ui_Form
 
 from handlers.ocr.ocr_main import OCR_main
-from handlers.transformer.embedding import Embedding 
+from handlers.transformer.embedding_main import Embedding
 
 class Base_window(QWidget):
     def __init__(self, parent):
