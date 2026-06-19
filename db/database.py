@@ -57,6 +57,22 @@ class DataBase:
             return path
         except Exception as e:
             print(f"Error {e}")
+    
+    def delete_ip(self, filename):
+        conn, cursor = self._get_connection()
+        try:
+            result = cursor.execute("SELECT id FROM innovation_proposal WHERE filename = (?)",
+                           (filename,))
+            if result:
+                id = result.fetchone()
+                
+            cursor.execute("DELETE FROM key_information WHERE id = (?)",
+                           (id[0],))
+            cursor.execute("DELETE FROM innovation_proposal WHERE id = (?)",
+                           (id[0],))
+            conn.commit()
+        except Exception as e:
+            print(f"Error {e}")
 
 #--------------------------------------------key_information--------------------------------------------
     
@@ -77,15 +93,13 @@ class DataBase:
     def get_key_information(self):
         conn, cursor = self._get_connection()
         try:
-            result = cursor.execute("""SELECT key_information.id,
-                                    innovation_proposal.filename,
-                                    innovation_proposal.path,
+            result = cursor.execute("""SELECT innovation_proposal.filename,
                                     key_information.number,
                                     key_information.date,
                                     key_information.name, 
                                     key_information.author
                                     FROM innovation_proposal
-                                    LEFT JOIN key_information ON innovation_proposal.id = innovation_proposal.id
+                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
                                     """)
             data = result.fetchall()
             return data

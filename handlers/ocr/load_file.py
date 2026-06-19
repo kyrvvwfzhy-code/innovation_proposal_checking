@@ -17,14 +17,14 @@ class Load_file:
 
         if file_path:
             filename = os.path.basename(file_path)
-            result = self.create_getFile_label(filename, file_path)
+            result = self.create_filename_label(filename, file_path)
         else:
             result = None
             return result
             
         return result
     
-    def create_getFile_label(self, filename, file_path):
+    def create_filename_label(self, filename, file_path):
         if hasattr(self, 'parent') and hasattr(self.parent, 'gui') and hasattr(self.parent.gui, 'label_4') and self.parent.gui.label_4 is not None:
             self.parent.gui.label_4.setText(filename)
         else:

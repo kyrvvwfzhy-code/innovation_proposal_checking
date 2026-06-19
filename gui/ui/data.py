@@ -19,6 +19,9 @@ class Ui_Form(object):
         self.label.setGeometry(QtCore.QRect(460, 10, 291, 51))
         self.label.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label.setObjectName("label")
+        self.pushButton = QtWidgets.QPushButton(Form)
+        self.pushButton.setGeometry(QtCore.QRect(530, 640, 141, 41))
+        self.pushButton.setObjectName("pushButton")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -27,6 +30,7 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Хранилище"))
         self.label.setText(_translate("Form", "ЗАГРУЖЕННЫЕ ДОКУМЕНТЫ"))
+        self.pushButton.setText(_translate("Form", "Удалить"))
 
 
 if __name__ == "__main__":
