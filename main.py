@@ -14,7 +14,7 @@ class IPC(QMainWindow):
     def init(self):
         self.db = DataBase()
         self.db.create_tables()
-        self.main = GUI_main(self)
+        self.main = GUI_main(self, self.db)
 
 def start_app():
     App = QApplication(sys.argv)

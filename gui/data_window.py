@@ -4,8 +4,9 @@ from gui.ui.data import Ui_Form
 from handlers.data_journal.loaded_documents import Loaded_documents
 
 class Data_window(QWidget):
-    def __init__(self):
+    def __init__(self, db):
         super().__init__()
+        self.db = db
 
     def open(self):
         self.gui = Ui_Form()

@@ -3,13 +3,12 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
 import subprocess
-from db.database import DataBase
 
 
 class Loaded_documents:
-    def __init__(self, parent):
+    def __init__(self, parent, db):
         self.parent = parent
-        self.db = DataBase()
+        self.db = db
         self.init()
     
     def init(self):

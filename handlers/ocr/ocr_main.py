@@ -5,18 +5,17 @@ from handlers.ocr.recognition import Recognition_Thread
 from handlers.ocr.extraction import Extraction
 import os
 
-from db.database import DataBase
 from data.data import ocr_result
 
 class OCR_main:
-    def __init__(self, parent = None):
+    def __init__(self, db, parent = None):
         self.parent = parent
-        self.db = DataBase()
+        self.db = db
         self.ocr_result = None
         self.thread = None
     
     def start(self):
-        self.load_file = Load_file(self.parent)
+        self.load_file = Load_file(self.parent, self.db)
         signal = self.load_file.start()
         if signal == None:
             pass
@@ -27,7 +26,7 @@ class OCR_main:
         self.parent.gui.pushButton.setEnabled(False)
         self.parent.gui.pushButton.setText("КОНВЕРТАЦИЯ...")
         filename = self.parent.gui.label_4.text()
-        self.thread = Conversion_Thread(filename)
+        self.thread = Conversion_Thread(filename, self.db)
         self.thread.conversion_finished.connect(self.conversion_finished)
         self.thread.conversion_error.connect(self.conversion_error)
         self.thread.start()

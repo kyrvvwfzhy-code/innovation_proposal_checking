@@ -1,12 +1,10 @@
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import os
 
-from db.database import DataBase
-
 class Load_file:
-    def __init__(self, parent):
+    def __init__(self, parent, db):
         self.parent = parent
-        self.db = DataBase()
+        self.db = db
     
     def start(self):
         file_path, _ = QFileDialog.getOpenFileName(self.parent,

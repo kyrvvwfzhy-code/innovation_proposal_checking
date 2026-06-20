@@ -6,9 +6,10 @@ from handlers.ocr.ocr_main import OCR_main
 from handlers.transformer.embedding_main import Embedding
 
 class Base_window(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, db):
         super().__init__()
         self.parent = parent
+        self.db = db
         self.init()
 
     def init(self):
@@ -17,7 +18,7 @@ class Base_window(QWidget):
         self.handlers()
 
     def handlers(self):
-        self.ocr = OCR_main(self)
-        self.checking = Embedding(self)
+        self.ocr = OCR_main(self.db, parent = self)
+        self.checking = Embedding(self, self.db)
         self.gui.pushButton.clicked.connect(self.ocr.start)
         self.gui.pushButton_2.clicked.connect(self.checking.start)

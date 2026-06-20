@@ -1,5 +1,6 @@
 import sqlite3
 import threading
+import numpy as np
 
 db = sqlite3.connect("IPC.db")
 cursor = db.cursor()
@@ -7,13 +8,16 @@ cursor = db.cursor()
 class DataBase:
     def __init__(self, db_path="IPC.db"):
         self.db_path = db_path
-        self._local = threading.local()
+        self.connection = sqlite3.connect(
+            self.db_path,
+            timeout=10,  
+            check_same_thread=False
+        )
+        self.connection.row_factory = sqlite3.Row
+        self.cursor = self.connection.cursor()
 
     def _get_connection(self):
-        if not hasattr(self._local, 'connection'):
-            self._local.connection = sqlite3.connect(self.db_path)
-            self._local.cursor = self._local.connection.cursor()
-        return self._local.connection, self._local.cursor
+        return self.connection, self.cursor
 
     def create_tables(self):
         conn, cursor = self._get_connection()
@@ -26,11 +30,20 @@ class DataBase:
         
         cursor.execute("""CREATE TABLE IF NOT EXISTS key_information (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                       innovation_proposal_id,
+                       innovation_proposal_id INTEGER,
                        number TEXT,
                        date TEXT,
-                       name TEXT,
+                       name TEXT UNIQUE,
                        author TEXT,
+                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
+                       )""")
+        
+        cursor.execute("""CREATE TABLE IF NOT EXISTS embeddings (
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       name TEXT UNIQUE,
+                       innovation_proposal_id INTEGER,
+                       embedding BLOB NOT NULL,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
                        )""")
@@ -105,6 +118,39 @@ class DataBase:
             return data
         except Exception as e:
             print(f"Eror {e}")
+    
+    def get_name(self, filename):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("""SELECT key_information.name
+                                    FROM innovation_proposal
+                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    WHERE innovation_proposal.filename = ?""",
+                                    (filename[:-4],))
+            result = cursor.fetchone()
+            return result[0]
+        except Exception as e:
+            print(f"Error {e}")
+
+#--------------------------------------------key_information--------------------------------------------
+
+    def add_embedding(self, filename, embedding):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("""SELECT innovation_proposal.id,
+                                    key_information.name
+                                    FROM innovation_proposal
+                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    WHERE innovation_proposal.filename = ?""",
+                                    (filename[:-4],))
+            result = cursor.fetchone()
+    
+            embedding_bytes = np.array(embedding, dtype=np.float32).tobytes()
+            cursor.execute("INSERT INTO embeddings (innovation_proposal_id, name, embedding) VALUES (?, ?, ?)",
+                               (result[0], result[1], embedding_bytes))
+            conn.commit()
+        except Exception as e:
+            print(f"Error {e}")
 
 if __name__ == "__main__":
     start = DataBase()

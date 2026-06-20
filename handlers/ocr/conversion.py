@@ -2,16 +2,15 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from pdf2image import convert_from_path
 import os
-from db.database import DataBase
 
 class Conversion_Thread(QThread):
     conversion_finished = pyqtSignal(str)
     conversion_error = pyqtSignal(str)
 
-    def __init__(self, filename):
+    def __init__(self, filename, db):
         super().__init__()
         self.filename = filename[:-4]
-        self.db = DataBase()
+        self.db = db
 
     def run(self):
         try:
@@ -21,7 +20,6 @@ class Conversion_Thread(QThread):
             self.conversion_error.emit(f"Error - {e}")
 
     def conversion(self):
-        self.db = DataBase()
         pdf_path = self.db.get_loaded_ip(self.filename)
         images = convert_from_path(pdf_path[0])
 

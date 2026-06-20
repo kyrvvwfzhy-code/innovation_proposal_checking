@@ -5,13 +5,14 @@ class Embedding_Thread(QThread):
     embedding_finished = pyqtSignal(object)
     embedding_error = pyqtSignal(str)
 
-    def __init__(self, parent):
+    def __init__(self, parent, text):
         super().__init__()
         self.parent = parent
+        self.text = text
     
     def run(self):
         model_en = SentenceTransformer('all-MiniLM-L6-v2')
-        sentences = self.parent.gui.plainTextEdit.toPlainText()
+        sentences = self.text
         try:
             if len(sentences) == 0:
                 pass
