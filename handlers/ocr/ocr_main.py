@@ -11,7 +11,6 @@ class OCR_main:
     def __init__(self, db, parent = None):
         self.parent = parent
         self.db = db
-        self.ocr_result = None
         self.thread = None
     
     def start(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui.ui'
+# Form implementation generated from reading ui file 'base.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -14,12 +14,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(702, 546)
+        Form.resize(701, 552)
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(430, 150, 261, 51))
         self.pushButton_2.setObjectName("pushButton_2")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Form)
-        self.plainTextEdit.setGeometry(QtCore.QRect(10, 60, 401, 481))
+        self.plainTextEdit.setGeometry(QtCore.QRect(10, 60, 401, 321))
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.label_4 = QtWidgets.QLabel(Form)
         self.label_4.setGeometry(QtCore.QRect(430, 121, 261, 31))
@@ -49,6 +49,19 @@ class Ui_Form(object):
         self.pushButton_3 = QtWidgets.QPushButton(Form)
         self.pushButton_3.setGeometry(QtCore.QRect(430, 230, 261, 51))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_4 = QtWidgets.QPushButton(Form)
+        self.pushButton_4.setGeometry(QtCore.QRect(190, 500, 101, 31))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.label_5 = QtWidgets.QLabel(Form)
+        self.label_5.setGeometry(QtCore.QRect(10, 390, 171, 51))
+        self.label_5.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
+        self.label_5.setObjectName("label_5")
+        self.lineEdit = QtWidgets.QLineEdit(Form)
+        self.lineEdit.setGeometry(QtCore.QRect(30, 450, 351, 41))
+        self.lineEdit.setObjectName("lineEdit")
+        self.pushButton_5 = QtWidgets.QPushButton(Form)
+        self.pushButton_5.setGeometry(QtCore.QRect(560, 300, 131, 31))
+        self.pushButton_5.setObjectName("pushButton_5")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -62,6 +75,9 @@ class Ui_Form(object):
         self.label_3.setText(_translate("Form", "РЕЗУЛЬТАТЫ ПРОВЕРКИ:"))
         self.pushButton.setText(_translate("Form", "Загрузить документ"))
         self.pushButton_3.setText(_translate("Form", "Загруженные документы"))
+        self.pushButton_4.setText(_translate("Form", "Поиск"))
+        self.label_5.setText(_translate("Form", "РУЧНОЙ ПОИСК:"))
+        self.pushButton_5.setText(_translate("Form", "Настройки"))
 
 
 if __name__ == "__main__":

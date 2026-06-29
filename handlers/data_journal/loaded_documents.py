@@ -24,7 +24,7 @@ class Loaded_documents:
             pass
 
         self.table.cellDoubleClicked.connect(self.open_file)
-        self.parent.gui.pushButton.clicked.connect(self.delete_file)
+        self.parent.gui.pushButton.clicked.connect(self.delete_selected)
 
     def table_setup(self):
         self.table.setGeometry(QtCore.QRect(10, 70, 1180,550))
@@ -51,22 +51,27 @@ class Loaded_documents:
         file_path = self.db.get_loaded_ip(filename.text())
         subprocess.call(['xdg-open', file_path[0]])
     
-    def delete_file(self, row):
-        filename = self.table.item(row, 1)
-        if row >= 0:
-            reply = QMessageBox.question(
-                self.parent,
-                "Подтверждение удаления",
-                "Вы уверены, что хотите удалить эту запись?",
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No
-            )
-            
-            if reply == QMessageBox.Yes:
-                self.db.delete_ip(filename.text())
-                self.table.removeRow(row)
-                self.update_row_numbers()
-    
+    def delete_selected(self):
+        row = self.table.currentRow()
+        
+        if row < 0:
+            QMessageBox.warning(self.parent, "Ошибка", "Выберите запись для удаления.", QMessageBox.Ok)
+            return
+        
+        filename = self.table.item(row, 1).text()
+        reply = QMessageBox.question(
+            self.parent,
+            "Подтверждение удаления",
+            f"Удалить запись \"{filename}\"?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            self.db.delete_ip(filename)
+            self.table.removeRow(row)
+            self.update_row_numbers()
+        
     def update_row_numbers(self):
         for row in range(self.table.rowCount()):
             self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))

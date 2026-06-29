@@ -15,6 +15,10 @@ class IPC(QMainWindow):
         self.db = DataBase()
         self.db.create_tables()
         self.main = GUI_main(self, self.db)
+    
+    def closeEvent(self, event):
+        self.db.close()
+        event.accept()
 
 def start_app():
     App = QApplication(sys.argv)

@@ -1,9 +1,9 @@
 from sentence_transformers import SentenceTransformer
 from PyQt5.QtCore import QThread, pyqtSignal
 
-class Embedding_Thread(QThread):
-    embedding_finished = pyqtSignal(object)
-    embedding_error = pyqtSignal(str)
+class Vectorization_Thread(QThread):
+    vectorization_finished = pyqtSignal(object)
+    vectorization_error = pyqtSignal(str)
 
     def __init__(self, parent, text):
         super().__init__()
@@ -19,7 +19,7 @@ class Embedding_Thread(QThread):
             
             elif len(sentences) > 0:
                 embeddings = model_en.encode(sentences)
-                embedding_result = [embeddings.tolist()]
-                self.embedding_finished.emit(embedding_result)
+                embedding_result = embeddings.tolist()
+                self.vectorization_finished.emit(embedding_result)
         except Exception as e:
-            self.embedding_error.emit(f"Error - {e}")
+            self.vectorization_error.emit(f"Error - {e}")

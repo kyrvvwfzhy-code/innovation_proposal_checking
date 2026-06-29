@@ -11,8 +11,8 @@ class Data_window(QWidget):
     def open(self):
         self.gui = Ui_Form()
         self.gui.setupUi(self)
-        self.loaded()
+        self.data_window()
         self.show()
     
-    def loaded(self):
-        self.loaded_documents = Loaded_documents(self)
+    def data_window(self):
+        self.loaded_documents = Loaded_documents(self, self.db)

@@ -2,9 +2,6 @@ import sqlite3
 import threading
 import numpy as np
 
-db = sqlite3.connect("IPC.db")
-cursor = db.cursor()
-
 class DataBase:
     def __init__(self, db_path="IPC.db"):
         self.db_path = db_path
@@ -13,7 +10,7 @@ class DataBase:
             timeout=10,  
             check_same_thread=False
         )
-        self.connection.row_factory = sqlite3.Row
+        #self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
     def _get_connection(self):
@@ -41,8 +38,8 @@ class DataBase:
         
         cursor.execute("""CREATE TABLE IF NOT EXISTS embeddings (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                       name TEXT UNIQUE,
                        innovation_proposal_id INTEGER,
+                       name TEXT UNIQUE,
                        embedding BLOB NOT NULL,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
@@ -82,6 +79,8 @@ class DataBase:
             cursor.execute("DELETE FROM key_information WHERE id = (?)",
                            (id[0],))
             cursor.execute("DELETE FROM innovation_proposal WHERE id = (?)",
+                           (id[0],))
+            cursor.execute("DELETE FROM embeddings WHERE id = (?)",
                            (id[0],))
             conn.commit()
         except Exception as e:
@@ -128,7 +127,10 @@ class DataBase:
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename[:-4],))
             result = cursor.fetchone()
-            return result[0]
+            if result:
+                return result[0]
+            else:
+                return None
         except Exception as e:
             print(f"Error {e}")
 
@@ -146,11 +148,58 @@ class DataBase:
             result = cursor.fetchone()
     
             embedding_bytes = np.array(embedding, dtype=np.float32).tobytes()
-            cursor.execute("INSERT INTO embeddings (innovation_proposal_id, name, embedding) VALUES (?, ?, ?)",
+            cursor.execute("INSERT OR IGNORE INTO embeddings (innovation_proposal_id, name, embedding) VALUES (?, ?, ?)",
                                (result[0], result[1], embedding_bytes))
             conn.commit()
         except Exception as e:
             print(f"Error {e}")
+    
+    def get_embeddings(self):
+        conn, cursor = self._get_connection()
+        try:
+            result = cursor.execute("SELECT name, embedding FROM embeddings")
+            embedding_list = []
+            for i in result.fetchall():
+                name = i[0]
+                embedding_bytes = i[1]
+                embedding_numpy = np.frombuffer(embedding_bytes, dtype=np.float32)
+                embedding_list.append([name, embedding_numpy])
+            
+            if embedding_list == []:
+                return None
+            else:
+                return embedding_list
+
+        except Exception as e:
+            print(f"Error {e}")
+    
+    def delete_embeddings(self, filename):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("""SELECT key_information.name
+                                    FROM innovation_proposal
+                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    WHERE innovation_proposal.filename = ?""",
+                                    (filename[:-4],))
+            result = cursor.fetchone()
+            
+            id = cursor.execute("SELECT innovation_proposal_id FROM embeddings WHERE name = ?",
+                                (result[0],))
+            if id:
+                id = id.fetchone()
+                
+            cursor.execute("DELETE FROM key_information WHERE id = (?)",
+                           (id[0],))
+            cursor.execute("DELETE FROM innovation_proposal WHERE id = (?)",
+                           (id[0],))
+            cursor.execute("DELETE FROM embeddings WHERE name = ?",
+                               (result[0],))
+            conn.commit()
+        except Exception as e:
+            print(f"Error {e}")
+
+    def close(self):
+        self.connection.close()
 
 if __name__ == "__main__":
     start = DataBase()
