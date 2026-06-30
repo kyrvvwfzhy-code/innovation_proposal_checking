@@ -91,16 +91,26 @@ class DataBase:
     def add_key_information(self, filename, number, date, name, author):
         conn, cursor = self._get_connection()
         try:
-            id = cursor.execute("SELECT id FROM innovation_proposal WHERE filename = ?",
-                           (filename,))
-            if id:
-                id = id.fetchone() 
+            # Получаем id документа
+            cursor.execute("SELECT id FROM innovation_proposal WHERE filename = ?", (filename,))
+            result = cursor.fetchone()
             
-            cursor.execute("INSERT INTO key_information (innovation_proposal_id, number, date, name, author) VALUES (?, ?, ?, ?, ?)",
-                        (id[0], number, date, name, author))
+            if result is None:
+                print(f"Документ '{filename}' не найден в БД")
+                return
+            
+            doc_id = result[0]
+            
+            # Вставляем данные
+            cursor.execute("""INSERT INTO key_information 
+                        (innovation_proposal_id, number, date, name, author) 
+                        VALUES (?, ?, ?, ?, ?)""",
+                        (doc_id, number, date, name, author))
             conn.commit()
+            print(f"Данные сохранены для документа: {filename}")
+            
         except Exception as e:
-            print(f"Error {e}")
+            print(f"Error in add_key_information: {e}")
     
     def get_key_information(self):
         conn, cursor = self._get_connection()

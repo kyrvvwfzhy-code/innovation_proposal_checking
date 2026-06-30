@@ -16,4 +16,4 @@ class Settings_window(QWidget):
     
     def settings_window(self):
         self.settings = Settings(self, self.db)
-        self.gui.pushButton.clicked.connect(self.settings.data_download)
+        self.gui.pushButton.clicked.connect(self.settings.main)
