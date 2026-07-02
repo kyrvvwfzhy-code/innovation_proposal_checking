@@ -41,12 +41,12 @@ class Processing_Thread(QThread):
 
     def process_registered(self,result, filename):
         cropped = result[670:920, 100:750]
-        final_path = os.path.join("OCR_TMP", f"{filename}_registered_processed.png")
+        final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_registered_processed.png")
         cv2.imwrite(final_path, cropped)
 
     def process_name(self, result, filename):
         cropped = result[1470:1600, 0:2000]
-        final_path = os.path.join("OCR_TMP", f"2_{filename[2:]}_name_processed.png")
+        final_path = os.path.join("OCR_TMP", f"2_{filename[2:][:-4]}_name_processed.png")
         cv2.imwrite(final_path, cropped)
         
     def process_last_page(self, file):
@@ -57,7 +57,7 @@ class Processing_Thread(QThread):
         _, black_white = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
         result = cv2.bitwise_not(black_white)
         cropped = result[658:715, 0:2000]
-        final_path = os.path.join("OCR_TMP", f"{filename}_author_processed.png")
+        final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_author_processed.png")
         cv2.imwrite(final_path, cropped)
 
 if __name__ == "__main__":

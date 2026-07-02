@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QFileDialog
 from pdf2image import convert_from_path
 import cv2
 import pytesseract
+from sentence_transformers import SentenceTransformer
 import os
 
 class Settings:
@@ -13,7 +14,8 @@ class Settings:
         filename_list = self.load_file()
         self.conversion(filename_list)
         self.processing()
-        self.recognition(filename_list)
+        names = self.recognition(filename_list)
+        self.embedding(filename_list, names)
 
     def load_file(self):
         folder_path = QFileDialog.getExistingDirectory(
@@ -24,7 +26,7 @@ class Settings:
         )
 
         if folder_path:
-            filename_list = os.listdir(folder_path)
+            filename_list = sorted(os.listdir(folder_path))
             for filenames in filename_list:
                 file_paths = os.path.join(folder_path, filenames)
                 self.db.add_innovation_proposal(filenames[:-4], file_paths)
@@ -108,49 +110,60 @@ class Settings:
                     full_path = os.path.join(folder_path, filename)
                     if os.path.isfile(full_path):
                         paths.append(full_path)
-        
         file = sorted(paths)
-        
-        # Словарь для хранения данных по каждому файлу
-        file_data = {}
-        
-        for file_path in file:
-            filename = os.path.basename(file_path)
+
+        result_list = []
+
+        for paths in file:
+            if paths.endswith("_registered_processed.png"):
+                registered = pytesseract.image_to_string(paths, lang='rus+eng')
+                result_list.append(registered)
+            if paths.endswith("_name_processed.png"):
+                name = pytesseract.image_to_string(paths, lang='rus+eng')
+                result_list.append(name)
+            if paths.endswith("_author_processed.png"):
+                author = pytesseract.image_to_string(paths, lang='rus+eng')
+                result_list.append(author)
             
-            # Извлекаем базовое имя файла (без суффиксов)
-            if '_registered_processed.png' in filename:
-                base_name = filename.replace('_registered_processed.png', '')
-                registered = pytesseract.image_to_string(file_path, lang='rus+eng')
-                if base_name not in file_data:
-                    file_data[base_name] = {}
-                file_data[base_name]['registered'] = registered
+        if registered in result_list and name in result_list and author in result_list:
+            total_items = len(result_list)
+            items_per_group = total_items // 3
+            
+            dates = result_list[0:items_per_group]
+            names = result_list[items_per_group:items_per_group * 2]
+            authors = result_list[items_per_group * 2:]
+            
+            for idx, files in enumerate(filename_list):
+                if idx < len(dates):
+                    filename = os.path.basename(files)
                 
-            elif '_name_processed.png' in filename:
-                base_name = filename.replace('_name_processed.png', '')
-                # Убираем "2_" если есть
-                if base_name.startswith('2_'):
-                    base_name = base_name[2:]
-                name = pytesseract.image_to_string(file_path, lang='rus+eng')
-                if base_name not in file_data:
-                    file_data[base_name] = {}
-                file_data[base_name]['name'] = name
-                
-            elif '_author_processed.png' in filename:
-                base_name = filename.replace('_author_processed.png', '')
-                author = pytesseract.image_to_string(file_path, lang='rus+eng')
-                if base_name not in file_data:
-                    file_data[base_name] = {}
-                file_data[base_name]['author'] = author
+                    date = self.clean_text(dates[idx])
+                    name = self.clean_text(names[idx])
+                    author = self.clean_text(authors[idx])
+                    
+                    number = 123
+                    
+                    self.db.add_key_information(
+                        filename[:-4], number, date, name, author)
         
-        # Теперь обрабатываем собранные данные
-        for base_name, data in file_data.items():
-            # Проверяем, что все данные собраны
-            if 'registered' in data and 'name' in data and 'author' in data:
-                # Добавляем в базу данных с правильными параметрами
-                # Приведите параметры в соответствие с вашей БД
-                self.db.add_key_information(
-                    base_name, 
-                    data['registered'], 
-                    data['name'], 
-                    data['author']
-            )
+        return names
+
+    def clean_text(self, elements):
+        return ' '.join(str(elements).replace('\n', ' ').replace('\x0c', ' ').split()).strip()
+    
+    def embedding(self, filename_list, names):
+        model_en = SentenceTransformer('all-MiniLM-L6-v2')
+        
+        for idx, filename in enumerate(filename_list):
+            name = names[idx]
+            
+            # Очищаем имя
+            cleaned_name = self.clean_text(name)
+            
+            # Создаем эмбеддинг для этого имени
+            embeddings = model_en.encode(cleaned_name)
+            new_embedding = embeddings.tolist()
+            
+            # Сохраняем в БД
+            self.db.add_embedding(filename, new_embedding)
+            print(f"✅ Эмбеддинг для: {os.path.basename(filename)} → {cleaned_name[:50]}...")

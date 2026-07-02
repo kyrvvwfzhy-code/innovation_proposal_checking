@@ -85,14 +85,6 @@ class OCR_main:
 
     def clear_folder(self):
         pass
-        folder_path = "OCR_TMP"
-        if os.path.exists(folder_path):
-            paths = []
-            for filename in os.listdir(folder_path):
-                full_path = os.path.join(folder_path, filename)
-                if os.path.isfile(full_path):
-                    paths.append(full_path)
-                    os.remove(full_path)
 
 if __name__ == "__main__":
     OCR_main()
