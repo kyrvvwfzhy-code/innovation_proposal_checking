@@ -30,7 +30,7 @@ class Searching_Thread(QThread):
                 max_index = int(similarities.argmax())
                 best_name = names[max_index]
                 
-                result = [max_similarity, best_name]
+                result = [max_similarity, best_name, text]
                 self.searching_finished.emit(result)
         except Exception as e:
             self.searching_error.emit(f"Error - {e}")

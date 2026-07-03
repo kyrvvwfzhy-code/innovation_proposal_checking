@@ -1,7 +1,6 @@
 from handlers.hand_searching.searching import Searching_Thread
 
-from data.data import сhecking_result
-
+from handlers.transformer.LLM import LLM_analys_Thread
 class Hand_searching_main:
     def __init__(self, parent, db):
         self.parent = parent
@@ -23,15 +22,28 @@ class Hand_searching_main:
             pass
     
     def searching_finished(self, result):
-        text = сhecking_result(result[0], result[1])
-        self.parent.gui.plainTextEdit_2.setPlainText(text)
-        self.parent.gui.pushButton_4.setEnabled(True)
         self.thread.deleteLater()
+        self.LLM_analys(result)
     
     def searching_error(self, error):
         print(f"errorsearch - {error}")
         self.thread.deleteLater()
+    
+    def LLM_analys(self, result):
+        self.result = result
+        self.thread = LLM_analys_Thread(self.result[0], self.result[1], self.result[2])
+        self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
+        self.thread.LLM_analys_error.connect(self.LLM_analys_error)
+        self.thread.start()
 
+    def LLM_analys_finished(self, analys):
+        self.parent.gui.pushButton_4.setEnabled(True)
+        self.parent.gui.plainTextEdit_2.setPlainText(analys)
+        self.thread.deleteLater()
+    
+    def LLM_analys_error(self, error):
+        print(f"errorllm - {error}")
+        self.thread.deleteLater()
 
 
 

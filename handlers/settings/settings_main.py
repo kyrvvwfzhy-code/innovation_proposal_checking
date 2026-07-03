@@ -146,6 +146,8 @@ class Settings:
                     self.db.add_key_information(
                         filename[:-4], number, date, name, author)
         
+        self.clear_folder()
+        
         return names
 
     def clean_text(self, elements):
@@ -157,13 +159,20 @@ class Settings:
         for idx, filename in enumerate(filename_list):
             name = names[idx]
             
-            # Очищаем имя
             cleaned_name = self.clean_text(name)
             
-            # Создаем эмбеддинг для этого имени
             embeddings = model_en.encode(cleaned_name)
             new_embedding = embeddings.tolist()
             
-            # Сохраняем в БД
             self.db.add_embedding(filename, new_embedding)
             print(f"✅ Эмбеддинг для: {os.path.basename(filename)} → {cleaned_name[:50]}...")
+    
+    def clear_folder(self):
+        folder_path = "OCR_TMP"
+        if os.path.exists(folder_path):
+            paths = []
+            for filename in os.listdir(folder_path):
+                full_path = os.path.join(folder_path, filename)
+                if os.path.isfile(full_path):
+                    paths.append(full_path)
+                    os.remove(full_path)

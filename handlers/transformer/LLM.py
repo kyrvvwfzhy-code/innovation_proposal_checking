@@ -1,41 +1,42 @@
+from PyQt5.QtCore import QThread, pyqtSignal
 import ollama
 
-def beautiful_verdict(text_a, text_b, similarity_score, model="llama3.2:3b"):
-    prompt = f"""
-Ты — эксперт по семантическому анализу текстов.
+class LLM_analys_Thread(QThread):
+    LLM_analys_finished = pyqtSignal(str)
+    LLM_analys_error = pyqtSignal(str)
+    
+    def __init__(self, max_similarity, best_name, new_name):
+        super().__init__()
+        self.max_similarity = max_similarity
+        self.best_name = best_name
+        self.new_name = new_name
 
-Текст А: "{text_a}"
-Текст Б: "{text_b}"
+    def run(self):
+        try:
+            model = "bambucha/saiga-llama3"
+            prompt = f"""Определи дубликат или похожий по смыслу рационализаторское предложение.
 
-Косинусное сходство между их эмбеддингами = {similarity_score:.4f}
-(где 1.0 — полная идентичность, 0.0 — полная непохожесть).
+                НОВОЕ: {self.new_name}
+                СУЩЕСТВУЮЩЕЕ: {self.best_name}
+                СХОДСТВО: {self.max_similarity:.2f}
 
-Напиши красивое, литературное заключение на русском языке:
-- Что общего в этих текстах?
-- Насколько они похожи по смыслу (в процентах)?
-- Если похожи — выдели общую тему.
-- Если не похожи — объясни, в чем ключевое различие.
+                ОТВЕТЬ ТОЛЬКО 4 СТРОК:
+                СХОДСТВО: [одна фраза, укажи существующее название]
+                РАЗЛИЧИЯ: [одна фраза]  
+                ДУБЛИКАТ: [ДА/НЕТ]
+                РЕКОМЕНДАЦИЯ: [ДОБАВИТЬ/НЕ ДОБАВЛЯТЬ]"""
 
-Ответ должен быть связным, как у филолога или литературного критика.
-"""
-
-    response = ollama.chat(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        options={
-            "temperature": 0.7,
-            "max_tokens": 300
-        }
-    )
-    return response["message"]["content"]
-
-
-
-
-if __name__ == "__main__":
-    text1 = "Кошка спит на диване"
-    text2 = "Пушистый кот отдыхает на кушетке"
-    cosine = 0.87
-
-    answer = beautiful_verdict(text1, text2, cosine)
-    print(answer)
+            response = ollama.chat(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                options={
+                    "temperature": 0.1,     
+                    "num_predict": 250,     
+                    "num_batch": 1024, 
+                }
+            )
+                
+            self.LLM_analys_finished.emit(response["message"]["content"])
+        
+        except Exception as e:
+            self.LLM_analys_error.emit(f"Error - {e}")

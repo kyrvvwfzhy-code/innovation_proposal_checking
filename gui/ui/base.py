@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(701, 552)
+        Form.resize(792, 681)
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(430, 150, 261, 51))
         self.pushButton_2.setObjectName("pushButton_2")
@@ -33,7 +33,7 @@ class Ui_Form(object):
         self.label_2.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label_2.setObjectName("label_2")
         self.plainTextEdit_2 = QtWidgets.QPlainTextEdit(Form)
-        self.plainTextEdit_2.setGeometry(QtCore.QRect(430, 340, 261, 201))
+        self.plainTextEdit_2.setGeometry(QtCore.QRect(430, 340, 341, 331))
         self.plainTextEdit_2.setObjectName("plainTextEdit_2")
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(430, 10, 261, 51))

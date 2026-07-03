@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMessageBox
 from handlers.transformer.vectorization import Vectorization_Thread
 from handlers.transformer.semantic_deduplication import Semantic_deduplication_Thread
 
-from data.data import сhecking_result
+from handlers.transformer.LLM import LLM_analys_Thread
 
 class Vectorization:
     def __init__(self, parent, db):
@@ -15,9 +15,9 @@ class Vectorization:
     
     def vectorization_thread(self):
         filename = self.parent.gui.label_4.text()
-        name = self.db.get_name(filename)
-        if name != None:
-            self.thread = Vectorization_Thread(self.parent, name)
+        self.name = self.db.get_name(filename)
+        if self.name != None:
+            self.thread = Vectorization_Thread(self.parent, self.name)
             self.parent.gui.pushButton_2.setEnabled(False)
             self.parent.gui.pushButton_2.setText("ВЕКТОРИЗАЦИЯ...")
             self.thread.vectorization_finished.connect(self.vectorization_finished)
@@ -51,8 +51,22 @@ class Vectorization:
         self.thread.start()
     
     def semantic_deduplication_finished(self, result):
-        text = сhecking_result(result[0], result[1])
-        self.parent.gui.plainTextEdit_2.setPlainText(text)
+        self.thread.deleteLater()
+        self.LLM_analys(result)
+
+    def semantic_deduplication_error(self, error):
+        print(f"errorsem - {error}")
+        self.thread.deleteLater()
+
+    def LLM_analys(self, result):
+        self.parent.gui.pushButton_2.setText("АНАЛИЗ ЯЗЫКОВОЙ МОДЕЛИ...")
+        self.thread = LLM_analys_Thread(result[0], result[1], self.name)
+        self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
+        self.thread.LLM_analys_error.connect(self.LLM_analys_error)
+        self.thread.start()
+
+    def LLM_analys_finished(self, result, analys):
+        self.parent.gui.plainTextEdit_2.setPlainText(analys)
         reply = QMessageBox.question(
             self.parent,
             "Подтверждение уникальности",
@@ -60,18 +74,13 @@ class Vectorization:
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No
         )
-        
         if reply == QMessageBox.No:
             self.db.delete_embeddings(self.filename)
         self.parent.gui.pushButton_2.setEnabled(True)
         self.parent.gui.pushButton_2.setText("Начать поиск")
         self.thread.deleteLater()
     
-    def semantic_deduplication_error(self, error):
-        print(f"errorsem - {error}")
+    def LLM_analys_error(self, error):
+        print(f"errorllm - {error}")
         self.thread.deleteLater()
-        
-
-
-
 
