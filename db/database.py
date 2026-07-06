@@ -46,6 +46,13 @@ class DataBase:
                        )""")
         conn.commit()
 
+        cursor.execute("""CREATE TABLE IF NOT EXISTS prompt_text (
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       prompt TEXT,
+                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                       )""")
+        conn.commit()
+
 #--------------------------------------------innovation_proposal--------------------------------------------
     def add_innovation_proposal(self, filename, path):
         conn, cursor = self._get_connection()
@@ -200,6 +207,41 @@ class DataBase:
             conn.commit()
         except Exception as e:
             print(f"Error {e}")
+
+#--------------------------------------------prompt_text--------------------------------------------
+
+    def add_prompt_text(self, prompt):
+            conn, cursor = self._get_connection()
+
+            try:
+                cursor.execute("INSERT INTO prompt_text prompt VALUES ?",
+                            (prompt,))
+                conn.commit()
+            except Exception as e:
+                return f"Error - {e}"
+    
+    def update_prompt_text(self, new_prompt):
+            conn, cursor = self._get_connection()
+
+            try:
+                cursor.execute("UPDATE prompt_text SET prompt = ? WHERE id = 1",
+                            (new_prompt,))
+                conn.commit()
+            except Exception as e:
+                return f"Error - {e}"
+    
+    def get_prompt_text(self):
+            conn, cursor = self._get_connection()
+
+            try:
+                cursor.execute("SELECT prompt INTO prompt_text WHERE id = 1")
+
+                prompt_text = cursor.fetchone()
+                return prompt_text[0]
+            except Exception as e:
+                return f"Error - {e}"
+
+#--------------------------------------------DB_CLOSE--------------------------------------------
 
     def close(self):
         self.connection.close()

@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 import ollama
 
+from data.data import base_prompt_text
+
 class LLM_analys_Thread(QThread):
     LLM_analys_finished = pyqtSignal(str)
     LLM_analys_error = pyqtSignal(str)
@@ -14,25 +16,15 @@ class LLM_analys_Thread(QThread):
     def run(self):
         try:
             model = "bambucha/saiga-llama3"
-            prompt = f"""Определи дубликат или похожий по смыслу рационализаторское предложение.
-
-                НОВОЕ: {self.new_name}
-                СУЩЕСТВУЮЩЕЕ: {self.best_name}
-                СХОДСТВО: {self.max_similarity:.2f}
-
-                ОТВЕТЬ ТОЛЬКО 4 СТРОК:
-                СХОДСТВО: [одна фраза, укажи существующее название]
-                РАЗЛИЧИЯ: [одна фраза]  
-                ДУБЛИКАТ: [ДА/НЕТ]
-                РЕКОМЕНДАЦИЯ: [ДОБАВИТЬ/НЕ ДОБАВЛЯТЬ]"""
+            prompt = base_prompt_text(self.new_name, self.best_name, self.max_similarity)
 
             response = ollama.chat(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 options={
                     "temperature": 0.1,     
-                    "num_predict": 250,     
-                    "num_batch": 1024, 
+                    "num_predict": 150,     
+                    "num_batch": 2048, 
                 }
             )
                 

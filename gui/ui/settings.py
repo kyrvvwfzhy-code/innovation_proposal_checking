@@ -16,8 +16,17 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(316, 300)
         self.pushButton = QtWidgets.QPushButton(Form)
-        self.pushButton.setGeometry(QtCore.QRect(10, 20, 161, 41))
+        self.pushButton.setGeometry(QtCore.QRect(10, 50, 141, 31))
         self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(Form)
+        self.pushButton_2.setGeometry(QtCore.QRect(10, 140, 141, 31))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(10, 100, 151, 41))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(Form)
+        self.label_2.setGeometry(QtCore.QRect(10, 10, 151, 41))
+        self.label_2.setObjectName("label_2")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -26,6 +35,9 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Настройки"))
         self.pushButton.setText(_translate("Form", "Загрузить базу"))
+        self.pushButton_2.setText(_translate("Form", "prompt"))
+        self.label.setText(_translate("Form", "Настройки  Ollama:"))
+        self.label_2.setText(_translate("Form", "Настройки  БД:"))
 
 
 if __name__ == "__main__":
