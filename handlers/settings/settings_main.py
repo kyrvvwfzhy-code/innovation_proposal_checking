@@ -4,6 +4,7 @@ class Settings:
     def __init__(self, parent, db):
         self.parent = parent
         self.db = db
+
     
     def load_data(self):
         self.loading = Load_data_main(self.parent, self.db)

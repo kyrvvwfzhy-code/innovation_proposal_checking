@@ -10,7 +10,6 @@ class DataBase:
             timeout=10,  
             check_same_thread=False
         )
-        #self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
     def _get_connection(self):
@@ -28,10 +27,8 @@ class DataBase:
         cursor.execute("""CREATE TABLE IF NOT EXISTS key_information (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        innovation_proposal_id INTEGER,
-                       number TEXT,
-                       date TEXT,
+                       registered TEXT,
                        name TEXT UNIQUE,
-                       author TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
                        )""")
@@ -64,6 +61,8 @@ class DataBase:
         except sqlite3.IntegrityError:
             error = "Данный документ уже выгружен"
             return error
+        except Exception as e:
+            return f"DATABASE ERROR - {e}"
     
     def get_loaded_ip(self, filename):
         conn, cursor = self._get_connection()
@@ -73,7 +72,7 @@ class DataBase:
             path = cursor.fetchone()
             return path
         except Exception as e:
-            print(f"Error {e}")
+            return f"DATABASE ERROR - {e}"
     
     def delete_ip(self, filename):
         conn, cursor = self._get_connection()
@@ -91,11 +90,11 @@ class DataBase:
                            (id[0],))
             conn.commit()
         except Exception as e:
-            print(f"Error {e}")
+            return f"DATABASE ERROR - {e}"
 
 #--------------------------------------------key_information--------------------------------------------
     
-    def add_key_information(self, filename, number, date, name, author):
+    def add_key_information(self, filename, registered, name):
         conn, cursor = self._get_connection()
         try:
             id = cursor.execute("SELECT id FROM innovation_proposal WHERE filename = ?", (filename,))
@@ -104,29 +103,27 @@ class DataBase:
                 id = id.fetchone()
             
             cursor.execute("""INSERT INTO key_information 
-                        (innovation_proposal_id, number, date, name, author) 
-                        VALUES (?, ?, ?, ?, ?)""",
-                        (id[0], number, date, name, author))
+                        (innovation_proposal_id, registered, name) 
+                        VALUES (?, ?, ?)""",
+                        (id[0], registered, name))
             conn.commit()
             
         except Exception as e:
-            print(f"Error in add_key_information: {e}")
+            return f"DATABASE ERROR - {e}"
     
     def get_key_information(self):
         conn, cursor = self._get_connection()
         try:
             result = cursor.execute("""SELECT innovation_proposal.filename,
-                                    key_information.number,
-                                    key_information.date,
-                                    key_information.name, 
-                                    key_information.author
+                                    key_information.registered,
+                                    key_information.name
                                     FROM innovation_proposal
                                     LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
                                     """)
             data = result.fetchall()
             return data
         except Exception as e:
-            print(f"Eror {e}")
+            return f"DATABASE ERROR - {e}"
     
     def get_name(self, filename):
         conn, cursor = self._get_connection()
@@ -142,9 +139,9 @@ class DataBase:
             else:
                 return None
         except Exception as e:
-            print(f"Error {e}")
+            return f"DATABASE ERROR - {e}"
 
-#--------------------------------------------key_information--------------------------------------------
+#--------------------------------------------embeddings--------------------------------------------
 
     def add_embedding(self, filename, embedding):
         conn, cursor = self._get_connection()
@@ -162,7 +159,7 @@ class DataBase:
                                (result[0], result[1], embedding_bytes))
             conn.commit()
         except Exception as e:
-            print(f"Error {e}")
+            return f"DATABASE ERROR - {e}"
     
     def get_embeddings(self):
         conn, cursor = self._get_connection()
@@ -181,7 +178,7 @@ class DataBase:
                 return embedding_list
 
         except Exception as e:
-            print(f"Error {e}")
+            return f"DATABASE ERROR - {e}"
     
     def delete_embeddings(self, filename):
         conn, cursor = self._get_connection()
@@ -206,7 +203,7 @@ class DataBase:
                                (result[0],))
             conn.commit()
         except Exception as e:
-            print(f"Error {e}")
+            return f"DATABASE ERROR - {e}"
 
 #--------------------------------------------prompt_text--------------------------------------------
 
@@ -218,7 +215,7 @@ class DataBase:
                             (prompt,))
                 conn.commit()
             except Exception as e:
-                return f"Error - {e}"
+                return f"DATABASE ERROR - {e}"
     
     def update_prompt_text(self, new_prompt):
             conn, cursor = self._get_connection()
@@ -228,7 +225,7 @@ class DataBase:
                             (new_prompt,))
                 conn.commit()
             except Exception as e:
-                return f"Error - {e}"
+                return f"DATABASE ERROR - {e}"
     
     def get_prompt_text(self):
             conn, cursor = self._get_connection()
@@ -239,14 +236,9 @@ class DataBase:
                 prompt_text = cursor.fetchone()
                 return prompt_text[0]
             except Exception as e:
-                return f"Error - {e}"
+                return f"DATABASE ERROR - {e}"
 
 #--------------------------------------------DB_CLOSE--------------------------------------------
 
     def close(self):
         self.connection.close()
-
-if __name__ == "__main__":
-    start = DataBase()
-    # start.create_tables()
-    start.get_loaded_rp()

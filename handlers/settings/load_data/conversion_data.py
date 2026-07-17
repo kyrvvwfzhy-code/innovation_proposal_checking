@@ -21,8 +21,8 @@ class Conversion_data_Thread(QThread):
                     images = convert_from_path(paths)
 
                     first_page = 1
-                    total_images = len(images)
-                    last_page = min(9, total_images)
+                    # total_images = len(images)
+                    # last_page = min(9, total_images)
 
         
                     for i, image in enumerate(images):
@@ -30,9 +30,9 @@ class Conversion_data_Thread(QThread):
                         if page_number == first_page:
                             output_path = os.path.join("OCR_TMP", f"1_first_page_{files[:-4]}.png")
                             image.save(output_path, "PNG")
-                        if page_number == last_page:
-                            output_path = os.path.join("OCR_TMP", f"2_last_page_{files[:-4]}.png")
-                            image.save(output_path, "PNG")
+                        # if page_number == last_page:
+                        #     output_path = os.path.join("OCR_TMP", f"2_last_page_{files[:-4]}.png")
+                        #     image.save(output_path, "PNG")
             self.conversion_data_finished.emit("Ready")
         except Exception as e:
             self.conversion_data_error.emit(f"Error - {e}")

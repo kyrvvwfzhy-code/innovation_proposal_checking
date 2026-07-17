@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>714</width>
-    <height>652</height>
+    <width>900</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Проверка рационализаторских предложений</string>
+   <string/>
   </property>
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>150</y>
-     <width>261</width>
+     <x>620</x>
+     <y>290</y>
+     <width>271</width>
      <height>51</height>
     </rect>
    </property>
@@ -30,18 +30,18 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>60</y>
-     <width>381</width>
-     <height>351</height>
+     <y>180</y>
+     <width>491</width>
+     <height>491</height>
     </rect>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>121</y>
-     <width>261</width>
+     <x>620</x>
+     <y>250</y>
+     <width>271</width>
      <height>31</height>
     </rect>
    </property>
@@ -59,9 +59,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>401</width>
+     <x>110</x>
+     <y>120</y>
+     <width>291</width>
      <height>51</height>
     </rect>
    </property>
@@ -72,38 +72,12 @@ color: rgb(0, 130, 15);</string>
     <string>РЕЗУЛЬТАТЫ РАСПОЗНОВАНИЯ:</string>
    </property>
   </widget>
-  <widget class="QPlainTextEdit" name="plainTextEdit_2">
-   <property name="geometry">
-    <rect>
-     <x>430</x>
-     <y>410</y>
-     <width>271</width>
-     <height>231</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>430</x>
-     <y>10</y>
-     <width>271</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
-   </property>
-   <property name="text">
-    <string>ПАНЕЛЬ ИНСТРУМЕНТОВ:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>360</y>
-     <width>261</width>
+     <x>610</x>
+     <y>380</y>
+     <width>231</width>
      <height>51</height>
     </rect>
    </property>
@@ -117,9 +91,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>70</y>
-     <width>261</width>
+     <x>620</x>
+     <y>190</y>
+     <width>271</width>
      <height>51</height>
     </rect>
    </property>
@@ -127,38 +101,12 @@ color: rgb(0, 130, 15);</string>
     <string>Загрузить документ</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
-   <property name="geometry">
-    <rect>
-     <x>430</x>
-     <y>230</y>
-     <width>261</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Загруженные документы</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_4">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>580</y>
-     <width>101</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Поиск</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>440</y>
-     <width>371</width>
+     <x>410</x>
+     <y>0</y>
+     <width>181</width>
      <height>51</height>
     </rect>
    </property>
@@ -166,32 +114,124 @@ color: rgb(0, 130, 15);</string>
     <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
    </property>
    <property name="text">
-    <string>РУЧНОЙ ПОИСК:</string>
+    <string>ЗАГРУЗКА СКАНОВ</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>510</y>
-     <width>351</width>
-     <height>41</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_5">
-   <property name="geometry">
-    <rect>
-     <x>430</x>
-     <y>300</y>
-     <width>261</width>
+     <x>380</x>
+     <y>0</y>
+     <width>221</width>
      <height>51</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Настройки</string>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(218, 218, 218, 100);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
    </property>
   </widget>
+  <widget class="QFrame" name="frame_3">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>100</y>
+     <width>511</width>
+     <height>581</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(218, 218, 218, 100);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>120</y>
+     <width>231</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>ПАНЕЛЬ ИНСТРУМЕНТОВ:</string>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frame_2">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>100</y>
+     <width>291</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(218, 218, 218, 100);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="plainTextEdit_2">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>440</y>
+     <width>331</width>
+     <height>231</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frame_4">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>370</y>
+     <width>351</width>
+     <height>311</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(218, 218, 218, 100);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
+  <zorder>frame_4</zorder>
+  <zorder>frame_3</zorder>
+  <zorder>frame_2</zorder>
+  <zorder>frame</zorder>
+  <zorder>pushButton_2</zorder>
+  <zorder>plainTextEdit</zorder>
+  <zorder>label_4</zorder>
+  <zorder>label_2</zorder>
+  <zorder>label_3</zorder>
+  <zorder>pushButton</zorder>
+  <zorder>label_5</zorder>
+  <zorder>label</zorder>
+  <zorder>plainTextEdit_2</zorder>
  </widget>
  <resources/>
  <connections/>

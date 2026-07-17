@@ -1,6 +1,8 @@
 from sentence_transformers import SentenceTransformer
 from PyQt5.QtCore import QThread, pyqtSignal
 from sklearn.metrics.pairwise import cosine_similarity
+from log.logging import logger
+import os
 
 class Searching_Thread(QThread):
     searching_finished = pyqtSignal(list)
@@ -12,7 +14,16 @@ class Searching_Thread(QThread):
         self.db_embeddings = db_embeddings
     
     def run(self):
-        model_en = SentenceTransformer('all-MiniLM-L6-v2')
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+            
+        model_path = os.path.join(
+                project_root, 
+                'data', 
+                'models--sentence-transformers--all-MiniLM-L6-v2'
+            )
+        
+        model_en = SentenceTransformer(model_path)
         text = self.parent.gui.lineEdit.text()
         try:
             if len(text) == 0:
@@ -32,6 +43,8 @@ class Searching_Thread(QThread):
                 
                 result = [max_similarity, best_name, text]
                 self.searching_finished.emit(result)
+            logger.debug(f"LINEEDIT - {len(text)}")
+            logger.info(f"SEARCHING - {result}")
         except Exception as e:
-            self.searching_error.emit(f"Error - {e}")
+            self.searching_error.emit(logger.error(f"SEARCHING - {e}"))
         

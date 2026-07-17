@@ -33,17 +33,17 @@ class Recognition_data_Thread(QThread):
                 if paths.endswith("_name_processed.png"):
                     name = pytesseract.image_to_string(paths, lang='rus+eng')
                     result_list.append(name)
-                if paths.endswith("_author_processed.png"):
-                    author = pytesseract.image_to_string(paths, lang='rus+eng')
-                    result_list.append(author)
+                # if paths.endswith("_author_processed.png"):
+                #     author = pytesseract.image_to_string(paths, lang='rus+eng')
+                #     result_list.append(author)
                 
-            if registered in result_list and name in result_list and author in result_list:
+            if registered in result_list and name in result_list:
                 total_items = len(result_list)
-                items_per_group = total_items // 3
+                items_per_group = total_items // 2
                 
                 dates = result_list[0:items_per_group]
                 names = result_list[items_per_group:items_per_group * 2]
-                authors = result_list[items_per_group * 2:]
+                # authors = result_list[items_per_group * 2:]
                 
                 for idx, files in enumerate(self.filename_list):
                     if idx < len(dates):
@@ -51,12 +51,11 @@ class Recognition_data_Thread(QThread):
                     
                         date = self.clean_text(dates[idx])
                         name = self.clean_text(names[idx])
-                        author = self.clean_text(authors[idx])
+                        # author = self.clean_text(authors[idx])
                         
-                        number = 123
                         
                         self.db.add_key_information(
-                            filename[:-4], number, date, name, author)
+                            filename[:-4], date, name)
             
             self.recognition_data_finished.emit(names)
 

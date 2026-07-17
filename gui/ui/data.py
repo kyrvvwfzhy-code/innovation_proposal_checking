@@ -14,23 +14,37 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1200, 700)
+        Form.resize(900, 679)
+        Form.setWindowTitle("")
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(460, 10, 291, 51))
+        self.label.setGeometry(QtCore.QRect(320, 10, 291, 51))
         self.label.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label.setObjectName("label")
         self.pushButton = QtWidgets.QPushButton(Form)
-        self.pushButton.setGeometry(QtCore.QRect(530, 640, 141, 41))
+        self.pushButton.setGeometry(QtCore.QRect(200, 630, 141, 41))
         self.pushButton.setObjectName("pushButton")
+        self.frame_3 = QtWidgets.QFrame(Form)
+        self.frame_3.setGeometry(QtCore.QRect(0, 70, 901, 541))
+        self.frame_3.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
+        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_3.setObjectName("frame_3")
+        self.pushButton_2 = QtWidgets.QPushButton(Form)
+        self.pushButton_2.setGeometry(QtCore.QRect(380, 630, 141, 41))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_3 = QtWidgets.QPushButton(Form)
+        self.pushButton_3.setGeometry(QtCore.QRect(560, 630, 141, 41))
+        self.pushButton_3.setObjectName("pushButton_3")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Хранилище"))
         self.label.setText(_translate("Form", "ЗАГРУЖЕННЫЕ ДОКУМЕНТЫ"))
         self.pushButton.setText(_translate("Form", "Удалить"))
+        self.pushButton_2.setText(_translate("Form", "Изменить"))
+        self.pushButton_3.setText(_translate("Form", "Обновить"))
 
 
 if __name__ == "__main__":

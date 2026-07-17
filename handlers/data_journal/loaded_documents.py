@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QMessageBox
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
-
+import sys
+import os
 import subprocess
 
 
@@ -20,23 +20,26 @@ class Loaded_documents:
         data = self.db.get_key_information()
         if data:
             self.add_data(data)
-        else:
-            pass
 
         self.table.cellDoubleClicked.connect(self.open_file)
         self.parent.gui.pushButton.clicked.connect(self.delete_selected)
 
     def table_setup(self):
-        self.table.setGeometry(QtCore.QRect(10, 70, 1180,550))
-        headers = ["№", "Имя файла", "Номер регистрации", "Дата Регистрации", "Наименование", "Автор"]
+        self.table.setGeometry(QtCore.QRect(10, 80, 880,520))
+        headers = ["№", "Имя файла", "Зарегестрирован", "Наименование"]
         self.table.setColumnCount(len(headers))
         self.table.setHorizontalHeaderLabels(headers)
         self.table.verticalHeader().setVisible(False)
         self.table.setColumnWidth(0, 25)
+        
+        self.table.setWordWrap(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
+
+        self.table.setColumnWidth(1, 100)
+        self.table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         header = self.table.horizontalHeader()
-        for i in range(1, self.table.columnCount()):  
+        for i in range(2, self.table.columnCount()):  
             header.setSectionResizeMode(i, QHeaderView.Stretch)
 
     def add_data(self, data):
@@ -49,7 +52,10 @@ class Loaded_documents:
     def open_file(self, row):
         filename = self.table.item(row, 1)
         file_path = self.db.get_loaded_ip(filename.text())
-        subprocess.call(['xdg-open', file_path[0]])
+        if sys.platform == 'win32':
+            os.startfile(file_path[0])
+        else:
+            subprocess.call(['xdg-open', file_path[0]])
     
     def delete_selected(self):
         row = self.table.currentRow()
@@ -69,6 +75,7 @@ class Loaded_documents:
         
         if reply == QMessageBox.Yes:
             self.db.delete_ip(filename)
+            self.db.delete_embeddings(filename)
             self.table.removeRow(row)
             self.update_row_numbers()
         

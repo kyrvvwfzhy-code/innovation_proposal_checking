@@ -6,20 +6,87 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>316</width>
-    <height>300</height>
+    <width>900</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Настройки</string>
+   <string>Form</string>
   </property>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>0</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>НАСТРОЙКИ</string>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>0</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(218, 218, 218, 100);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>300</y>
+     <width>311</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>НАСТРОЙКИ ЯЗЫКОВОЙ МОДЕЛИ:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>130</y>
+     <width>261</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>НАСТРОЙКИ БАЗЫ ДАННЫХ:</string>
+   </property>
+  </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>50</y>
-     <width>141</width>
-     <height>31</height>
+     <x>380</x>
+     <y>190</y>
+     <width>160</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -29,42 +96,62 @@
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>140</y>
-     <width>141</width>
-     <height>31</height>
+     <x>380</x>
+     <y>360</y>
+     <width>160</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
-    <string>prompt</string>
+    <string>Изменить промпт</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QFrame" name="frame_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>151</width>
-     <height>41</height>
+     <x>310</x>
+     <y>130</y>
+     <width>291</width>
+     <height>121</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Настройки  Ollama:</string>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(218, 218, 218, 100);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QFrame" name="frame_3">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>151</width>
-     <height>41</height>
+     <x>290</x>
+     <y>290</y>
+     <width>331</width>
+     <height>141</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Настройки  БД:</string>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(218, 218, 218, 100);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
    </property>
   </widget>
+  <zorder>frame_3</zorder>
+  <zorder>frame_2</zorder>
+  <zorder>frame</zorder>
+  <zorder>label_5</zorder>
+  <zorder>label_6</zorder>
+  <zorder>label_7</zorder>
+  <zorder>pushButton</zorder>
+  <zorder>pushButton_2</zorder>
  </widget>
  <resources/>
  <connections/>

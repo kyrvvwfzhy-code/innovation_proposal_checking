@@ -27,12 +27,11 @@ class Recognition_Thread(QThread):
                         paths.append(full_path)
         file = sorted(paths)
 
-        if len(file) >= 3:
+        if len(file) >= 2:
             registered = pytesseract.image_to_string(file[0], lang='rus+eng')
             name = pytesseract.image_to_string(file[1], lang='rus+eng')
-            author = pytesseract.image_to_string(file[2], lang='rus+eng')
 
-        text =  [registered, name, author]
+        text =  [registered, name]
 
         result = [self.clean_text(item) for item in text]
         
