@@ -1,9 +1,11 @@
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from handlers.settings.load_data.load_files import Load_files
 from handlers.settings.load_data.conversion_data import Conversion_data_Thread
 from handlers.settings.load_data.processing_data import Processing_data_Thread
 from handlers.settings.load_data.recognition_data import Recognition_data_Thread
 from handlers.settings.load_data.embedding_data import Embedding_data_Thread
 from options.progressbar import Progressbar_Thread
+from data.messagebox import critical_message
 import os
 
 from log.logging import logger
@@ -18,12 +20,13 @@ class Load_data_main:
     def start(self):
         self.load_files = Load_files(self.db)
         self.filename_list = self.load_files.start()
-        self.target = (len(self.filename_list) * 3)
         if self.filename_list != None:
+            self.target = (len(self.filename_list) * 3)
             self.start_progressbar()
+            self.conversion_data_thread(self.filename_list)
         else:
+            critical_message(self.parent, "Выберите папку с файлами")
             pass
-        self.conversion_data_thread(self.filename_list)
     
     def start_progressbar(self):
         self.parent.show()

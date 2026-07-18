@@ -17,6 +17,14 @@ class DataBase:
 
     def create_tables(self):
         conn, cursor = self._get_connection()
+
+        cursor.execute("""CREATE TABLE IF NOT EXISTS ip_tmp (
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       filename TEXT UNIQUE,
+                       path TEXT,
+                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                       )""")
+
         cursor.execute("""CREATE TABLE IF NOT EXISTS innovation_proposal (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        filename TEXT UNIQUE,
@@ -50,6 +58,20 @@ class DataBase:
                        )""")
         conn.commit()
 
+#--------------------------------------------ip_tmp---------------------------------------------------------
+
+    def add_ip_tmp(self, filename, path):
+            conn, cursor = self._get_connection()
+
+            try:
+                cursor.execute("INSERT INTO ip_tmp (filename, path) VALUES (?, ?)",
+                            (filename, path))
+                conn.commit()
+            except sqlite3.IntegrityError as IntegrityError:
+                return IntegrityError
+            except Exception as e:
+                return f"DATABASE ERROR - {e}"
+        
 #--------------------------------------------innovation_proposal--------------------------------------------
     def add_innovation_proposal(self, filename, path):
         conn, cursor = self._get_connection()
@@ -58,9 +80,8 @@ class DataBase:
             cursor.execute("INSERT INTO innovation_proposal (filename, path) VALUES (?, ?)",
                         (filename, path))
             conn.commit()
-        except sqlite3.IntegrityError:
-            error = "Данный документ уже выгружен"
-            return error
+        except sqlite3.IntegrityError as IntegrityError:
+            return IntegrityError
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     

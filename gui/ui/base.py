@@ -20,7 +20,7 @@ class Ui_Form(object):
         self.pushButton_2.setGeometry(QtCore.QRect(620, 290, 271, 51))
         self.pushButton_2.setObjectName("pushButton_2")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Form)
-        self.plainTextEdit.setGeometry(QtCore.QRect(10, 180, 491, 491))
+        self.plainTextEdit.setGeometry(QtCore.QRect(10, 180, 491, 411))
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.label_4 = QtWidgets.QLabel(Form)
         self.label_4.setGeometry(QtCore.QRect(620, 250, 271, 31))
@@ -51,7 +51,7 @@ class Ui_Form(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.frame_3 = QtWidgets.QFrame(Form)
-        self.frame_3.setGeometry(QtCore.QRect(0, 100, 511, 581))
+        self.frame_3.setGeometry(QtCore.QRect(0, 100, 511, 501))
         self.frame_3.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -75,6 +75,9 @@ class Ui_Form(object):
         self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_4.setObjectName("frame_4")
+        self.pushButton_3 = QtWidgets.QPushButton(Form)
+        self.pushButton_3.setGeometry(QtCore.QRect(170, 620, 181, 51))
+        self.pushButton_3.setObjectName("pushButton_3")
         self.frame_4.raise_()
         self.frame_3.raise_()
         self.frame_2.raise_()
@@ -88,6 +91,7 @@ class Ui_Form(object):
         self.label_5.raise_()
         self.label.raise_()
         self.plainTextEdit_2.raise_()
+        self.pushButton_3.raise_()
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -100,6 +104,7 @@ class Ui_Form(object):
         self.pushButton.setText(_translate("Form", "Загрузить документ"))
         self.label_5.setText(_translate("Form", "ЗАГРУЗКА СКАНОВ"))
         self.label.setText(_translate("Form", "ПАНЕЛЬ ИНСТРУМЕНТОВ:"))
+        self.pushButton_3.setText(_translate("Form", "Исправить"))
 
 
 if __name__ == "__main__":

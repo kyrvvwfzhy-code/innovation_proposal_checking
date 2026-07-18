@@ -70,15 +70,31 @@ class OCR_main:
         self.parent.gui.pushButton.setEnabled(True)
         self.parent.gui.pushButton.setText("Загрузить документ")
         
-        registered = result[0]
-        name = result[1]
-        
-        filename = self.parent.gui.label_4.text()
-        self.db.add_key_information(filename[:-4], registered, name)
-        text = ocr_result(registered, name)
+        self.filename = self.parent.gui.label_4.text()
+        self.registered = result[0]
+        self.name = result[1]
+
+        text = ocr_result(self.registered, self.name)
         self.parent.gui.plainTextEdit.setPlainText(text)
+
+        self.parent.gui.pushButton_3.setEnabled(True)
+        self.parent.gui.pushButton_3.clicked.connect(self.open_edit_window)
+
         self.thread.deleteLater()
         self.clear_folder()
+    
+    def open_edit_window(self):
+        self.parent.edit_window.open()
+        self.parent.edit_window.filling_data(self.registered, self.name)
+        self.parent.edit_window.gui.pushButton.clicked.connect(self.save_edit_data)
+    
+    def save_edit_data(self):
+        edit_registered, edit_name = self.parent.edit_window.save_data()
+        self.db.add_key_information(self.filename[:-4], edit_registered, edit_name)
+        text = ocr_result(edit_registered, edit_name)
+        self.parent.gui.plainTextEdit.setPlainText(text)
+        self.parent.gui.pushButton_3.setEnabled(False)
+        self.parent.edit_window.close()
     
     def recognition_error(self, error):
         logger.error(f"RECOGNITION - {error}")
@@ -95,7 +111,6 @@ class OCR_main:
                     paths.append(full_path)
                     os.remove(full_path)
         logger.info(f"'OCR_TMP' folder is clear")
-
 
 if __name__ == "__main__":
     OCR_main()

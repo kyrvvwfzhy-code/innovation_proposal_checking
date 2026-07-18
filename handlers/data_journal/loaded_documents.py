@@ -3,6 +3,7 @@ from PyQt5 import QtCore
 import sys
 import os
 import subprocess
+from data.messagebox import delete_question_message
 
 
 class Loaded_documents:
@@ -21,7 +22,7 @@ class Loaded_documents:
         if data:
             self.add_data(data)
 
-        self.table.cellDoubleClicked.connect(self.open_file)
+        # self.table.cellDoubleClicked.connect(self.open_file)
         self.parent.gui.pushButton.clicked.connect(self.delete_selected)
 
     def table_setup(self):
@@ -33,7 +34,6 @@ class Loaded_documents:
         self.table.setColumnWidth(0, 25)
         
         self.table.setWordWrap(True)
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
 
         self.table.setColumnWidth(1, 100)
@@ -65,15 +65,8 @@ class Loaded_documents:
             return
         
         filename = self.table.item(row, 1).text()
-        reply = QMessageBox.question(
-            self.parent,
-            "Подтверждение удаления",
-            f"Удалить запись \"{filename}\"?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
-        
-        if reply == QMessageBox.Yes:
+        reply = delete_question_message(self.parent, "Удалить запись", filename)
+        if reply == True:
             self.db.delete_ip(filename)
             self.db.delete_embeddings(filename)
             self.table.removeRow(row)

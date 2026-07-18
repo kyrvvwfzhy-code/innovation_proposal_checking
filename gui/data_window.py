@@ -23,10 +23,9 @@ class Data_window(QWidget):
     def update_table(self):
             if self.loaded_documents is not None:
                 if hasattr(self.loaded_documents, 'table'):
-                    if hasattr(self.loaded_documents, 'table'):
-                        self.loaded_documents.table.setRowCount(0)
-                        data = self.db.get_key_information()
-                        if data:
-                            self.loaded_documents.add_data(data)
-                        logger.info("✅ Таблица обновлена")
-                        return
+                    self.loaded_documents.table.setRowCount(0)
+                    data = self.db.get_key_information()
+                    if data:
+                        self.loaded_documents.add_data(data)
+                    logger.info("✅ Таблица обновлена")
+                    return

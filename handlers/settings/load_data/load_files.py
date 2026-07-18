@@ -20,7 +20,9 @@ class Load_files:
                         file_paths = os.path.join(folder_path, filenames)
                         self.db.add_innovation_proposal(filenames[:-4], file_paths)
 
-                return filename_list
+                    return filename_list
+                else:
+                    return None
                 
             except Exception as e:
                 return f"Error - {e}"

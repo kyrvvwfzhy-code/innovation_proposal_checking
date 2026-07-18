@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QMessageBox
 from handlers.transformer.vectorization import Vectorization_Thread
 from handlers.transformer.semantic_deduplication import Semantic_deduplication_Thread
-
 from handlers.transformer.LLM import LLM_analys_Thread
+from data.messagebox import critical_message, question_message
 
 class Vectorization:
     def __init__(self, parent, db):
@@ -32,10 +31,9 @@ class Vectorization:
         if db_embeddings:
             self.semantic_deduplication_thread(new_embedding, db_embeddings)
         if db_embeddings == None:
-            message = "БД Эмбеддингов пустая"
+            critical_message(self.parent, "Журнал пустой")
             self.parent.gui.pushButton_2.setEnabled(True)
             self.parent.gui.pushButton_2.setText("Начать поиск")
-            QMessageBox.information(self.parent, "Информация", message)
         self.filename = self.parent.gui.label_4.text()
         self.db.add_embedding(self.filename, new_embedding)
             
@@ -67,14 +65,8 @@ class Vectorization:
 
     def LLM_analys_finished(self, result, analys):
         self.parent.gui.plainTextEdit_2.setPlainText(analys)
-        reply = QMessageBox.question(
-            self.parent,
-            "Подтверждение уникальности",
-            f"Добавить в базу\"{result[1]}\"?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
-        if reply == QMessageBox.No:
+        reply = question_message(self.parent, "Добавить в базу", result[1])
+        if reply == False:
             self.db.delete_embeddings(self.filename)
         self.parent.gui.pushButton_2.setEnabled(True)
         self.parent.gui.pushButton_2.setText("Начать поиск")

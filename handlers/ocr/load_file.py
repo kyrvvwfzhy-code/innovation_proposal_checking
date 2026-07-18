@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog
 import os
+from data.messagebox import info_message
 
 class Load_file:
     def __init__(self, parent, db):
@@ -31,13 +32,9 @@ class Load_file:
         self.parent.gui.label_4.show()
         exist = self.db.add_innovation_proposal(filename[:-4], file_path)
         if exist != None:
-            self.logg_box(exist)
+            info_message(self.parent, "Документ уже выгружен")
             return False
         else:
             return True
-        
-    
-    def logg_box(self, exist):
-        QMessageBox.information(self.parent, "Информация", exist)
 
     

@@ -29,6 +29,7 @@ class LLM_analys_Thread(QThread):
             )
                 
             self.LLM_analys_finished.emit(response["message"]["content"])
+            print(response["message"]["content"])
         
         except Exception as e:
             self.LLM_analys_error.emit(f"Error - {e}")

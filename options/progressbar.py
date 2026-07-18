@@ -27,7 +27,7 @@ class Progressbar_Thread(QThread):
             progress = 100
         
         self.parent.gui.progressBar.setValue(progress)
-        self.parent.gui.label.setText(f"{current_count} из {self.target} ({progress}%)")
+        self.parent.gui.label.setText(f"{current_count} из {self.target}")
 
         if current_count >= self.target:
             self.parent.gui.progressBar.setValue(100)
