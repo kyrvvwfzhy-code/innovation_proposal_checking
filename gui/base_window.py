@@ -21,5 +21,7 @@ class Base_window(QWidget):
         self.edit_window = Edit_window()
         self.gui.pushButton.clicked.connect(self.ocr.start)
         self.gui.pushButton_2.clicked.connect(self.checking.start)
+        self.gui.pushButton_2.setEnabled(False)
         self.gui.pushButton_3.setEnabled(False)
+        self.gui.pushButton_4.setEnabled(False)
 

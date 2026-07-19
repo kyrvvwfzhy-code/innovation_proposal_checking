@@ -31,6 +31,7 @@ class Load_file:
 
         self.parent.gui.label_4.show()
         exist = self.db.add_innovation_proposal(filename[:-4], file_path)
+
         if exist != None:
             info_message(self.parent, "Документ уже выгружен")
             return False

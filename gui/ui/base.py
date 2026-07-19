@@ -76,8 +76,11 @@ class Ui_Form(object):
         self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_4.setObjectName("frame_4")
         self.pushButton_3 = QtWidgets.QPushButton(Form)
-        self.pushButton_3.setGeometry(QtCore.QRect(170, 620, 181, 51))
+        self.pushButton_3.setGeometry(QtCore.QRect(30, 620, 181, 51))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_4 = QtWidgets.QPushButton(Form)
+        self.pushButton_4.setGeometry(QtCore.QRect(290, 620, 181, 51))
+        self.pushButton_4.setObjectName("pushButton_4")
         self.frame_4.raise_()
         self.frame_3.raise_()
         self.frame_2.raise_()
@@ -92,6 +95,7 @@ class Ui_Form(object):
         self.label.raise_()
         self.plainTextEdit_2.raise_()
         self.pushButton_3.raise_()
+        self.pushButton_4.raise_()
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -101,10 +105,11 @@ class Ui_Form(object):
         self.pushButton_2.setText(_translate("Form", "Начать проверку"))
         self.label_2.setText(_translate("Form", "РЕЗУЛЬТАТЫ РАСПОЗНОВАНИЯ:"))
         self.label_3.setText(_translate("Form", "РЕЗУЛЬТАТЫ ПРОВЕРКИ:"))
-        self.pushButton.setText(_translate("Form", "Загрузить документ"))
+        self.pushButton.setText(_translate("Form", "Выбрать документ"))
         self.label_5.setText(_translate("Form", "ЗАГРУЗКА СКАНОВ"))
         self.label.setText(_translate("Form", "ПАНЕЛЬ ИНСТРУМЕНТОВ:"))
         self.pushButton_3.setText(_translate("Form", "Исправить"))
+        self.pushButton_4.setText(_translate("Form", "Загрузить"))
 
 
 if __name__ == "__main__":

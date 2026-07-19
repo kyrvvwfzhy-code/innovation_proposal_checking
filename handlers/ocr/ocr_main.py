@@ -2,6 +2,7 @@ from handlers.ocr.load_file import Load_file
 from handlers.ocr.conversion import Conversion_Thread
 from handlers.ocr.processing import Processing_Thread
 from handlers.ocr.recognition import Recognition_Thread
+from options.edit import Edit
 import os
 
 from data.data import ocr_result
@@ -14,6 +15,7 @@ class OCR_main:
         self.thread = None
     
     def start(self):
+        self.parent.gui.pushButton_2.setEnabled(False)
         self.load_file = Load_file(self.parent, self.db)
         signal = self.load_file.start()
         if signal == None:
@@ -77,24 +79,13 @@ class OCR_main:
         text = ocr_result(self.registered, self.name)
         self.parent.gui.plainTextEdit.setPlainText(text)
 
+        self.edit = Edit(self.parent, self.db, self.filename, self.registered, self.name)
         self.parent.gui.pushButton_3.setEnabled(True)
-        self.parent.gui.pushButton_3.clicked.connect(self.open_edit_window)
+        self.parent.gui.pushButton_4.setEnabled(True)
+        self.parent.gui.pushButton_3.clicked.connect(self.edit.open_window)
 
         self.thread.deleteLater()
         self.clear_folder()
-    
-    def open_edit_window(self):
-        self.parent.edit_window.open()
-        self.parent.edit_window.filling_data(self.registered, self.name)
-        self.parent.edit_window.gui.pushButton.clicked.connect(self.save_edit_data)
-    
-    def save_edit_data(self):
-        edit_registered, edit_name = self.parent.edit_window.save_data()
-        self.db.add_key_information(self.filename[:-4], edit_registered, edit_name)
-        text = ocr_result(edit_registered, edit_name)
-        self.parent.gui.plainTextEdit.setPlainText(text)
-        self.parent.gui.pushButton_3.setEnabled(False)
-        self.parent.edit_window.close()
     
     def recognition_error(self, error):
         logger.error(f"RECOGNITION - {error}")

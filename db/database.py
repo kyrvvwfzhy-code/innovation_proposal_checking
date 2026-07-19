@@ -18,13 +18,6 @@ class DataBase:
     def create_tables(self):
         conn, cursor = self._get_connection()
 
-        cursor.execute("""CREATE TABLE IF NOT EXISTS ip_tmp (
-                       id INTEGER PRIMARY KEY AUTOINCREMENT,
-                       filename TEXT UNIQUE,
-                       path TEXT,
-                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                       )""")
-
         cursor.execute("""CREATE TABLE IF NOT EXISTS innovation_proposal (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        filename TEXT UNIQUE,
@@ -58,19 +51,9 @@ class DataBase:
                        )""")
         conn.commit()
 
-#--------------------------------------------ip_tmp---------------------------------------------------------
+#--------------------------------------------tmp---------------------------------------------------------
 
-    def add_ip_tmp(self, filename, path):
-            conn, cursor = self._get_connection()
 
-            try:
-                cursor.execute("INSERT INTO ip_tmp (filename, path) VALUES (?, ?)",
-                            (filename, path))
-                conn.commit()
-            except sqlite3.IntegrityError as IntegrityError:
-                return IntegrityError
-            except Exception as e:
-                return f"DATABASE ERROR - {e}"
         
 #--------------------------------------------innovation_proposal--------------------------------------------
     def add_innovation_proposal(self, filename, path):
@@ -118,17 +101,12 @@ class DataBase:
     def add_key_information(self, filename, registered, name):
         conn, cursor = self._get_connection()
         try:
-            id = cursor.execute("SELECT id FROM innovation_proposal WHERE filename = ?", (filename,))
-            
-            if id:
-                id = id.fetchone()
-            
-            cursor.execute("""INSERT INTO key_information 
-                        (innovation_proposal_id, registered, name) 
-                        VALUES (?, ?, ?)""",
-                        (id[0], registered, name))
+            cursor.execute("""INSERT INTO key_information (innovation_proposal_id, registered, name)
+                           SELECT id, ?, ? FROM innovation_proposal
+                           WHERE filename = ?
+                           """, (registered, name, filename))
             conn.commit()
-            
+    
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
@@ -161,6 +139,20 @@ class DataBase:
                 return None
         except Exception as e:
             return f"DATABASE ERROR - {e}"
+    
+    def update_key_information(self, filename, new_registered, new_name):
+            conn, cursor = self._get_connection()
+
+            try:
+                cursor.execute("""UPDATE key_information SET registered = ?, name = ?
+                               WHERE innovation_proposal_id = (
+                                SELECT id FROM innovation_proposal WHERE filename = ?
+                                )
+                         """, (new_registered, new_name, filename))
+        
+                conn.commit()
+            except Exception as e:
+                return f"DATABASE ERROR - {e}"
 
 #--------------------------------------------embeddings--------------------------------------------
 
