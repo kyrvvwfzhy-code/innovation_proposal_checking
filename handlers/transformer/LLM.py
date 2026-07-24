@@ -4,7 +4,7 @@ import ollama
 from data.data import base_prompt_text
 
 class LLM_analys_Thread(QThread):
-    LLM_analys_finished = pyqtSignal(str)
+    LLM_analys_finished = pyqtSignal(list)
     LLM_analys_error = pyqtSignal(str)
     
     def __init__(self, max_similarity, best_name, new_name):
@@ -27,9 +27,11 @@ class LLM_analys_Thread(QThread):
                     "num_batch": 2048, 
                 }
             )
-                
-            self.LLM_analys_finished.emit(response["message"]["content"])
-            print(response["message"]["content"])
+            
+            result = [response["message"]["content"], [self.new_name]]
+            self.LLM_analys_finished.emit(result)
+
+
         
         except Exception as e:
             self.LLM_analys_error.emit(f"Error - {e}")

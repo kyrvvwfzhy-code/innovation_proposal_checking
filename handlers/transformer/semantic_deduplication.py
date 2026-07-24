@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from sklearn.metrics.pairwise import cosine_similarity
+from log.logging import logger
 
 class Semantic_deduplication_Thread(QThread):
     semantic_deduplication_finished = pyqtSignal(list)
@@ -16,6 +17,7 @@ class Semantic_deduplication_Thread(QThread):
             embeddings = [item[1] for item in self.db_embeddings]
 
             similarities = cosine_similarity([self.new_embedding], embeddings)[0]
+            logger.debug(f"All emb-gs = {similarities}")
             
             max_similarity = float(max(similarities))
             max_index = int(similarities.argmax())

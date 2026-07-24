@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QFileDialog
 import os
-from data.messagebox import info_message
+from data.messagebox import critical_message
 
 class Load_file:
     def __init__(self, parent, db):
@@ -33,7 +33,7 @@ class Load_file:
         exist = self.db.add_innovation_proposal(filename[:-4], file_path)
 
         if exist != None:
-            info_message(self.parent, "Документ уже выгружен")
+            critical_message(self.parent, "Документ уже выгружен")
             return False
         else:
             return True

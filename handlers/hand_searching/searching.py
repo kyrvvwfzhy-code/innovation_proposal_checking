@@ -24,7 +24,7 @@ class Searching_Thread(QThread):
             )
         
         model_en = SentenceTransformer(model_path)
-        text = self.parent.gui.lineEdit.text()
+        text = self.parent.gui.plainTextEdit.toPlainText()
         try:
             if len(text) == 0:
                 pass

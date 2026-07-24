@@ -63,8 +63,8 @@ class Vectorization:
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
         self.thread.start()
 
-    def LLM_analys_finished(self, result, analys):
-        self.parent.gui.plainTextEdit_2.setPlainText(analys)
+    def LLM_analys_finished(self, result):
+        self.parent.gui.plainTextEdit_2.setPlainText(result[0])
         reply = question_message(self.parent, "Добавить в базу", result[1])
         if reply == False:
             self.db.delete_embeddings(self.filename)

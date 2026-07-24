@@ -17,7 +17,7 @@ class Hand_searching_main:
         db_embeddings = self.db.get_embeddings()
         if db_embeddings != None:
             self.thread = Searching_Thread(self.parent, db_embeddings)
-            self.parent.gui.pushButton_4.setEnabled(False)
+            self.parent.gui.pushButton_2.setEnabled(False)
             self.thread.searching_finished.connect(self.searching_finished)
             self.thread.searching_error.connect(self.searching_error)
             self.thread.start()
@@ -40,9 +40,9 @@ class Hand_searching_main:
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
         self.thread.start()
 
-    def LLM_analys_finished(self, analys):
-        self.parent.gui.pushButton_4.setEnabled(True)
-        self.parent.gui.plainTextEdit_2.setPlainText(analys)
+    def LLM_analys_finished(self, result):
+        self.parent.gui.pushButton_2.setEnabled(True)
+        self.parent.gui.plainTextEdit_3.setPlainText(result[0])
         logger.info("LLM_analys is Ready")
         self.thread.deleteLater()
     

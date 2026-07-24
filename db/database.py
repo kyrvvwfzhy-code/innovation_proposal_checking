@@ -140,19 +140,35 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def update_key_information(self, filename, new_registered, new_name):
-            conn, cursor = self._get_connection()
+    def update_data(self, filename, new_registered, new_name):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("""SELECT registered, name FROM key_information 
+                        WHERE innovation_proposal_id = (
+                            SELECT id FROM innovation_proposal WHERE filename = ?
+                        )
+                        """, (filename,))
+            old_data = cursor.fetchone()
+            
+            if not old_data:
+                return 0
+            
+            old_registered, old_name = old_data
+            
+            if old_registered == new_registered and old_name == new_name:
+                return 0
 
-            try:
-                cursor.execute("""UPDATE key_information SET registered = ?, name = ?
-                               WHERE innovation_proposal_id = (
-                                SELECT id FROM innovation_proposal WHERE filename = ?
-                                )
-                         """, (new_registered, new_name, filename))
-        
-                conn.commit()
-            except Exception as e:
-                return f"DATABASE ERROR - {e}"
+            cursor.execute("""UPDATE key_information SET registered = ?, name = ?
+                        WHERE innovation_proposal_id = (
+                            SELECT id FROM innovation_proposal WHERE filename = ?
+                        )
+                        """, (new_registered, new_name, filename))
+            conn.commit()
+            return cursor.rowcount
+            
+        except Exception as e:
+            print(f"Ошибка обновления: {e}")
+            return 0
 
 #--------------------------------------------embeddings--------------------------------------------
 
@@ -215,6 +231,27 @@ class DataBase:
             cursor.execute("DELETE FROM embeddings WHERE name = ?",
                                (result[0],))
             conn.commit()
+        except Exception as e:
+            return f"DATABASE ERROR - {e}"
+    
+    def update_embedding(self, filename, embedding):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("""SELECT innovation_proposal.id,
+                                    key_information.name
+                                    FROM innovation_proposal
+                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    WHERE innovation_proposal.filename = ?""",
+                                    (filename,))
+            result = cursor.fetchone()
+    
+            embedding_bytes = np.array(embedding, dtype=np.float32).tobytes()
+            cursor.execute("""UPDATE embeddings 
+                            SET innovation_proposal_id = ?, name = ?, embedding = ?
+                            WHERE innovation_proposal_id = ?""",
+                        (result[0], result[1], embedding_bytes, result[0]))
+            conn.commit()
+
         except Exception as e:
             return f"DATABASE ERROR - {e}"
 

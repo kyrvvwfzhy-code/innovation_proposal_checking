@@ -4,7 +4,9 @@ import sys
 import os
 import subprocess
 from data.messagebox import delete_question_message
-
+from data.messagebox import info_message, critical_message
+from log.logging import logger
+from handlers.transformer.vectorization import Vectorization_Thread
 
 class Loaded_documents:
     def __init__(self, parent, db):
@@ -22,8 +24,9 @@ class Loaded_documents:
         if data:
             self.add_data(data)
 
-        # self.table.cellDoubleClicked.connect(self.open_file)
+        self.table.itemDoubleClicked.connect(self.edit_item)
         self.parent.gui.pushButton.clicked.connect(self.delete_selected)
+        self.parent.gui.pushButton_2.clicked.connect(self.save_changes)
 
     def table_setup(self):
         self.table.setGeometry(QtCore.QRect(10, 80, 880,520))
@@ -41,6 +44,17 @@ class Loaded_documents:
         header = self.table.horizontalHeader()
         for i in range(2, self.table.columnCount()):  
             header.setSectionResizeMode(i, QHeaderView.Stretch)
+    
+    def edit_item(self, item):
+        """Редактирование при двойном клике на любую ячейку"""
+        row = item.row()
+        col = item.column()
+        
+        if col == 0 or col == 1:
+            self.open_file(row)
+            return
+        
+        self.table.editItem(item)
 
     def add_data(self, data):
         self.table.setRowCount(len(data))
@@ -50,8 +64,8 @@ class Loaded_documents:
                 self.table.setItem(row, col, QTableWidgetItem(str(value)))
     
     def open_file(self, row):
-        filename = self.table.item(row, 1)
-        file_path = self.db.get_loaded_ip(filename.text())
+        filename = self.table.item(row, 1).text()
+        file_path = self.db.get_loaded_ip(filename)
         if sys.platform == 'win32':
             os.startfile(file_path[0])
         else:
@@ -71,10 +85,57 @@ class Loaded_documents:
             self.db.delete_embeddings(filename)
             self.table.removeRow(row)
             self.update_row_numbers()
+    
+    def save_changes(self):
+        try:
+            saved_rows = 0
+            unchanged_rows = 0
+            
+            for row in range(self.table.rowCount()):
+                self.filename = self.table.item(row, 1).text()
+                registration_date = self.table.item(row, 2).text()  
+                self.name = self.table.item(row, 3).text()  
+                
+                result = self.db.update_data(self.filename, registration_date, self.name)
+                
+                if result > 0:
+                    saved_rows += 1
+                    self.vector_update()
+                    logger.info(f"Строка {row} обновлена: {self.filename}")
+                else:
+                    unchanged_rows += 1
+
+            if saved_rows > 0:
+                info_message(self.parent, f"Данные успешно сохранены! Обновлено {saved_rows} записей.")
+            else:
+                critical_message(self.parent, "Изменений не обнаружено.")
+                
+        except Exception as e:
+            logger.error(f"Ошибка при сохранении: {e}")
+            critical_message(self.parent, f"Ошибка при сохранении: {e}")
+    
+    def vector_update(self):
+        self.thread = Vectorization_Thread(self.parent, self.name)
+        self.thread.vectorization_finished.connect(self.vectorization_finished)
+        self.thread.vectorization_error.connect(self.vectorization_error)
+        self.thread.start()
+    
+    def vectorization_finished(self, new_embedding):
+        self.thread.deleteLater()
+        self.db.update_embedding(self.filename, new_embedding)
+        
+        logger.info(f"Эмбеддинг файла {self.filename} обновился в связи с изменениями в журнале")
+            
+    def vectorization_error(self, error):
+        logger.error(f"ОШИБКА - Эмбеддинг файла {self.filename} не обновился. {error}")
+        self.thread.deleteLater()
         
     def update_row_numbers(self):
         for row in range(self.table.rowCount()):
             self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))
+    
+    
+        
         
         
 
