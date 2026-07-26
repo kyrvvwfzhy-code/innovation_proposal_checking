@@ -1,13 +1,13 @@
-from handlers.settings.load_data.load_data_main import Load_data_main
+from handlers.settings.settings_logic import Settings_logic
 
 class Settings:
     def __init__(self, parent, db):
         self.parent = parent
-        self.db = db
+        self.db = db 
+        self.logic = Settings_logic(self.parent, self.db)
 
-    
-    def load_data(self):
-        self.loading = Load_data_main(self.parent, self.db)
-    
-    def ollama(self):
-        pass
+    def download(self):
+        self.logic.load_data()
+
+    def prompt(self):
+        self.logic.prompt_settings()

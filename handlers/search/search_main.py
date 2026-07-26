@@ -1,0 +1,10 @@
+from handlers.search.search_logic import Search_logic
+
+class Search:
+    def __init__(self, parent, db):
+        self.parent = parent
+        self.db = db
+        self.logic = Search_logic(self.parent, self.db)
+
+    def search(self):
+        self.logic.search()

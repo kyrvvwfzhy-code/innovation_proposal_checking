@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QWidget
 
-from gui.top_window import Top_window
-from gui.base_window import Base_window
-from gui.data_window import Data_window
-from gui.search_window import Search_window
-from gui.settings_window import Settings_window
+from gui.base_windows.top_window import Top_window
+from gui.base_windows.download_window import Download_window
+from gui.base_windows.journal_window import Journal_window
+from gui.base_windows.search_window import Search_window
+from gui.base_windows.settings_window import Settings_window
 from log.logging import logger
 
 class GUI_main(QWidget):
@@ -16,29 +16,29 @@ class GUI_main(QWidget):
     
     def init(self):
         self.top_window = Top_window(self.parent)
-        self.base_window = Base_window(self.db)
-        self.data_window = Data_window(self.db)
+        self.download_window = Download_window(self.db)
+        self.journal_window = Journal_window(self.db)
         self.search_window = Search_window(self.db)
         self.settings_window = Settings_window(self.db)
-        self.top_window_config()
+        self.top_window_signals()
 
-    def top_window_config(self):
-        self.top_window.gui.stackedWidget.addWidget(self.base_window.open())
-        self.top_window.gui.stackedWidget.addWidget(self.data_window.open())
+    def top_window_signals(self):
+        self.top_window.gui.stackedWidget.addWidget(self.download_window.open())
+        self.top_window.gui.stackedWidget.addWidget(self.journal_window.open())
         self.top_window.gui.stackedWidget.addWidget(self.search_window.open())
         self.top_window.gui.stackedWidget.addWidget(self.settings_window.open())
 
-        self.top_window.gui.pushButton.clicked.connect(self.goto_base_window)
-        self.top_window.gui.pushButton_1.clicked.connect(self.goto_data_window)
+        self.top_window.gui.pushButton.clicked.connect(self.goto_download_window)
+        self.top_window.gui.pushButton_1.clicked.connect(self.goto_journal_window)
         self.top_window.gui.pushButton_2.clicked.connect(self.goto_search_window)
         self.top_window.gui.pushButton_3.clicked.connect(self.goto_settings_window)
 
-    def goto_base_window(self):
-        logger.info("OPEN - base_window")
+    def goto_download_window(self):
+        logger.info("OPEN - download_window")
         self.top_window.gui.stackedWidget.setCurrentIndex(0)
     
-    def goto_data_window(self):
-        logger.info("OPEN - data_window")
+    def goto_journal_window(self):
+        logger.info("OPEN - journal_window")
         self.top_window.gui.stackedWidget.setCurrentIndex(1)
     
     def goto_search_window(self):
