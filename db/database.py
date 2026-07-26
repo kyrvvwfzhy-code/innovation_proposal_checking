@@ -140,7 +140,7 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def update_data(self, filename, new_registered, new_name):
+    def update_key_information(self, filename, new_registered, new_name):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT registered, name FROM key_information 

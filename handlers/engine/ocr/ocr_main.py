@@ -82,6 +82,7 @@ class OCR_main:
         self.edit = Edit(self.parent, self.db, self.filename, self.registered, self.name)
         self.parent.gui.pushButton_3.setEnabled(True)
         self.parent.gui.pushButton_4.setEnabled(True)
+        self.edit.open_window()
         self.parent.gui.pushButton_3.clicked.connect(self.edit.open_window)
 
         self.thread.deleteLater()

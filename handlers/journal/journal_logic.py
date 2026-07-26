@@ -91,7 +91,7 @@ class Journal_logic:
                 registration_date = self.table.item(row, 2).text()  
                 self.name = self.table.item(row, 3).text()  
                 
-                result = self.db.update_data(self.filename, registration_date, self.name)
+                result = self.db.update_key_information(self.filename, registration_date, self.name)
                 
                 if result > 0:
                     saved_rows += 1
