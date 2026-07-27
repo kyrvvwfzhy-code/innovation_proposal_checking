@@ -30,6 +30,7 @@ class DataBase:
                        innovation_proposal_id INTEGER,
                        registered TEXT,
                        name TEXT UNIQUE,
+                       description TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
                        )""")
@@ -38,7 +39,9 @@ class DataBase:
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        innovation_proposal_id INTEGER,
                        name TEXT UNIQUE,
-                       embedding BLOB NOT NULL,
+                       embedding_name BLOB NOT NULL,
+                       embedding_description BLOB NOT NULL,
+                       embedding_general BLOB NOT NULL,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
                        )""")
@@ -98,13 +101,13 @@ class DataBase:
 
 #--------------------------------------------key_information--------------------------------------------
     
-    def add_key_information(self, filename, registered, name):
+    def add_key_information(self, filename, registered, name, description):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("""INSERT INTO key_information (innovation_proposal_id, registered, name)
-                           SELECT id, ?, ? FROM innovation_proposal
+            cursor.execute("""INSERT INTO key_information (innovation_proposal_id, registered, name, description)
+                           SELECT id, ?, ?, ? FROM innovation_proposal
                            WHERE filename = ?
-                           """, (registered, name, filename))
+                           """, (registered, name, description, filename))
             conn.commit()
     
         except Exception as e:
@@ -124,17 +127,17 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def get_name(self, filename):
+    def get_name_description(self, filename):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("""SELECT key_information.name
+            cursor.execute("""SELECT key_information.name, key_information.description
                                     FROM innovation_proposal
                                     LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename[:-4],))
             result = cursor.fetchone()
             if result:
-                return result[0]
+                return result
             else:
                 return None
         except Exception as e:
@@ -172,7 +175,7 @@ class DataBase:
 
 #--------------------------------------------embeddings--------------------------------------------
 
-    def add_embedding(self, filename, embedding):
+    def add_embedding(self, filename, embedding_name, embedding_description, embedding_general):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT innovation_proposal.id,
@@ -182,10 +185,13 @@ class DataBase:
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename[:-4],))
             result = cursor.fetchone()
-    
-            embedding_bytes = np.array(embedding, dtype=np.float32).tobytes()
-            cursor.execute("INSERT OR IGNORE INTO embeddings (innovation_proposal_id, name, embedding) VALUES (?, ?, ?)",
-                               (result[0], result[1], embedding_bytes))
+
+            embedding_name_bytes = np.array(embedding_name, dtype=np.float32).tobytes()
+            embedding_description_bytes = np.array(embedding_description, dtype=np.float32).tobytes()
+            embedding_general_bytes = np.array(embedding_general, dtype=np.float32).tobytes()
+
+            cursor.execute("INSERT OR IGNORE INTO embeddings (innovation_proposal_id, name, embedding_name, embedding_description, embedding_general) VALUES (?, ?, ?, ?, ?)",
+                               (result[0], result[1], embedding_name_bytes, embedding_description_bytes, embedding_general_bytes))
             conn.commit()
         except Exception as e:
             return f"DATABASE ERROR - {e}"
@@ -193,13 +199,13 @@ class DataBase:
     def get_embeddings(self):
         conn, cursor = self._get_connection()
         try:
-            result = cursor.execute("SELECT name, embedding FROM embeddings")
+            result = cursor.execute("SELECT name, embedding_general FROM embeddings")
             embedding_list = []
             for i in result.fetchall():
                 name = i[0]
-                embedding_bytes = i[1]
-                embedding_numpy = np.frombuffer(embedding_bytes, dtype=np.float32)
-                embedding_list.append([name, embedding_numpy])
+                embedding_general_bytes = i[1]
+                embedding_general_numpy = np.frombuffer(embedding_general_bytes, dtype=np.float32)
+                embedding_list.append([name, embedding_general_numpy])
             
             if embedding_list == []:
                 return None
@@ -244,10 +250,11 @@ class DataBase:
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename,))
             result = cursor.fetchone()
+            print(result)
     
             embedding_bytes = np.array(embedding, dtype=np.float32).tobytes()
             cursor.execute("""UPDATE embeddings 
-                            SET innovation_proposal_id = ?, name = ?, embedding = ?
+                            SET innovation_proposal_id = ?, name = ?, embedding_name = ?
                             WHERE innovation_proposal_id = ?""",
                         (result[0], result[1], embedding_bytes, result[0]))
             conn.commit()

@@ -2,17 +2,17 @@ from handlers.engine.ocr.load_file import Load_file
 from handlers.engine.ocr.conversion import Conversion_Thread
 from handlers.engine.ocr.processing import Processing_Thread
 from handlers.engine.ocr.recognition import Recognition_Thread
-from handlers.options.edit.edit_main import Edit
 import os
 
 from data.data import ocr_result
 from log.logging import logger
 
 class OCR_main:
-    def __init__(self, db, parent = None):
+    def __init__(self, db, parent = None, callback = None):
         self.parent = parent
         self.db = db
         self.thread = None
+        self.callback = callback
     
     def start(self):
         self.parent.gui.pushButton_2.setEnabled(False)
@@ -75,18 +75,16 @@ class OCR_main:
         self.filename = self.parent.gui.label_4.text()
         self.registered = result[0]
         self.name = result[1]
+        self.description = result[2]
 
-        text = ocr_result(self.registered, self.name)
+        text = ocr_result(self.registered, self.name, self.description)
         self.parent.gui.plainTextEdit.setPlainText(text)
-
-        self.edit = Edit(self.parent, self.db, self.filename, self.registered, self.name)
-        self.parent.gui.pushButton_3.setEnabled(True)
-        self.parent.gui.pushButton_4.setEnabled(True)
-        self.edit.open_window()
-        self.parent.gui.pushButton_3.clicked.connect(self.edit.open_window)
 
         self.thread.deleteLater()
         self.clear_folder()
+
+        if self.callback:
+            self.callback(self.filename, self.registered, self.name, self.description)
     
     def recognition_error(self, error):
         logger.error(f"RECOGNITION - {error}")

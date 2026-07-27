@@ -87,16 +87,16 @@ class Journal_logic:
             unchanged_rows = 0
             
             for row in range(self.table.rowCount()):
-                self.filename = self.table.item(row, 1).text()
+                filename = self.table.item(row, 1).text()
                 registration_date = self.table.item(row, 2).text()  
-                self.name = self.table.item(row, 3).text()  
+                name = self.table.item(row, 3).text()  
                 
-                result = self.db.update_key_information(self.filename, registration_date, self.name)
+                result = self.db.update_key_information(filename, registration_date, name)
                 
                 if result > 0:
                     saved_rows += 1
-                    self.vector_update()
-                    logger.info(f"Строка {row} обновлена: {self.filename}")
+                    self.vector_update(filename, name)
+                    logger.info(f"Строка {row} обновлена: {filename}")
                 else:
                     unchanged_rows += 1
 
@@ -119,20 +119,21 @@ class Journal_logic:
                     logger.info("✅ Таблица обновлена")
                     return
     
-    def vector_update(self):
-        self.thread = Vectorization_Thread(self.parent, self.name)
-        self.thread.vectorization_finished.connect(self.vectorization_finished)
+    def vector_update(self, filename, name):
+        self.thread = Vectorization_Thread(self.parent, name)
+        self.thread.vectorization_finished.connect(
+        lambda new_embedding: self.vectorization_finished(new_embedding, filename)
+        )
         self.thread.vectorization_error.connect(self.vectorization_error)
         self.thread.start()
     
-    def vectorization_finished(self, new_embedding):
-        self.thread.deleteLater()
-        self.db.update_embedding(self.filename, new_embedding)
+    def vectorization_finished(self, new_embedding, filename):
+        self.db.update_embedding(filename, new_embedding)
         
-        logger.info(f"Эмбеддинг файла {self.filename} обновился в связи с изменениями в журнале")
+        logger.info(f"Эмбеддинг файла {filename} обновился в связи с изменениями в журнале")
             
     def vectorization_error(self, error):
-        logger.error(f"ОШИБКА - Эмбеддинг файла {self.filename} не обновился. {error}")
+        logger.error(f"ОШИБКА - Эмбеддинг файла не обновился. {error}")
         self.thread.deleteLater()
         
     def update_row_numbers(self):

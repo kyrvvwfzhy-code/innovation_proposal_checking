@@ -27,7 +27,7 @@ class Processing_Thread(QThread):
 
         file = sorted(paths)
         self.process_first_page(file)
-        # self.process_last_page(file)
+        self.process_second_page(file)
 
     def process_first_page(self, file):
         image = file[0]
@@ -49,16 +49,16 @@ class Processing_Thread(QThread):
         final_path = os.path.join("OCR_TMP", f"2_{filename[2:][:-4]}_name_processed.png")
         cv2.imwrite(final_path, cropped)
         
-    # def process_last_page(self, file):
-    #     image = file[1]
-    #     filename = os.path.basename(image)
-    #     process_image = cv2.imread(image)
-    #     gray = cv2.cvtColor(process_image, cv2.COLOR_BGR2GRAY)
-    #     _, black_white = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    #     result = cv2.bitwise_not(black_white)
-    #     cropped = result[658:715, 0:2000]
-    #     final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_author_processed.png")
-    #     cv2.imwrite(final_path, cropped)
+    def process_second_page(self, file):
+        image = file[1]
+        filename = os.path.basename(image)
+        process_image = cv2.imread(image)
+        gray = cv2.cvtColor(process_image, cv2.COLOR_BGR2GRAY)
+        _, black_white = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        result = cv2.bitwise_not(black_white)
+        cropped = result[400:1700, 0:2000]
+        final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_description_processed.png")
+        cv2.imwrite(final_path, cropped)
 
 if __name__ == "__main__":
     start = Processing_Thread()

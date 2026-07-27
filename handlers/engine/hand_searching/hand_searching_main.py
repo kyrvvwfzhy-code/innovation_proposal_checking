@@ -35,7 +35,7 @@ class Hand_searching_main:
     
     def LLM_analys(self, result):
         self.result = result
-        self.thread = LLM_analys_Thread(self.result[0], self.result[1], self.result[2])
+        self.thread = LLM_analys_Thread(self.result[0], self.result[1])
         self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
         self.thread.start()

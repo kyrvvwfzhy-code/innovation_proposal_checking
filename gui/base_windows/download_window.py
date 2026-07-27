@@ -18,8 +18,11 @@ class Download_window(QWidget):
     
     def signals(self):
         self.handler = Download(self.db, parent = self)
-        self.edit = Edit_window()
+        self.edit = Edit_window(self)
+        
         self.gui.pushButton.clicked.connect(self.handler.download)
         self.gui.pushButton_2.clicked.connect(self.handler.check)
+        self.gui.pushButton_3.clicked.connect(self.handler.edit)
+        self.gui.pushButton_3.clicked.connect(self.handler.save)
 
 

@@ -24,8 +24,8 @@ class Conversion_Thread(QThread):
         images = convert_from_path(pdf_path[0])
 
         first_page = 1
-        # total_images = len(images)
-        # last_page = min(9, total_images)
+        #total_images = len(images)
+        second_page = 2
 
         os.makedirs("OCR_TMP", exist_ok = True)
         for i, image in enumerate(images):
@@ -33,9 +33,9 @@ class Conversion_Thread(QThread):
             if page_number == first_page:
                 output_path = os.path.join("OCR_TMP", f"1_first_page_{self.filename}.png")
                 image.save(output_path, "PNG")
-            # if page_number == last_page:
-            #     output_path = os.path.join("OCR_TMP", f"2_last_page_{self.filename}.png")
-            #     image.save(output_path, "PNG")
+            if page_number == second_page:
+                output_path = os.path.join("OCR_TMP", f"2_second_page_{self.filename}.png")
+                image.save(output_path, "PNG")
 
 if __name__ == "__main__":
     start = Conversion_Thread()

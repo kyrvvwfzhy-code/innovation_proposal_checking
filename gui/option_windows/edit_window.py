@@ -1,20 +1,19 @@
 from PyQt5.QtWidgets import QWidget
+
 from gui.ui.edit import Ui_Form
 
-class Edit_window(QWidget):
-    def __init__(self):
-        super().__init__()
+from handlers.options.edit.edit_main import Edit
 
-    def open(self):
+class Edit_window(QWidget):
+    def __init__(self, parent):
+        super().__init__()
+        self.parent = parent
+
+    def open(self, db, filename, registered, name, description):
         self.gui = Ui_Form()
         self.gui.setupUi(self)
+        self.signals(db, filename, registered, name, description)
         self.show()
-    
-    def filling_data(self, registered, name):
-        self.gui.lineEdit.setText(registered)
-        self.gui.lineEdit_2.setText(name)
 
-    def save_data(self):
-        edit_registered = self.gui.lineEdit.text().strip()
-        edit_name = self.gui.lineEdit_2.text().strip()
-        return edit_registered, edit_name
+    def signals(self, db, filename, registered, name, description):
+        self.handler = Edit(self.parent, db, filename, registered, name, description)

@@ -3,6 +3,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from sklearn.metrics.pairwise import cosine_similarity
 from log.logging import logger
 import os
+import numpy as np
 
 class Searching_Thread(QThread):
     searching_finished = pyqtSignal(list)
@@ -14,7 +15,7 @@ class Searching_Thread(QThread):
         self.db_embeddings = db_embeddings
     
     def run(self):
-        model_path = r"C:\models--sentence-transformers--all-MiniLM-L6-v2"
+        model_path = r"/home/niyazabiy/models--sentence-transformers--all-MiniLM-L6-v2"
         logger.info(f"ПУТЬ МОДЕЛИ - {model_path}")
         model_en = SentenceTransformer(model_path)
         text = self.parent.gui.plainTextEdit.toPlainText()
@@ -30,14 +31,25 @@ class Searching_Thread(QThread):
 
                 similarities = cosine_similarity([embedding_result], embeddings)[0]
                 
-                max_similarity = float(max(similarities))
-                max_index = int(similarities.argmax())
-                best_name = names[max_index]
-                
-                result = [max_similarity, best_name, text]
+                top_k = min(5, len(similarities))
+                top_indices = np.argsort(similarities)[-top_k:][::-1]  
+        
+                top_5 = []
+                for idx in top_indices:
+                    top_5.append({
+                        'name': names[idx],
+                        'similarity': float(similarities[idx])
+                    })
+                logger.debug(f"LINEEDIT - {len(text)}")
+                logger.info(f"SEARCHING - {top_5}")
+                logger.info(f"Найдено {len(top_5)} похожих документов:")
+                for i, item in enumerate(top_5, 1):
+                    logger.info(f"  {i}. {item['name']} - {item['similarity']:.4f} ({item['similarity']*100:.2f}%)")
+
+
+                result = [top_5, text]
                 self.searching_finished.emit(result)
-            logger.debug(f"LINEEDIT - {len(text)}")
-            logger.info(f"SEARCHING - {result}")
+
         except Exception as e:
             self.searching_error.emit(logger.error(f"SEARCHING - {e}"))
         

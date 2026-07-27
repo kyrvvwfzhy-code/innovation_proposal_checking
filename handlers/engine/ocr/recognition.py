@@ -30,8 +30,9 @@ class Recognition_Thread(QThread):
         if len(file) >= 2:
             registered = pytesseract.image_to_string(file[0], lang='rus+eng')
             name = pytesseract.image_to_string(file[1], lang='rus+eng')
+            description = pytesseract.image_to_string(file[2], lang='rus+eng')
 
-        text =  [registered, name]
+        text =  [registered, name, description]
 
         result = [self.clean_text(item) for item in text]
         

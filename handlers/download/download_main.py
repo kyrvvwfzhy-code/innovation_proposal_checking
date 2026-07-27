@@ -11,3 +11,9 @@ class Download:
 
     def check(self):
         self.logic.transformer()
+
+    def edit(self):
+        self.logic.change_data()
+
+    def save(self):
+        self.logic.save_data()
