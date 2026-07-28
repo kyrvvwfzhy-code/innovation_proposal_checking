@@ -10,31 +10,21 @@
     <height>680</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="label_5">
-   <property name="geometry">
-    <rect>
-     <x>410</x>
-     <y>0</y>
-     <width>111</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
-   </property>
-   <property name="text">
-    <string>НАСТРОЙКИ</string>
-   </property>
-  </widget>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>390</x>
+     <x>380</x>
      <y>0</y>
-     <width>141</width>
+     <width>221</width>
      <height>51</height>
     </rect>
    </property>
@@ -53,7 +43,7 @@
     <rect>
      <x>300</x>
      <y>300</y>
-     <width>311</width>
+     <width>371</width>
      <height>51</height>
     </rect>
    </property>
@@ -69,7 +59,7 @@
     <rect>
      <x>330</x>
      <y>130</y>
-     <width>261</width>
+     <width>291</width>
      <height>51</height>
     </rect>
    </property>
@@ -109,10 +99,10 @@
   <widget class="QFrame" name="frame_2">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>130</y>
-     <width>291</width>
-     <height>121</height>
+     <x>-10</x>
+     <y>90</y>
+     <width>911</width>
+     <height>181</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -128,9 +118,9 @@
   <widget class="QFrame" name="frame_3">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>-10</x>
      <y>290</y>
-     <width>331</width>
+     <width>911</width>
      <height>141</height>
     </rect>
    </property>
@@ -144,14 +134,30 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>0</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>НАСТРОЙКИ</string>
+   </property>
+  </widget>
   <zorder>frame_3</zorder>
   <zorder>frame_2</zorder>
   <zorder>frame</zorder>
-  <zorder>label_5</zorder>
   <zorder>label_6</zorder>
   <zorder>label_7</zorder>
   <zorder>pushButton</zorder>
   <zorder>pushButton_2</zorder>
+  <zorder>label_5</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -6,58 +6,54 @@ def ocr_result(registered, name, description):
             f"Описание: {description}"
     )
     return text
-         
+
 def base_prompt_text(result, new_name):
-    if not result:
-        return f"""РЕШЕНИЕ: МОЖНО ДОБАВЛЯТЬ
-ПРИЧИНА: Похожих нет
-СТАТУС: УНИКАЛЕН
-НАЗВАНИЯ: Нет"""
+    response_text = make_response_text(result, new_name)
+    prompt = f"""Ты ИИ-помощник анализа сходства рационализаторских предложений.
+
+                    У тебя на входе текст с заключением:
+                    {response_text}
+
+                    ОТВЕТЬ КРАТКО (2 предложения):
+                    - Что показал анализ?
+
+                    НЕ ВЫДУМЫВАЙ. ТОЛЬКО ПО ФАКТАМ.
+                    """
+    return response_text, prompt
+
+def general_text(response_text, base_prompt_text):
+    general = (f"{response_text}"
+               f"АНАЛИЗ НЕЙРОСЕТИ:\n\n{base_prompt_text}")
     
-    # Формируем список документов для промпта
-    docs_text = ""
-    for i, item in enumerate(result[:5], 1):
-        name = item.get('name', 'Неизвестно')
-        similarity = item.get('similarity', 0)
-        docs_text += f"{i}. {name} - {similarity:.2%}\n"
+    return general
+
+def make_response_text(result, new_name):
+    name_max_sim = f' - {result[0]["name"]}'
+    max_sim = result[0]["similarity"]
+
+    name_list = []
+    for item in result:         
+        name_list.append(item['name'])
+
+    if max_sim > 0.99:
+        status = "ПОЛНОЕ СХОДСТВО"
+    elif max_sim > 0.95:
+        status = "ВЫСОКИЙ УРОВЕНЬ СХОДСТВА"
+    elif max_sim > 0.85:
+        status = "ВОЗМОЖНОЕ СХОДСТВО"
+    elif max_sim > 0.8 and max_sim < 0.85:
+        status = "CХОДСТВО НЕ НАЙДЕНО"
+        name_max_sim = ""
+    elif max_sim < 0.8:
+        status = "CХОДСТВО НЕ НАЙДЕНО"
+        name_max_sim = ""
     
-    names = ", ".join([item['name'] for item in result[:3]])
-    max_sim = result[0]['similarity']
-    
-    # Логика по правилам
-    if max_sim > 0.85:
-        decision = "НЕЛЬЗЯ ДОБАВЛЯТЬ"
-        status = "ДУБЛИКАТ"
-        reason = f"Сходство {max_sim:.2%} > 85%"
-        names = ""  # Пусто, если дубликат
-    elif max_sim > 0.70:
-        decision = "ТРЕБУЕТСЯ ПРОВЕРКА"
-        status = "ОЧЕНЬ ПОХОЖ"
-        reason = f"Сходство {max_sim:.2%} > 70%"
-    else:
-        decision = "МОЖНО ДОБАВЛЯТЬ"
-        status = "УНИКАЛЕН"
-        reason = f"Сходство {max_sim:.2%} < 70%"
-    
-    prompt = f"""Ты ИИ-помощник по поиску ДУБЛИКАТОВ рационализаторских предложений.
+    text = (f"ПРОВЕРКА УНИКАЛЬНОСТИ РАЦИОНАЛИЗАТОРСКОГО ПРЕДЛОЖЕНИЯ\n\n"
+            f"{new_name}\n\n"
+            f"ТОП-5 - {name_list}\n\n"
+            f"Максимальное сходство = {max_sim:.2f}{name_max_sim}\n\n"
+            f"РЕЗУЛЬТАТ: {status}\n\n"
 
-Пользователь ищет рационализаторское предложение под названием: {new_name}
+            )
 
-Найденные похожие документы (топ-5):
-{docs_text}
-
-Максимальное сходство: {max_sim:.2%}
-
-Правила принятия решения:
-- Сходство > 85% → НЕЛЬЗЯ ДОБАВЛЯТЬ (ДУБЛИКАТ)
-- Сходство 70-85% → ТРЕБУЕТСЯ ПРОВЕРКА (ОЧЕНЬ ПОХОЖ)
-- Сходство < 70% → МОЖНО ДОБАВЛЯТЬ (УНИКАЛЕН)
-
-ОТВЕТЬ РОВНО 4 СТРОКАМИ. БЕЗ ЛИШНИХ СЛОВ. НЕ ВЫДУМЫВАЙ.
-
-РЕШЕНИЕ: {decision}
-ПРИЧИНА: {reason}
-СТАТУС: {status}
-НАЗВАНИЯ: {names}"""
-    
-    return prompt
+    return text

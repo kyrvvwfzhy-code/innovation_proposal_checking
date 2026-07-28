@@ -15,22 +15,20 @@ class LLM_analys_Thread(QThread):
     def run(self):
         try:
             model = "bambucha/saiga-llama3"
-            prompt = base_prompt_text(self.result, self.new_name)
+            response_text, prompt = base_prompt_text(self.result, self.new_name)
 
             response = ollama.chat(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 options={
                     "temperature": 0.1,     
-                    "num_predict": 150,     
+                    "num_predict": 80,     
                     "num_batch": 2048, 
                 }
             )
             
-            result = [response["message"]["content"], [self.new_name]]
+            result = [response_text, response["message"]["content"], [self.new_name]]
             self.LLM_analys_finished.emit(result)
-
-
         
         except Exception as e:
             self.LLM_analys_error.emit(f"Error - {e}")

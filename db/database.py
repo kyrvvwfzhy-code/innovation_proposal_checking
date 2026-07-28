@@ -214,6 +214,44 @@ class DataBase:
 
         except Exception as e:
             return f"DATABASE ERROR - {e}"
+
+    def get_embeddings_name(self):
+        conn, cursor = self._get_connection()
+        try:
+            result = cursor.execute("SELECT name, embedding_name FROM embeddings")
+            embedding_list = []
+            for i in result.fetchall():
+                name = i[0]
+                embedding_name_bytes = i[1]
+                embedding_name_numpy = np.frombuffer(embedding_name_bytes, dtype=np.float32)
+                embedding_list.append([name, embedding_name_numpy])
+            
+            if embedding_list == []:
+                return None
+            else:
+                return embedding_list
+
+        except Exception as e:
+            return f"DATABASE ERROR - {e}"
+
+    def get_embeddings_description(self):
+        conn, cursor = self._get_connection()
+        try:
+            result = cursor.execute("SELECT name, embeddings_description FROM embeddings")
+            embedding_list = []
+            for i in result.fetchall():
+                name = i[0]
+                embeddings_description_bytes = i[1]
+                embeddings_description_numpy = np.frombuffer(embeddings_description_bytes, dtype=np.float32)
+                embedding_list.append([name, embeddings_description_numpy])
+            
+            if embedding_list == []:
+                return None
+            else:
+                return embedding_list
+
+        except Exception as e:
+            return f"DATABASE ERROR - {e}"
     
     def delete_embeddings(self, filename):
         conn, cursor = self._get_connection()

@@ -4,6 +4,7 @@ from handlers.engine.transformer.LLM import LLM_analys_Thread
 from data.messagebox import critical_message, question_message
 import numpy as np
 
+from data.data import make_response_text, general_text
 
 class Vectorization:
     def __init__(self, parent, db):
@@ -70,6 +71,9 @@ class Vectorization:
     
     def semantic_deduplication_finished(self, result):
         self.thread.deleteLater()
+        response_text = make_response_text(result, self.data[0])
+        general = general_text(response_text, "Формируется...")
+        self.parent.gui.plainTextEdit_2.setPlainText(general)
         self.LLM_analys(result)
 
     def semantic_deduplication_error(self, error):
@@ -84,8 +88,9 @@ class Vectorization:
         self.thread.start()
 
     def LLM_analys_finished(self, result):
-        self.parent.gui.plainTextEdit_2.setPlainText(result[0])
-        reply = question_message(self.parent, "Добавить в базу", result[1])
+        general = general_text(result[0], result[1])
+        self.parent.gui.plainTextEdit_2.setPlainText(general)
+        reply = question_message(self.parent, "Добавить в базу", result[2])
         if reply == False:
             self.db.delete_embeddings(self.filename)
         self.parent.gui.pushButton_2.setEnabled(True)

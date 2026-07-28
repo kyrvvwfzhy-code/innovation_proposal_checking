@@ -14,6 +14,7 @@ class Download_logic:
         return 
 
     def transformer(self):
+        self.parent.gui.plainTextEdit_2.clear()
         self.check = Vectorization(self.parent, self.db)
         self.check.start()
 

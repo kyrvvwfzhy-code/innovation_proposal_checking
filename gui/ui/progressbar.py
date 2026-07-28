@@ -15,6 +15,11 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(393, 164)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
+        Form.setSizePolicy(sizePolicy)
         self.progressBar = QtWidgets.QProgressBar(Form)
         self.progressBar.setGeometry(QtCore.QRect(41, 40, 331, 21))
         self.progressBar.setMaximum(100)
@@ -24,10 +29,11 @@ class Ui_Form(object):
         self.pushButton.setGeometry(QtCore.QRect(70, 110, 101, 31))
         self.pushButton.setObjectName("pushButton")
         self.pushButton_2 = QtWidgets.QPushButton(Form)
+        self.pushButton_2.setEnabled(False)
         self.pushButton_2.setGeometry(QtCore.QRect(230, 110, 101, 31))
         self.pushButton_2.setObjectName("pushButton_2")
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(50, 70, 71, 21))
+        self.label.setGeometry(QtCore.QRect(50, 70, 91, 21))
         self.label.setText("")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(Form)
@@ -40,7 +46,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Загрузка данных"))
+        Form.setWindowTitle(_translate("Form", "Загрузка"))
         self.pushButton.setText(_translate("Form", "Отменить"))
         self.pushButton_2.setText(_translate("Form", "Продолжить"))
 

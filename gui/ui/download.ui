@@ -10,6 +10,12 @@
     <height>680</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string/>
   </property>
@@ -62,9 +68,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>100</x>
      <y>120</y>
-     <width>291</width>
+     <width>321</width>
      <height>51</height>
     </rect>
    </property>
@@ -78,9 +84,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>600</x>
      <y>380</y>
-     <width>231</width>
+     <width>251</width>
      <height>51</height>
     </rect>
    </property>
@@ -107,9 +113,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>400</x>
      <y>0</y>
-     <width>181</width>
+     <width>191</width>
      <height>51</height>
     </rect>
    </property>
@@ -125,7 +131,7 @@ color: rgb(0, 130, 15);</string>
     <rect>
      <x>380</x>
      <y>0</y>
-     <width>221</width>
+     <width>231</width>
      <height>51</height>
     </rect>
    </property>
@@ -161,9 +167,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>630</x>
      <y>120</y>
-     <width>231</width>
+     <width>261</width>
      <height>51</height>
     </rect>
    </property>
@@ -235,7 +241,7 @@ color: rgb(0, 130, 15);</string>
     </rect>
    </property>
    <property name="text">
-    <string>Исправить</string>
+    <string>Правка</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_4">

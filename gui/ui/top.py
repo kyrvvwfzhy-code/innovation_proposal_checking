@@ -15,6 +15,11 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1101, 701)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
+        Form.setSizePolicy(sizePolicy)
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(950, 400, 120, 40))
         self.pushButton_2.setObjectName("pushButton_2")
@@ -32,7 +37,6 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.stackedWidget.sizePolicy().hasHeightForWidth())
         self.stackedWidget.setSizePolicy(sizePolicy)
         self.stackedWidget.setObjectName("stackedWidget")
-
         self.pushButton_1 = QtWidgets.QPushButton(Form)
         self.pushButton_1.setGeometry(QtCore.QRect(950, 250, 120, 40))
         self.pushButton_1.setObjectName("pushButton_1")
@@ -54,7 +58,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Проверка рацианолизаторских предложений"))
+        Form.setWindowTitle(_translate("Form", "Form"))
         self.pushButton_2.setText(_translate("Form", "ПОИСК"))
         self.pushButton_3.setText(_translate("Form", "НАСТРОЙКИ"))
         self.pushButton.setText(_translate("Form", "ЗАГРУЗИТЬ"))
