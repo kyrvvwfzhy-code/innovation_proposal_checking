@@ -6,7 +6,7 @@ import numpy as np
 
 from data.data import make_response_text, general_text
 
-class Vectorization:
+class Transformer:
     def __init__(self, parent, db):
         self.parent = parent
         self.db = db
@@ -36,7 +36,7 @@ class Vectorization:
 
         general = self.calculating_general(name, description)
 
-        db_embeddings = self.db.get_embeddings()
+        db_embeddings = self.db.get_embeddings("general")
         if db_embeddings:
             self.semantic_deduplication_thread(general, db_embeddings)
         if db_embeddings == None:
@@ -92,7 +92,7 @@ class Vectorization:
         self.parent.gui.plainTextEdit_2.setPlainText(general)
         reply = question_message(self.parent, "Добавить в базу", result[2])
         if reply == False:
-            self.db.delete_embeddings(self.filename)
+            self.db.delete_innovation_proposal(self.filename[:-4])
         self.parent.gui.pushButton_2.setEnabled(True)
         self.parent.gui.pushButton_2.setText("Начать поиск")
         self.thread.deleteLater()

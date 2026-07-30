@@ -20,6 +20,38 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
+        Form.setStyleSheet("QFrame {\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover:!checked {\n"
+"    background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover {\n"
+"   background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:pressed:!checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked:pressed {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:!checked {\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"}")
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(380, 0, 221, 51))
         self.frame.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
@@ -41,13 +73,13 @@ class Ui_Form(object):
         self.pushButton_2.setGeometry(QtCore.QRect(380, 360, 160, 51))
         self.pushButton_2.setObjectName("pushButton_2")
         self.frame_2 = QtWidgets.QFrame(Form)
-        self.frame_2.setGeometry(QtCore.QRect(-10, 90, 911, 181))
+        self.frame_2.setGeometry(QtCore.QRect(0, 90, 891, 181))
         self.frame_2.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.frame_3 = QtWidgets.QFrame(Form)
-        self.frame_3.setGeometry(QtCore.QRect(-10, 290, 911, 141))
+        self.frame_3.setGeometry(QtCore.QRect(0, 290, 891, 141))
         self.frame_3.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)

@@ -1,5 +1,4 @@
 import sqlite3
-import threading
 import numpy as np
 
 class DataBase:
@@ -10,7 +9,9 @@ class DataBase:
             timeout=10,  
             check_same_thread=False
         )
+        self.connection.execute("PRAGMA foreign_keys = ON")
         self.cursor = self.connection.cursor()
+        
 
     def _get_connection(self):
         return self.connection, self.cursor
@@ -18,24 +19,26 @@ class DataBase:
     def create_tables(self):
         conn, cursor = self._get_connection()
 
+#--------------------------------------------create_tables--------------------------------------------
+
         cursor.execute("""CREATE TABLE IF NOT EXISTS innovation_proposal (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        filename TEXT UNIQUE,
-                       path TEXT,
+                       filepath TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                        )""")
         
-        cursor.execute("""CREATE TABLE IF NOT EXISTS key_information (
+        cursor.execute("""CREATE TABLE IF NOT EXISTS innovation_proposal_info (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        innovation_proposal_id INTEGER,
                        registered TEXT,
                        name TEXT UNIQUE,
                        description TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
+                       FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id) ON DELETE CASCADE
                        )""")
         
-        cursor.execute("""CREATE TABLE IF NOT EXISTS embeddings (
+        cursor.execute("""CREATE TABLE IF NOT EXISTS innovation_proposal_embeddings (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        innovation_proposal_id INTEGER,
                        name TEXT UNIQUE,
@@ -43,58 +46,46 @@ class DataBase:
                        embedding_description BLOB NOT NULL,
                        embedding_general BLOB NOT NULL,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id)
+                       FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id) ON DELETE CASCADE
                        )""")
         conn.commit()
 
-        cursor.execute("""CREATE TABLE IF NOT EXISTS prompt_text (
+        cursor.execute("""CREATE TABLE IF NOT EXISTS innovation_proposal_prompt (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        prompt TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                        )""")
         conn.commit()
-
-#--------------------------------------------tmp---------------------------------------------------------
-
-
         
 #--------------------------------------------innovation_proposal--------------------------------------------
-    def add_innovation_proposal(self, filename, path):
+
+    def add_innovation_proposal(self, filename, filepath):
         conn, cursor = self._get_connection()
 
         try:
-            cursor.execute("INSERT INTO innovation_proposal (filename, path) VALUES (?, ?)",
-                        (filename, path))
+            cursor.execute("INSERT INTO innovation_proposal (filename, filepath) VALUES (?, ?)",
+                        (filename, filepath))
             conn.commit()
         except sqlite3.IntegrityError as IntegrityError:
-            return IntegrityError
+            return f"DATABASE ERROR - {IntegrityError}"
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def get_loaded_ip(self, filename):
+    def get_path_from_innovation_proposal(self, filename):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("SELECT path FROM innovation_proposal WHERE filename = (?)",
+            cursor.execute("SELECT filepath FROM innovation_proposal WHERE filename = (?)",
                            (filename,))
             path = cursor.fetchone()
             return path
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def delete_ip(self, filename):
+    def delete_innovation_proposal(self, filename):
         conn, cursor = self._get_connection()
         try:
-            result = cursor.execute("SELECT id FROM innovation_proposal WHERE filename = (?)",
+            cursor.execute("DELETE FROM innovation_proposal WHERE filename = (?)",
                            (filename,))
-            if result:
-                id = result.fetchone()
-                
-            cursor.execute("DELETE FROM key_information WHERE id = (?)",
-                           (id[0],))
-            cursor.execute("DELETE FROM innovation_proposal WHERE id = (?)",
-                           (id[0],))
-            cursor.execute("DELETE FROM embeddings WHERE id = (?)",
-                           (id[0],))
             conn.commit()
         except Exception as e:
             return f"DATABASE ERROR - {e}"
@@ -104,7 +95,7 @@ class DataBase:
     def add_key_information(self, filename, registered, name, description):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("""INSERT INTO key_information (innovation_proposal_id, registered, name, description)
+            cursor.execute("""INSERT INTO innovation_proposal_info (innovation_proposal_id, registered, name, description)
                            SELECT id, ?, ?, ? FROM innovation_proposal
                            WHERE filename = ?
                            """, (registered, name, description, filename))
@@ -117,10 +108,10 @@ class DataBase:
         conn, cursor = self._get_connection()
         try:
             result = cursor.execute("""SELECT innovation_proposal.filename,
-                                    key_information.registered,
-                                    key_information.name
+                                    innovation_proposal_info.registered,
+                                    innovation_proposal_info.name
                                     FROM innovation_proposal
-                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
                                     """)
             data = result.fetchall()
             return data
@@ -130,9 +121,9 @@ class DataBase:
     def get_name_description(self, filename):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("""SELECT key_information.name, key_information.description
+            cursor.execute("""SELECT innovation_proposal_info.name, innovation_proposal_info.description
                                     FROM innovation_proposal
-                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename[:-4],))
             result = cursor.fetchone()
@@ -146,7 +137,7 @@ class DataBase:
     def update_key_information(self, filename, new_registered, new_name):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("""SELECT registered, name FROM key_information 
+            cursor.execute("""SELECT registered, name FROM innovation_proposal_info 
                         WHERE innovation_proposal_id = (
                             SELECT id FROM innovation_proposal WHERE filename = ?
                         )
@@ -161,7 +152,7 @@ class DataBase:
             if old_registered == new_registered and old_name == new_name:
                 return 0
 
-            cursor.execute("""UPDATE key_information SET registered = ?, name = ?
+            cursor.execute("""UPDATE innovation_proposal_info SET registered = ?, name = ?
                         WHERE innovation_proposal_id = (
                             SELECT id FROM innovation_proposal WHERE filename = ?
                         )
@@ -179,9 +170,9 @@ class DataBase:
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT innovation_proposal.id,
-                                    key_information.name
+                                    innovation_proposal_info.name
                                     FROM innovation_proposal
-                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename[:-4],))
             result = cursor.fetchone()
@@ -190,91 +181,38 @@ class DataBase:
             embedding_description_bytes = np.array(embedding_description, dtype=np.float32).tobytes()
             embedding_general_bytes = np.array(embedding_general, dtype=np.float32).tobytes()
 
-            cursor.execute("INSERT OR IGNORE INTO embeddings (innovation_proposal_id, name, embedding_name, embedding_description, embedding_general) VALUES (?, ?, ?, ?, ?)",
+            cursor.execute("INSERT OR IGNORE INTO innovation_proposal_embeddings (innovation_proposal_id, name, embedding_name, embedding_description, embedding_general) VALUES (?, ?, ?, ?, ?)",
                                (result[0], result[1], embedding_name_bytes, embedding_description_bytes, embedding_general_bytes))
             conn.commit()
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def get_embeddings(self):
+    def get_embeddings(self, value):
         conn, cursor = self._get_connection()
         try:
-            result = cursor.execute("SELECT name, embedding_general FROM embeddings")
-            embedding_list = []
-            for i in result.fetchall():
-                name = i[0]
-                embedding_general_bytes = i[1]
-                embedding_general_numpy = np.frombuffer(embedding_general_bytes, dtype=np.float32)
-                embedding_list.append([name, embedding_general_numpy])
-            
-            if embedding_list == []:
-                return None
-            else:
-                return embedding_list
-
-        except Exception as e:
-            return f"DATABASE ERROR - {e}"
-
-    def get_embeddings_name(self):
-        conn, cursor = self._get_connection()
-        try:
-            result = cursor.execute("SELECT name, embedding_name FROM embeddings")
+            result = cursor.execute("SELECT name, embedding_name, embedding_description, embedding_general FROM innovation_proposal_embeddings")
             embedding_list = []
             for i in result.fetchall():
                 name = i[0]
                 embedding_name_bytes = i[1]
+                embedding_description_bytes = i[2]
+                embedding_general_bytes = i[3]
                 embedding_name_numpy = np.frombuffer(embedding_name_bytes, dtype=np.float32)
-                embedding_list.append([name, embedding_name_numpy])
-            
+                embedding_description_numpy = np.frombuffer(embedding_description_bytes, dtype=np.float32)
+                embedding_general_numpy = np.frombuffer(embedding_general_bytes, dtype=np.float32)
+
+                if value == "name":
+                    embedding_list.append([name, embedding_name_numpy])
+                elif value == "description":
+                    embedding_list.append([name, embedding_description_numpy])
+                elif value == "general":
+                    embedding_list.append([name, embedding_general_numpy])
+                    
             if embedding_list == []:
                 return None
             else:
                 return embedding_list
 
-        except Exception as e:
-            return f"DATABASE ERROR - {e}"
-
-    def get_embeddings_description(self):
-        conn, cursor = self._get_connection()
-        try:
-            result = cursor.execute("SELECT name, embeddings_description FROM embeddings")
-            embedding_list = []
-            for i in result.fetchall():
-                name = i[0]
-                embeddings_description_bytes = i[1]
-                embeddings_description_numpy = np.frombuffer(embeddings_description_bytes, dtype=np.float32)
-                embedding_list.append([name, embeddings_description_numpy])
-            
-            if embedding_list == []:
-                return None
-            else:
-                return embedding_list
-
-        except Exception as e:
-            return f"DATABASE ERROR - {e}"
-    
-    def delete_embeddings(self, filename):
-        conn, cursor = self._get_connection()
-        try:
-            cursor.execute("""SELECT key_information.name
-                                    FROM innovation_proposal
-                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
-                                    WHERE innovation_proposal.filename = ?""",
-                                    (filename[:-4],))
-            result = cursor.fetchone()
-            
-            id = cursor.execute("SELECT innovation_proposal_id FROM embeddings WHERE name = ?",
-                                (result[0],))
-            if id:
-                id = id.fetchone()
-                
-            cursor.execute("DELETE FROM key_information WHERE id = (?)",
-                           (id[0],))
-            cursor.execute("DELETE FROM innovation_proposal WHERE id = (?)",
-                           (id[0],))
-            cursor.execute("DELETE FROM embeddings WHERE name = ?",
-                               (result[0],))
-            conn.commit()
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
@@ -282,16 +220,16 @@ class DataBase:
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT innovation_proposal.id,
-                                    key_information.name
+                                    innovation_proposal_info.name
                                     FROM innovation_proposal
-                                    LEFT JOIN key_information ON innovation_proposal.id = key_information.innovation_proposal_id
+                                    LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename,))
             result = cursor.fetchone()
             print(result)
     
             embedding_bytes = np.array(embedding, dtype=np.float32).tobytes()
-            cursor.execute("""UPDATE embeddings 
+            cursor.execute("""UPDATE innovation_proposal_embeddings 
                             SET innovation_proposal_id = ?, name = ?, embedding_name = ?
                             WHERE innovation_proposal_id = ?""",
                         (result[0], result[1], embedding_bytes, result[0]))
@@ -306,7 +244,7 @@ class DataBase:
             conn, cursor = self._get_connection()
 
             try:
-                cursor.execute("INSERT INTO prompt_text prompt VALUES ?",
+                cursor.execute("INSERT INTO innovation_proposal_prompt prompt VALUES ?",
                             (prompt,))
                 conn.commit()
             except Exception as e:
@@ -316,7 +254,7 @@ class DataBase:
             conn, cursor = self._get_connection()
 
             try:
-                cursor.execute("UPDATE prompt_text SET prompt = ? WHERE id = 1",
+                cursor.execute("UPDATE innovation_proposal_prompt SET prompt = ? WHERE id = 1",
                             (new_prompt,))
                 conn.commit()
             except Exception as e:
@@ -326,7 +264,7 @@ class DataBase:
             conn, cursor = self._get_connection()
 
             try:
-                cursor.execute("SELECT prompt INTO prompt_text WHERE id = 1")
+                cursor.execute("SELECT prompt INTO innovation_proposal_prompt WHERE id = 1")
 
                 prompt_text = cursor.fetchone()
                 return prompt_text[0]

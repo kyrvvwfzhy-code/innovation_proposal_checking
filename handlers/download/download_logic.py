@@ -1,5 +1,5 @@
 from handlers.engine.ocr.ocr_main import OCR_main
-from handlers.engine.transformer.transformer_main import Vectorization
+from handlers.engine.transformer.transformer_main import Transformer
 
 from log.logging import logger
 
@@ -15,7 +15,7 @@ class Download_logic:
 
     def transformer(self):
         self.parent.gui.plainTextEdit_2.clear()
-        self.check = Vectorization(self.parent, self.db)
+        self.check = Transformer(self.parent, self.db)
         self.check.start()
 
     def on_ocr_finished(self, filename, registered, name, description):

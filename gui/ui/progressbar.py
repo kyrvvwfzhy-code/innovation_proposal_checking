@@ -20,8 +20,40 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
+        Form.setStyleSheet("QFrame {\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover:!checked {\n"
+"    background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover {\n"
+"   background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:pressed:!checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked:pressed {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:!checked {\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"}")
         self.progressBar = QtWidgets.QProgressBar(Form)
-        self.progressBar.setGeometry(QtCore.QRect(41, 40, 331, 21))
+        self.progressBar.setGeometry(QtCore.QRect(21, 50, 351, 21))
         self.progressBar.setMaximum(100)
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
@@ -33,7 +65,7 @@ class Ui_Form(object):
         self.pushButton_2.setGeometry(QtCore.QRect(230, 110, 101, 31))
         self.pushButton_2.setObjectName("pushButton_2")
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(50, 70, 91, 21))
+        self.label.setGeometry(QtCore.QRect(20, 80, 91, 21))
         self.label.setText("")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(Form)

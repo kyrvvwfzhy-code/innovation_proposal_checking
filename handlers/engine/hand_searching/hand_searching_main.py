@@ -18,15 +18,20 @@ class Hand_searching_main:
     
     def searching_thread(self):
         logger.info("START - hand_searching")
-        db_embeddings = self.db.get_embeddings_name()
-        if db_embeddings != None:
-            self.thread = Searching_Thread(self.parent, db_embeddings)
+
+        db_embeddings_name = self.db.get_embeddings("name")
+        db_embeddings_description = self.db.get_embeddings("description")
+        db_embeddings_general = self.db.get_embeddings("general")
+
+
+        if db_embeddings_name != None and db_embeddings_description != None:
+            self.thread = Searching_Thread(self.parent, db_embeddings_name, db_embeddings_description, db_embeddings_general)
             self.parent.gui.pushButton_2.setEnabled(False)
             self.thread.searching_finished.connect(self.searching_finished)
             self.thread.searching_error.connect(self.searching_error)
             self.thread.start()
         else:
-            logger.debug(f"EMBEDDINGS TABLE - {len(db_embeddings)} records")
+            logger.debug(f"EMBEDDINGS TABLE - {len(db_embeddings_name)} records")
     
     def searching_finished(self, result):
         self.thread.deleteLater()

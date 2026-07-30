@@ -24,12 +24,12 @@ class Journal_logic:
         self.table.itemDoubleClicked.connect(self.edit_item)
 
     def table_setup(self):
-        self.table.setGeometry(QtCore.QRect(10, 80, 880,520))
+        self.table.setGeometry(QtCore.QRect(20, 80, 860,520))
         headers = ["№", "Имя файла", "Зарегестрирован", "Наименование"]
         self.table.setColumnCount(len(headers))
         self.table.setHorizontalHeaderLabels(headers)
         self.table.verticalHeader().setVisible(False)
-        self.table.setColumnWidth(0, 25)
+        self.table.setColumnWidth(0, 30)
         
         self.table.setWordWrap(True)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -60,7 +60,7 @@ class Journal_logic:
     
     def open_file(self, row):
         filename = self.table.item(row, 1).text()
-        file_path = self.db.get_loaded_ip(filename)
+        file_path = self.db.get_path_from_innovation_proposal(filename)
         if sys.platform == 'win32':
             os.startfile(file_path[0])
         else:
@@ -76,8 +76,7 @@ class Journal_logic:
         filename = self.table.item(row, 1).text()
         reply = delete_question_message(self.parent, "Удалить запись", filename)
         if reply == True:
-            self.db.delete_ip(filename)
-            self.db.delete_embeddings(filename)
+            self.db.delete_innovation_proposal(filename)
             self.table.removeRow(row)
             self.update_row_numbers()
     

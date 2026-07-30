@@ -21,12 +21,45 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
         Form.setWindowTitle("")
+        Form.setStyleSheet("QFrame {\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover:!checked {\n"
+"    background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover {\n"
+"   background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:pressed:!checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked:pressed {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:!checked {\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"}")
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setEnabled(False)
-        self.pushButton_2.setGeometry(QtCore.QRect(620, 290, 271, 51))
+        self.pushButton_2.setGeometry(QtCore.QRect(620, 290, 251, 51))
         self.pushButton_2.setObjectName("pushButton_2")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Form)
         self.plainTextEdit.setGeometry(QtCore.QRect(10, 180, 491, 411))
+        self.plainTextEdit.setStyleSheet("font: 11pt \"Ubuntu\";")
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.label_4 = QtWidgets.QLabel(Form)
         self.label_4.setGeometry(QtCore.QRect(620, 250, 271, 31))
@@ -40,11 +73,11 @@ class Ui_Form(object):
         self.label_2.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label_2.setObjectName("label_2")
         self.label_3 = QtWidgets.QLabel(Form)
-        self.label_3.setGeometry(QtCore.QRect(600, 380, 251, 51))
+        self.label_3.setGeometry(QtCore.QRect(590, 380, 261, 51))
         self.label_3.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label_3.setObjectName("label_3")
         self.pushButton = QtWidgets.QPushButton(Form)
-        self.pushButton.setGeometry(QtCore.QRect(620, 190, 271, 51))
+        self.pushButton.setGeometry(QtCore.QRect(620, 190, 251, 51))
         self.pushButton.setObjectName("pushButton")
         self.label_5 = QtWidgets.QLabel(Form)
         self.label_5.setGeometry(QtCore.QRect(400, 0, 191, 51))
@@ -63,20 +96,21 @@ class Ui_Form(object):
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(630, 120, 261, 51))
+        self.label.setGeometry(QtCore.QRect(620, 120, 251, 51))
         self.label.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label.setObjectName("label")
         self.frame_2 = QtWidgets.QFrame(Form)
-        self.frame_2.setGeometry(QtCore.QRect(610, 100, 291, 251))
+        self.frame_2.setGeometry(QtCore.QRect(600, 100, 291, 251))
         self.frame_2.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.plainTextEdit_2 = QtWidgets.QPlainTextEdit(Form)
-        self.plainTextEdit_2.setGeometry(QtCore.QRect(560, 440, 331, 231))
+        self.plainTextEdit_2.setGeometry(QtCore.QRect(560, 440, 321, 231))
+        self.plainTextEdit_2.setStyleSheet("font: 12pt \"Ubuntu\";")
         self.plainTextEdit_2.setObjectName("plainTextEdit_2")
         self.frame_4 = QtWidgets.QFrame(Form)
-        self.frame_4.setGeometry(QtCore.QRect(550, 370, 351, 311))
+        self.frame_4.setGeometry(QtCore.QRect(550, 370, 341, 311))
         self.frame_4.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
         self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)

@@ -20,6 +20,38 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
+        Form.setStyleSheet("QFrame {\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover:!checked {\n"
+"    background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover {\n"
+"   background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:pressed:!checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked:pressed {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:!checked {\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"}")
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(380, 0, 231, 51))
         self.frame.setStyleSheet("background-color: rgba(218, 218, 218, 100);")
@@ -28,6 +60,7 @@ class Ui_Form(object):
         self.frame.setObjectName("frame")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Form)
         self.plainTextEdit.setGeometry(QtCore.QRect(40, 120, 351, 51))
+        self.plainTextEdit.setStyleSheet("font: 11pt \"Ubuntu\";")
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.label_6 = QtWidgets.QLabel(Form)
         self.label_6.setGeometry(QtCore.QRect(40, 65, 301, 51))
@@ -45,7 +78,7 @@ class Ui_Form(object):
         self.label_8.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label_8.setObjectName("label_8")
         self.pushButton = QtWidgets.QPushButton(Form)
-        self.pushButton.setEnabled(False)
+        self.pushButton.setEnabled(True)
         self.pushButton.setGeometry(QtCore.QRect(40, 590, 150, 51))
         self.pushButton.setObjectName("pushButton")
         self.frame_2 = QtWidgets.QFrame(Form)
@@ -71,6 +104,7 @@ class Ui_Form(object):
         self.pushButton_2.setObjectName("pushButton_2")
         self.plainTextEdit_3 = QtWidgets.QPlainTextEdit(Form)
         self.plainTextEdit_3.setGeometry(QtCore.QRect(520, 280, 321, 281))
+        self.plainTextEdit_3.setStyleSheet("font: 12pt \"Ubuntu\";")
         self.plainTextEdit_3.setObjectName("plainTextEdit_3")
         self.label_3 = QtWidgets.QLabel(Form)
         self.label_3.setGeometry(QtCore.QRect(550, 220, 261, 51))

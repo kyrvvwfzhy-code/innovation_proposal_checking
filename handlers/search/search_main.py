@@ -6,5 +6,9 @@ class Search:
         self.db = db
         self.logic = Search_logic(self.parent, self.db)
 
-    def search(self):
-        self.logic.search()
+    def search_by_text(self):
+        self.logic.search_text()
+
+    def search_by_image(self):
+        self.logic.search_image()
+    

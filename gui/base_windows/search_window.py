@@ -17,4 +17,6 @@ class Search_window(QWidget):
 
     def signals(self):
         self.handler = Search(self, self.db)
-        self.gui.pushButton_2.clicked.connect(self.handler.search)
+        self.gui.pushButton_2.clicked.connect(self.handler.search_by_text)
+        self.gui.pushButton.clicked.connect(self.handler.search_by_image)
+

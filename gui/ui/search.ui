@@ -19,6 +19,40 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame {
+    border-radius: 10px;
+}
+
+QPushButton{
+	background-color: rgba(255, 255, 255, 200);
+    border-radius: 5px;
+}
+
+QPushButton:hover:!checked {
+    background-color: rgb(119, 118, 123);
+}
+
+QPushButton:checked:hover {
+   background-color: rgb(119, 118, 123);
+}
+
+QPushButton:pressed:!checked {
+	background-color: rgb(154, 153, 150);
+}
+
+QPushButton:checked:pressed {
+	background-color: rgb(154, 153, 150);
+}
+
+QPushButton:checked {
+	background-color: rgb(154, 153, 150);
+}
+
+QPushButton:!checked {
+	background-color: rgba(255, 255, 255, 200);
+}</string>
+  </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
@@ -46,6 +80,9 @@
      <width>351</width>
      <height>51</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 11pt &quot;Ubuntu&quot;;</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
@@ -108,7 +145,7 @@
   </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
@@ -200,6 +237,9 @@
      <width>321</width>
      <height>281</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 12pt &quot;Ubuntu&quot;;</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">

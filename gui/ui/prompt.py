@@ -20,8 +20,41 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
+        Form.setStyleSheet("QFrame {\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover:!checked {\n"
+"    background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover {\n"
+"   background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:pressed:!checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked:pressed {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:!checked {\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"}")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Form)
         self.plainTextEdit.setGeometry(QtCore.QRect(10, 10, 641, 371))
+        self.plainTextEdit.setStyleSheet("font: 14pt \"Ubuntu\";")
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(220, 390, 211, 41))

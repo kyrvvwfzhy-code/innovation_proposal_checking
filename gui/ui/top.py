@@ -20,14 +20,49 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
+        Form.setStyleSheet("QFrame {\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover:!checked {\n"
+"    background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover {\n"
+"   background-color: rgb(119, 118, 123);\n"
+"}\n"
+"\n"
+"QPushButton:pressed:!checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked:pressed {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgb(154, 153, 150);\n"
+"}\n"
+"\n"
+"QPushButton:!checked {\n"
+"    background-color: rgba(255, 255, 255, 200);\n"
+"}")
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(950, 400, 120, 40))
+        self.pushButton_2.setCheckable(True)
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_3 = QtWidgets.QPushButton(Form)
         self.pushButton_3.setGeometry(QtCore.QRect(950, 550, 120, 40))
+        self.pushButton_3.setCheckable(True)
         self.pushButton_3.setObjectName("pushButton_3")
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(950, 100, 120, 40))
+        self.pushButton.setCheckable(True)
         self.pushButton.setObjectName("pushButton")
         self.stackedWidget = QtWidgets.QStackedWidget(Form)
         self.stackedWidget.setGeometry(QtCore.QRect(10, 10, 900, 680))
@@ -39,6 +74,7 @@ class Ui_Form(object):
         self.stackedWidget.setObjectName("stackedWidget")
         self.pushButton_1 = QtWidgets.QPushButton(Form)
         self.pushButton_1.setGeometry(QtCore.QRect(950, 250, 120, 40))
+        self.pushButton_1.setCheckable(True)
         self.pushButton_1.setObjectName("pushButton_1")
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(940, 80, 141, 531))
@@ -52,6 +88,12 @@ class Ui_Form(object):
         self.pushButton.raise_()
         self.stackedWidget.raise_()
         self.pushButton_1.raise_()
+        self.button_group = QtWidgets.QButtonGroup()
+        self.button_group.addButton(self.pushButton)
+        self.button_group.addButton(self.pushButton_1)
+        self.button_group.addButton(self.pushButton_2)
+        self.button_group.addButton(self.pushButton_3)
+        self.button_group.setExclusive(True)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

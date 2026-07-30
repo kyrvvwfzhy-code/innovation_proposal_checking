@@ -72,18 +72,18 @@ class Load_data_main:
         self.thread.recognition_data_error.connect(self.recognition_data_error)
         self.thread.start()
     
-    def recognition_data_finished(self, names):
+    def recognition_data_finished(self, result):
         logger.info(f"RECOGNTION (load_data) - is Ready")
         self.thread.deleteLater()
-        self.embedding_data_thread(names)
+        self.embedding_data_thread(result)
     
     def recognition_data_error(self, error):
         logger.error(f"RECOGNITION (load_data) - {error}")
         self.thread.deleteLater()
     
-    def embedding_data_thread(self, names):
+    def embedding_data_thread(self, result):
         logger.info(f"START (load_data) - EMBEDDING")
-        self.thread = Embedding_data_Thread(self.db, self.filename_list, names)
+        self.thread = Embedding_data_Thread(self.db, self.filename_list, result[0], result[1])
         self.thread.embedding_data_finished.connect(self.embedding_data_finished)
         self.thread.embedding_data_error.connect(self.embedding_data_error)
         self.thread.start()

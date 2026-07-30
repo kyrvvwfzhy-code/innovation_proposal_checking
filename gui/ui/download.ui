@@ -19,6 +19,40 @@
   <property name="windowTitle">
    <string/>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame {
+    border-radius: 10px;
+}
+
+QPushButton{
+	background-color: rgba(255, 255, 255, 200);
+    border-radius: 5px;
+}
+
+QPushButton:hover:!checked {
+    background-color: rgb(119, 118, 123);
+}
+
+QPushButton:checked:hover {
+   background-color: rgb(119, 118, 123);
+}
+
+QPushButton:pressed:!checked {
+	background-color: rgb(154, 153, 150);
+}
+
+QPushButton:checked:pressed {
+	background-color: rgb(154, 153, 150);
+}
+
+QPushButton:checked {
+	background-color: rgb(154, 153, 150);
+}
+
+QPushButton:!checked {
+	background-color: rgba(255, 255, 255, 200);
+}</string>
+  </property>
   <widget class="QPushButton" name="pushButton_2">
    <property name="enabled">
     <bool>false</bool>
@@ -27,7 +61,7 @@
     <rect>
      <x>620</x>
      <y>290</y>
-     <width>271</width>
+     <width>251</width>
      <height>51</height>
     </rect>
    </property>
@@ -43,6 +77,9 @@
      <width>491</width>
      <height>411</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 11pt &quot;Ubuntu&quot;;</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
@@ -84,9 +121,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>600</x>
+     <x>590</x>
      <y>380</y>
-     <width>251</width>
+     <width>261</width>
      <height>51</height>
     </rect>
    </property>
@@ -102,7 +139,7 @@ color: rgb(0, 130, 15);</string>
     <rect>
      <x>620</x>
      <y>190</y>
-     <width>271</width>
+     <width>251</width>
      <height>51</height>
     </rect>
    </property>
@@ -167,9 +204,9 @@ color: rgb(0, 130, 15);</string>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>630</x>
+     <x>620</x>
      <y>120</y>
-     <width>261</width>
+     <width>251</width>
      <height>51</height>
     </rect>
    </property>
@@ -183,7 +220,7 @@ color: rgb(0, 130, 15);</string>
   <widget class="QFrame" name="frame_2">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>600</x>
      <y>100</y>
      <width>291</width>
      <height>251</height>
@@ -204,9 +241,12 @@ color: rgb(0, 130, 15);</string>
     <rect>
      <x>560</x>
      <y>440</y>
-     <width>331</width>
+     <width>321</width>
      <height>231</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 12pt &quot;Ubuntu&quot;;</string>
    </property>
   </widget>
   <widget class="QFrame" name="frame_4">
@@ -214,7 +254,7 @@ color: rgb(0, 130, 15);</string>
     <rect>
      <x>550</x>
      <y>370</y>
-     <width>351</width>
+     <width>341</width>
      <height>311</height>
     </rect>
    </property>

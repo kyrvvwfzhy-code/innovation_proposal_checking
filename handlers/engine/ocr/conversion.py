@@ -20,11 +20,12 @@ class Conversion_Thread(QThread):
             self.conversion_error.emit(f"Error - {e}")
 
     def conversion(self):
-        pdf_path = self.db.get_loaded_ip(self.filename)
+        pdf_path = self.db.get_path_from_innovation_proposal(self.filename)
         images = convert_from_path(pdf_path[0])
 
         first_page = 1
         #total_images = len(images)
+        # last_page = min(9, total_images)
         second_page = 2
 
         os.makedirs("OCR_TMP", exist_ok = True)
