@@ -17,7 +17,7 @@ class Journal_logic:
     def create_table(self):
         self.table = QTableWidget(self.parent)
         self.table_setup()
-        data = self.db.get_key_information()
+        data = self.db.get_innovation_proposal_info()
         if data:
             self.add_data(data)
 
@@ -60,7 +60,7 @@ class Journal_logic:
     
     def open_file(self, row):
         filename = self.table.item(row, 1).text()
-        file_path = self.db.get_path_from_innovation_proposal(filename)
+        file_path = self.db.get_filepath_from_innovation_proposal(filename)
         if sys.platform == 'win32':
             os.startfile(file_path[0])
         else:
@@ -90,7 +90,7 @@ class Journal_logic:
                 registration_date = self.table.item(row, 2).text()  
                 name = self.table.item(row, 3).text()  
                 
-                result = self.db.update_key_information(filename, registration_date, name)
+                result = self.db.update_innovation_proposal_info(filename, registration_date, name)
                 
                 if result > 0:
                     saved_rows += 1
@@ -112,7 +112,7 @@ class Journal_logic:
         if loaded_documents is not None:
                 if hasattr(loaded_documents, 'table'):
                     loaded_documents.table.setRowCount(0)
-                    data = self.db.get_key_information()
+                    data = self.db.get_innovation_proposal_info()
                     if data:
                         loaded_documents.add_data(data)
                     logger.info("✅ Таблица обновлена")
@@ -127,8 +127,7 @@ class Journal_logic:
         self.thread.start()
     
     def vectorization_finished(self, new_embedding, filename):
-        self.db.update_embedding(filename, new_embedding)
-        
+        self.db.update_innovation_proposal_embeddings(filename, new_embedding)
         logger.info(f"Эмбеддинг файла {filename} обновился в связи с изменениями в журнале")
             
     def vectorization_error(self, error):

@@ -65,7 +65,7 @@ class Ui_Form(object):
         self.pushButton_2.setGeometry(QtCore.QRect(230, 110, 101, 31))
         self.pushButton_2.setObjectName("pushButton_2")
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(20, 80, 91, 21))
+        self.label.setGeometry(QtCore.QRect(20, 80, 151, 21))
         self.label.setText("")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(Form)

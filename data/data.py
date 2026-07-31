@@ -7,20 +7,35 @@ def ocr_result(registered, name, description):
     )
     return text
 
-def base_prompt_text(result, new_name):
-    response_text = make_response_text(result, new_name)
-    prompt = f"""Ты ИИ-помощник анализа сходства рационализаторских предложений.
+def prompt_text(conclution = None):
+    text = f"""Ты ИИ-помощник анализа заключения связаного с проеркой рационализаторских предложений на уникальность.
 
                     У тебя на входе текст с заключением:
-                    {response_text}
+                    {'{conclution}'}
 
-                    ОТВЕТЬ КРАТКО (1 предложение):
-                    - НА КАКОЕ ОНО ПОХОЖЕ БЛИЖЕ ВСЕГО ПО СМЫЛУ ИЗ 📌 ТОП-5 ПОХОЖИХ ДОКУМЕНТОВ
+                    Сделай небольшой анализ на 3 предложения, с каким больше всего по смыслу похоже новое решение из ТОП ПОХОЖИХ ДКУМЕНТОВ
+                    (2-3 предложения)
 
-                    ТЫ ДОЛЖЕН ДАТЬ ОТВЕТ ОДНИМ ПРЕДЛОЖЕНИЕ!
-                    НЕ ВЫДУМЫВАЙ. НЕ ВРИ, ТОЛЬКО ПО ФАКТАМ ЗАКЛЮЧЕНИЯ.
+                    Ничего не выдймай, строго по заключению.
                     """
+    return text
+
+def prompt_conclition(promt, conclution):
+    conclution = conclution
+    new = promt
+    return new
+
+def base_prompt_text(result = None, new_name = None, db_prompt = None):
+    if result is None and new_name is None:
+        response_text = "None"
+    else:
+        response_text = make_response_text(result, new_name)
+
+    prompt = prompt_conclition(db_prompt,response_text)
+
+    print(f"Отправляется след промпт ----- {prompt}")
     return response_text, prompt
+
 
 def general_text(response_text, base_prompt_text):
     general = (f"{response_text}"
@@ -31,14 +46,6 @@ def general_text(response_text, base_prompt_text):
 def make_response_text(result, new_name):
     name_max_sim = f' - {result[0]["name"]}'
     max_sim = result[0]["similarity"]
-
-    # name_list = []
-    # for item in result:         
-    #     name_list.append(item['name'])
-
-    # sum_list = []
-    # for item in result:         
-    #     sum_list.append(item['similarity'])
 
     if max_sim > 0.99:
         status = "🔴 ПОЛНОЕ СХОДСТВО (ДУБЛИКАТ)"

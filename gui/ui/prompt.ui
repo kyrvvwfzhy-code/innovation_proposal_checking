@@ -63,7 +63,7 @@ QPushButton:!checked {
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 14pt &quot;Ubuntu&quot;;</string>
+    <string notr="true">font: 12pt &quot;Ubuntu&quot;;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
@@ -76,7 +76,7 @@ QPushButton:!checked {
     </rect>
    </property>
    <property name="text">
-    <string>Сохранить</string>
+    <string>Сохранить и выйти</string>
    </property>
   </widget>
  </widget>

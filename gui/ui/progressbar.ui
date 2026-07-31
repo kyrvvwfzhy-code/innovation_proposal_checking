@@ -103,7 +103,7 @@ QPushButton:!checked {
     <rect>
      <x>20</x>
      <y>80</y>
-     <width>91</width>
+     <width>151</width>
      <height>21</height>
     </rect>
    </property>

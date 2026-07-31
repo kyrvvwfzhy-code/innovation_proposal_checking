@@ -20,7 +20,7 @@ class Conversion_Thread(QThread):
             self.conversion_error.emit(f"Error - {e}")
 
     def conversion(self):
-        pdf_path = self.db.get_path_from_innovation_proposal(self.filename)
+        pdf_path = self.db.get_filepath_from_innovation_proposal(self.filename)
         images = convert_from_path(pdf_path[0])
 
         first_page = 1

@@ -19,9 +19,9 @@ class Hand_searching_main:
     def searching_thread(self):
         logger.info("START - hand_searching")
 
-        db_embeddings_name = self.db.get_embeddings("name")
-        db_embeddings_description = self.db.get_embeddings("description")
-        db_embeddings_general = self.db.get_embeddings("general")
+        db_embeddings_name = self.db.get_innovation_proposal_embeddings("name")
+        db_embeddings_description = self.db.get_innovation_proposal_embeddings("description")
+        db_embeddings_general = self.db.get_innovation_proposal_embeddings("general")
 
 
         if db_embeddings_name != None and db_embeddings_description != None:
@@ -46,7 +46,8 @@ class Hand_searching_main:
         self.thread.deleteLater()
     
     def LLM_analys(self, result):
-        self.thread = LLM_analys_Thread(result[0], result[1])
+        self.db_prompt = self.db.get_innovation_proposal_prompt()
+        self.thread = LLM_analys_Thread(result[0], result[1], self.db_prompt)
         self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
         self.thread.start()

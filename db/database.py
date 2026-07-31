@@ -11,7 +11,6 @@ class DataBase:
         )
         self.connection.execute("PRAGMA foreign_keys = ON")
         self.cursor = self.connection.cursor()
-        
 
     def _get_connection(self):
         return self.connection, self.cursor
@@ -71,13 +70,13 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def get_path_from_innovation_proposal(self, filename):
+    def get_filepath_from_innovation_proposal(self, filename):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("SELECT filepath FROM innovation_proposal WHERE filename = (?)",
                            (filename,))
-            path = cursor.fetchone()
-            return path
+            filepath = cursor.fetchone()
+            return filepath
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
@@ -90,9 +89,9 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
 
-#--------------------------------------------key_information--------------------------------------------
+#--------------------------------------------innovation_proposal_info--------------------------------------------
     
-    def add_key_information(self, filename, registered, name, description):
+    def add_innovation_proposal_info(self, filename, registered, name, description):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""INSERT INTO innovation_proposal_info (innovation_proposal_id, registered, name, description)
@@ -104,37 +103,31 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def get_key_information(self):
+    def get_innovation_proposal_info(self, filename = None):
         conn, cursor = self._get_connection()
         try:
-            result = cursor.execute("""SELECT innovation_proposal.filename,
-                                    innovation_proposal_info.registered,
-                                    innovation_proposal_info.name
-                                    FROM innovation_proposal
-                                    LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
-                                    """)
-            data = result.fetchall()
-            return data
-        except Exception as e:
-            return f"DATABASE ERROR - {e}"
-    
-    def get_name_description(self, filename):
-        conn, cursor = self._get_connection()
-        try:
-            cursor.execute("""SELECT innovation_proposal_info.name, innovation_proposal_info.description
-                                    FROM innovation_proposal
-                                    LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
-                                    WHERE innovation_proposal.filename = ?""",
-                                    (filename[:-4],))
-            result = cursor.fetchone()
-            if result:
-                return result
+            if filename:
+                cursor.execute("""SELECT innovation_proposal_info.name, innovation_proposal_info.description
+                                        FROM innovation_proposal
+                                        LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
+                                        WHERE innovation_proposal.filename = ?""",
+                                        (filename[:-4],))
+                result = cursor.fetchone()
+                if result:
+                    return result
             else:
-                return None
+                result = cursor.execute("""SELECT innovation_proposal.filename,
+                                        innovation_proposal_info.registered,
+                                        innovation_proposal_info.name
+                                        FROM innovation_proposal
+                                        LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
+                                        """)
+                data = result.fetchall()
+                return data
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def update_key_information(self, filename, new_registered, new_name):
+    def update_innovation_proposal_info(self, filename, new_registered, new_name):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT registered, name FROM innovation_proposal_info 
@@ -164,9 +157,9 @@ class DataBase:
             print(f"Ошибка обновления: {e}")
             return 0
 
-#--------------------------------------------embeddings--------------------------------------------
+#--------------------------------------------innovation_proposal_embeddings--------------------------------------------
 
-    def add_embedding(self, filename, embedding_name, embedding_description, embedding_general):
+    def add_innovation_proposal_embeddings(self, filename, embedding_name, embedding_description, embedding_general):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT innovation_proposal.id,
@@ -187,7 +180,7 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
-    def get_embeddings(self, value):
+    def get_innovation_proposal_embeddings(self, value):
         conn, cursor = self._get_connection()
         try:
             result = cursor.execute("SELECT name, embedding_name, embedding_description, embedding_general FROM innovation_proposal_embeddings")
@@ -214,9 +207,9 @@ class DataBase:
                 return embedding_list
 
         except Exception as e:
-            return f"DATABASE ERROR - {e}"
+            return f"DATABASE ERROR - {e}" 
     
-    def update_embedding(self, filename, embedding):
+    def update_innovation_proposal_embeddings(self, filename, embedding):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT innovation_proposal.id,
@@ -238,36 +231,40 @@ class DataBase:
         except Exception as e:
             return f"DATABASE ERROR - {e}"
 
-#--------------------------------------------prompt_text--------------------------------------------
+#--------------------------------------------innovation_proposal_prompt--------------------------------------------
 
-    def add_prompt_text(self, prompt):
+    def add_innovation_proposal_prompt(self, prompt):
             conn, cursor = self._get_connection()
 
             try:
-                cursor.execute("INSERT INTO innovation_proposal_prompt prompt VALUES ?",
+                cursor.execute("INSERT INTO innovation_proposal_prompt (prompt) VALUES (?)",
                             (prompt,))
                 conn.commit()
             except Exception as e:
                 return f"DATABASE ERROR - {e}"
+            
+    def get_innovation_proposal_prompt(self):
+            conn, cursor = self._get_connection()
+
+            try:
+                cursor.execute("SELECT prompt FROM innovation_proposal_prompt WHERE id = 1")
+
+                prompt_text = cursor.fetchone()
+                
+                if prompt_text:
+                    return prompt_text[0]
+                else:
+                    return None
+            except Exception as e:
+                return f"DATABASE ERROR - {e}"
     
-    def update_prompt_text(self, new_prompt):
+    def update_get_innovation_proposal_prompt_prompt(self, new_prompt):
             conn, cursor = self._get_connection()
 
             try:
                 cursor.execute("UPDATE innovation_proposal_prompt SET prompt = ? WHERE id = 1",
                             (new_prompt,))
                 conn.commit()
-            except Exception as e:
-                return f"DATABASE ERROR - {e}"
-    
-    def get_prompt_text(self):
-            conn, cursor = self._get_connection()
-
-            try:
-                cursor.execute("SELECT prompt INTO innovation_proposal_prompt WHERE id = 1")
-
-                prompt_text = cursor.fetchone()
-                return prompt_text[0]
             except Exception as e:
                 return f"DATABASE ERROR - {e}"
 

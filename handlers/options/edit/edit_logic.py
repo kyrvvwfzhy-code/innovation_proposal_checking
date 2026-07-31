@@ -41,16 +41,16 @@ class Edit_logic:
     def save_db(self):
         found_record = self.check_ki()
         if found_record:
-            self.db.update_key_information(self.filename[:-4], self.edit_registered, self.edit_name)
+            self.db.update_innovation_proposal_info(self.filename[:-4], self.edit_registered, self.edit_name)
             logger.debug(f"В БД изменилась запись {found_record} на {self.edit_registered, self.edit_name}")
         else:
-            self.db.add_key_information(self.filename[:-4], self.edit_registered, self.edit_name, self.description)
+            self.db.add_innovation_proposal_info(self.filename[:-4], self.edit_registered, self.edit_name, self.description)
             logger.debug(f"В БД сохранилась новая запись {self.edit_registered, self.edit_name}")
         
         self.parent.gui.pushButton_2.setEnabled(True)
     
     def check_ki(self):
-        exist = self.db.get_key_information()
+        exist = self.db.get_innovation_proposal_info()
         logger.debug(f"{exist}")
         for i in exist:
             if i[0] == self.filename[:-4] and i[1] != None and i[2] != None:

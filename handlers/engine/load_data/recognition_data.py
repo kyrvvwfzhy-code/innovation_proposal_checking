@@ -53,7 +53,7 @@ class Recognition_data_Thread(QThread):
                         name = self.clean_text(names[idx])
                         description = self.clean_text(descriptions[idx])
                         
-                        self.db.add_key_information(
+                        self.db.add_innovation_proposal_info(
                             filename[:-4], date, name, description)
                         
             result = [names, descriptions]

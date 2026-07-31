@@ -16,7 +16,7 @@ class Conversion_data_Thread(QThread):
             os.makedirs("OCR_TMP", exist_ok = True)
 
             for files in self.filename_list:
-                pdf_path = self.db.get_path_from_innovation_proposal(files[:-4])
+                pdf_path = self.db.get_filepath_from_innovation_proposal(files[:-4])
                 for paths in pdf_path:
                     images = convert_from_path(paths)
 

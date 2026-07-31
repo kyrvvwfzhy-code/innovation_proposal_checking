@@ -54,7 +54,7 @@ class Ui_Form(object):
 "}")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Form)
         self.plainTextEdit.setGeometry(QtCore.QRect(10, 10, 641, 371))
-        self.plainTextEdit.setStyleSheet("font: 14pt \"Ubuntu\";")
+        self.plainTextEdit.setStyleSheet("font: 12pt \"Ubuntu\";")
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(220, 390, 211, 41))
@@ -66,7 +66,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Правка"))
-        self.pushButton.setText(_translate("Form", "Сохранить"))
+        self.pushButton.setText(_translate("Form", "Сохранить и выйти"))
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ class Transformer:
     
     def vectorization_thread(self):
         filename = self.parent.gui.label_4.text()
-        self.data = self.db.get_name_description(filename)
+        self.data = self.db.get_innovation_proposal_info(filename = filename)
         if self.data != None:
             self.thread = Vectorization_Thread(self.parent, self.data[0], self.data[1])
             self.parent.gui.pushButton_2.setEnabled(False)
@@ -36,7 +36,7 @@ class Transformer:
 
         general = self.calculating_general(name, description)
 
-        db_embeddings = self.db.get_embeddings("general")
+        db_embeddings = self.db.get_innovation_proposal_embeddings("general")
         if db_embeddings:
             self.semantic_deduplication_thread(general, db_embeddings)
         if db_embeddings == None:
@@ -44,7 +44,7 @@ class Transformer:
             self.parent.gui.pushButton_2.setEnabled(True)
             self.parent.gui.pushButton_2.setText("Начать поиск")
         self.filename = self.parent.gui.label_4.text()
-        self.db.add_embedding(self.filename, name, description, general)
+        self.db.add_innovation_proposal_embeddings(self.filename, name, description, general)
 
     def calculating_general(self, name, description):
         name_emb = np.array(name)
@@ -82,7 +82,8 @@ class Transformer:
 
     def LLM_analys(self, result):
         self.parent.gui.pushButton_2.setText("АНАЛИЗ ЯЗЫКОВОЙ МОДЕЛИ...")
-        self.thread = LLM_analys_Thread(result, self.data[0])
+        self.db_prompt = self.db.get_innovation_proposal_prompt()
+        self.thread = LLM_analys_Thread(result, self.data[0], self.db_prompt)
         self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
         self.thread.start()

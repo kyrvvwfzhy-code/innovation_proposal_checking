@@ -31,7 +31,7 @@ class Embedding_data_Thread(QThread):
                 new_embedding_description = embeddings_description.tolist()
                 new_embedding_general = self.calculating_general(embeddings_name, embeddings_description)
                 
-                self.db.add_embedding(filename, new_embedding_name, new_embedding_description, new_embedding_general)
+                self.db.add_innovation_proposal_embeddings(filename, new_embedding_name, new_embedding_description, new_embedding_general)
     
             self.embedding_data_finished.emit("Эмбеддинги созданы")
             

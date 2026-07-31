@@ -7,22 +7,23 @@ class LLM_analys_Thread(QThread):
     LLM_analys_finished = pyqtSignal(list)
     LLM_analys_error = pyqtSignal(str)
     
-    def __init__(self, result, new_name):
+    def __init__(self, result, new_name, db_prompt):
         super().__init__()
         self.result = result
         self.new_name = new_name
+        self.db_prompt = db_prompt
 
     def run(self):
         try:
             model = "bambucha/saiga-llama3"
-            response_text, prompt = base_prompt_text(self.result, self.new_name)
+            response_text, prompt = base_prompt_text(self.result, self.new_name, self.db_prompt)
 
             response = ollama.chat(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 options={
                     "temperature": 0.1,     
-                    "num_predict": 80,     
+                    "num_predict": 150,     
                     "num_batch": 2048, 
                 }
             )
