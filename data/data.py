@@ -10,7 +10,7 @@ def ocr_result(registered, name, description):
             f"Описание: {description}"
     )
     return text
-
+#qwwdf
 def prompt_text(conclution = None):
     text = f"""Отвечай на русском языке. Ты ИИ-помощник анализа заключения связаного с проеркой рационализаторских предложений на уникальность.
 
