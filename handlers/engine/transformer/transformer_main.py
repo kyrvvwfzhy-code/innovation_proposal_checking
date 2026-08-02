@@ -82,8 +82,7 @@ class Transformer:
 
     def LLM_analys(self, result):
         self.parent.gui.pushButton_2.setText("АНАЛИЗ ЯЗЫКОВОЙ МОДЕЛИ...")
-        self.db_prompt = self.db.get_innovation_proposal_prompt()
-        self.thread = LLM_analys_Thread(result, self.data[0], self.db_prompt)
+        self.thread = LLM_analys_Thread(result, self.data[0])
         self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
         self.thread.start()

@@ -46,8 +46,7 @@ class Hand_searching_main:
         self.thread.deleteLater()
     
     def LLM_analys(self, result):
-        self.db_prompt = self.db.get_innovation_proposal_prompt()
-        self.thread = LLM_analys_Thread(result[0], result[1], self.db_prompt)
+        self.thread = LLM_analys_Thread(result[0], result[1])
         self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
         self.thread.start()

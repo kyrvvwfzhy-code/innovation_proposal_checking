@@ -1,3 +1,7 @@
+from db.database import DataBase
+
+db = DataBase()
+
 def ocr_result(registered, name, description):
     text = (f"Рационализаторское предложение: {registered}\n\n"
 
@@ -8,32 +12,26 @@ def ocr_result(registered, name, description):
     return text
 
 def prompt_text(conclution = None):
-    text = f"""Ты ИИ-помощник анализа заключения связаного с проеркой рационализаторских предложений на уникальность.
+    text = f"""Отвечай на русском языке. Ты ИИ-помощник анализа заключения связаного с проеркой рационализаторских предложений на уникальность.
 
                     У тебя на входе текст с заключением:
-                    {'{conclution}'}
+                    {conclution}
 
-                    Сделай небольшой анализ на 3 предложения, с каким больше всего по смыслу похоже новое решение из ТОП ПОХОЖИХ ДКУМЕНТОВ
-                    (2-3 предложения)
+                    ОТВЕТЬ НЕ ПОВТОРЯЯ ТО ЧТО В ЗАКЛЮЧЕНИИ, с каким больше всего по смыслу похоже новое решение из ТОП ПОХОЖИХ ДКУМЕНТОВ (2-3 предложения)
 
-                    Ничего не выдймай, строго по заключению.
+                    Не повторяй одно и тоже, ничего не выдймай, строго по заключению.
                     """
     return text
 
-def prompt_conclition(promt, conclution):
-    conclution = conclution
-    new = promt
-    return new
-
-def base_prompt_text(result = None, new_name = None, db_prompt = None):
+def base_prompt_text(result, new_name):
     if result is None and new_name is None:
         response_text = "None"
     else:
         response_text = make_response_text(result, new_name)
 
-    prompt = prompt_conclition(db_prompt,response_text)
-
-    print(f"Отправляется след промпт ----- {prompt}")
+    template = db.get_innovation_proposal_prompt()
+    prompt = template.replace('{conclution}', response_text)
+    
     return response_text, prompt
 
 

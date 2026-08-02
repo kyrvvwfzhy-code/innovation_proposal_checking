@@ -5,6 +5,7 @@ from gui.base_windows.download_window import Download_window
 from gui.base_windows.journal_window import Journal_window
 from gui.base_windows.search_window import Search_window
 from gui.base_windows.settings_window import Settings_window
+
 from log.logging import logger
 
 class GUI_main(QWidget):

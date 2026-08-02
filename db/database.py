@@ -258,7 +258,7 @@ class DataBase:
             except Exception as e:
                 return f"DATABASE ERROR - {e}"
     
-    def update_get_innovation_proposal_prompt_prompt(self, new_prompt):
+    def update_innovation_proposal_prompt(self, new_prompt):
             conn, cursor = self._get_connection()
 
             try:

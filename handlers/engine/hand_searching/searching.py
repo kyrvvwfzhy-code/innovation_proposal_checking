@@ -1,8 +1,7 @@
-from sentence_transformers import SentenceTransformer
 from PyQt5.QtCore import QThread, pyqtSignal
 from sklearn.metrics.pairwise import cosine_similarity
 from log.logging import logger
-import os
+import ollama
 import numpy as np
 
 class Searching_Thread(QThread):
@@ -15,36 +14,26 @@ class Searching_Thread(QThread):
         self.db_embeddings_name = db_embeddings_name
         self.db_embeddings_description = db_embeddings_description
         self.db_embeddings_general = db_embeddings_general
-    
-    def run(self):
-        self.model_path = r"/home/niyazabiy/models--sentence-transformers--all-MiniLM-L6-v2"
-        logger.info(f"ПУТЬ МОДЕЛИ - {self.model_path}")
-        self.model_en = SentenceTransformer(self.model_path)
+        self.model_name = "qwen-embed"
 
+    def run(self):
+        logger.info(f"Использую модель эмбеддингов: {self.model_name}")
+        
         text_name = self.parent.gui.plainTextEdit.toPlainText()
         text_description = self.parent.gui.plainTextEdit_2.toPlainText()
 
         try:
-
-            # ПУСТЫЕ ЗНАЧЕНИЯ
-
             if len(text_name) == 0 and len(text_description) == 0:
                 logger.info(f"SEARCHING - Поля для поиска ПУСТЫЕ!")
                 pass
-
-            # ПОИСК ПО НАИМЕНОВАНИЮ
 
             elif len(text_name) > 0 and len(text_description) == 0:
                 logger.info(f"SEARCHING - Поиск по НАИМЕНОВАНИЮ!")
                 self.search("name", text_name, self.db_embeddings_name)
 
-            # ПОИСК ПО ОПИСАНИЮ
-
-            elif len(text_description) > 0 and len(text_name) == 0 :
+            elif len(text_description) > 0 and len(text_name) == 0:
                 logger.info(f"SEARCHING - Поиск по ОПИСАНИЮ!")
                 self.search("description", text_description, self.db_embeddings_description)
-
-            # ПОИСК ПО НАИМЕНВОАНИЮ И ОПИСАНИЮ
 
             elif len(text_name) > 0 and len(text_description) > 0:
                 logger.info(f"SEARCHING - Поиск по НАИМЕНОВАНИЮ и ОПИСАНИЮ!")
@@ -63,23 +52,34 @@ class Searching_Thread(QThread):
             self.search_process(value, text, db_embedding)
 
     def search_process(self, value, text, db_embedding):
-        if value == "name" or value  == "description":
-            embeddings = self.model_en.encode(text)
-            embedding_result = embeddings.tolist()
+        def get_embedding(text):
+            if not text:
+                return None
+            response = ollama.embeddings(
+                model=self.model_name,
+                prompt=text
+            )
+            return response["embedding"]
+
+        if value == "name" or value == "description":
+            embedding_result = get_embedding(text)
+            if embedding_result is None:
+                return
+            
             names = [item[0] for item in db_embedding]
             embeddings = [item[1] for item in db_embedding]
             
             similarities = cosine_similarity([embedding_result], embeddings)[0]
                             
             top_k = min(5, len(similarities))
-            top_indices = np.argsort(similarities)[-top_k:][::-1]  
+            top_indices = np.argsort(similarities)[-top_k:][::-1]
                     
             top_5 = []
             for idx in top_indices:
                 top_5.append({
                     'name': names[idx],
                     'similarity': float(similarities[idx])
-                    })
+                })
                 
             logger.debug(f"LINEEDIT - {len(text)}")
             logger.info(f"SEARCHING - {top_5}")
@@ -96,14 +96,14 @@ class Searching_Thread(QThread):
         elif value == "general":
             sentences_name = text[0]
             sentences_description = text[1]
-            embeddings_name = self.model_en.encode(sentences_name)
-            embedding_name_result = embeddings_name.tolist()
             
-            embeddings_description = self.model_en.encode(sentences_description)
-            embedding_description_result = embeddings_description.tolist()
+            embeddings_name = get_embedding(sentences_name)
+            embeddings_description = get_embedding(sentences_description)
             
-            embeddings_result = [embedding_name_result, embedding_description_result]
-
+            if embeddings_name is None or embeddings_description is None:
+                return
+            
+            embeddings_result = [embeddings_name, embeddings_description]
             general = self.calculating_general(embeddings_result)
 
             names = [item[0] for item in db_embedding]
@@ -111,13 +111,13 @@ class Searching_Thread(QThread):
             similarities_general = cosine_similarity([general], embedding_general)[0]
             
             top_k = min(5, len(similarities_general))
-            top_indices = np.argsort(similarities_general)[-top_k:][::-1]  
+            top_indices = np.argsort(similarities_general)[-top_k:][::-1]
                         
             top_5 = []
             for idx in top_indices:
                 top_5.append({
                     'name': names[idx],
-                        'similarity': float(similarities_general[idx])
+                    'similarity': float(similarities_general[idx])
                 })
                         
             logger.info(f"Найдено {len(top_5)} похожих документов:")
@@ -128,13 +128,13 @@ class Searching_Thread(QThread):
             self.searching_finished.emit(result)
             
     def calculating_general(self, embeddings_result):
-            name_emb = np.array(embeddings_result[0])
-            desc_emb = np.array(embeddings_result[1])
-            
-            name_emb = name_emb / np.linalg.norm(name_emb)
-            desc_emb = desc_emb / np.linalg.norm(desc_emb)
-            
-            general_emb = (name_emb + desc_emb) / 2
-            general_emb = general_emb / np.linalg.norm(general_emb)
-    
-            return general_emb
+        name_emb = np.array(embeddings_result[0])
+        desc_emb = np.array(embeddings_result[1])
+        
+        name_emb = name_emb / np.linalg.norm(name_emb)
+        desc_emb = desc_emb / np.linalg.norm(desc_emb)
+        
+        general_emb = (name_emb + desc_emb) / 2
+        general_emb = general_emb / np.linalg.norm(general_emb)
+
+        return general_emb

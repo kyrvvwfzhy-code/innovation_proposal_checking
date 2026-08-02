@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer
+import ollama
 from PyQt5.QtCore import QThread, pyqtSignal
 from log.logging import logger
 
@@ -6,35 +6,45 @@ class Vectorization_Thread(QThread):
     vectorization_finished = pyqtSignal(object)
     vectorization_error = pyqtSignal(str)
 
-    def __init__(self, parent, name, description = None):
+    def __init__(self, parent, name, description=None):
         super().__init__()
         self.parent = parent
         self.name = name
         self.description = description
-    
+        self.model_name = "qwen-embed"  
+
     def run(self):
-        self.model_path = r"/home/niyazabiy/models--sentence-transformers--all-MiniLM-L6-v2"
-        logger.info(f"ПУТЬ МОДЕЛИ - {self.model_path}")
-        self.model_en = SentenceTransformer(self.model_path)
+        logger.info(f"Использую модель эмбеддингов: {self.model_name}")
+        
         sentences_name = self.name
         sentences_description = self.description
+        
         try:
+            def get_embedding(text):
+                if not text:
+                    return None
+                response = ollama.embeddings(
+                    model=self.model_name,
+                    prompt=text 
+                )
+                return response["embedding"] 
+
             if sentences_description is None:
-                embeddings_name = self.model_en.encode(sentences_name)
-                embedding_name_result = embeddings_name.tolist()
-                self.vectorization_finished.emit(embedding_name_result)
+                embeddings_name = get_embedding(sentences_name)
+                if embeddings_name is not None:
+                    self.vectorization_finished.emit(embeddings_name)
 
             elif len(sentences_name) == 0 and len(sentences_description) == 0:
                 pass
             
             elif len(sentences_name) > 0 and len(sentences_description) > 0:
-                embeddings_name = self.model_en.encode(sentences_name)
-                embedding_name_result = embeddings_name.tolist()
-
-                embeddings_description = self.model_en.encode(sentences_description)
-                embedding_description_result = embeddings_description.tolist()
-
-                embeddings_result = [embedding_name_result, embedding_description_result]
-                self.vectorization_finished.emit(embeddings_result)
+                embeddings_name = get_embedding(sentences_name)
+                embeddings_description = get_embedding(sentences_description)
+                
+                if embeddings_name is not None and embeddings_description is not None:
+                    embeddings_result = [embeddings_name, embeddings_description]
+                    self.vectorization_finished.emit(embeddings_result)
+                    
         except Exception as e:
+            logger.error(f"Ошибка векторизации: {e}")
             self.vectorization_error.emit(f"Error - {e}")
