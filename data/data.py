@@ -10,7 +10,7 @@ def ocr_result(registered, name, description):
             f"Описание: {description}"
     )
     return text
-#qwwdf
+
 def prompt_text(conclution = None):
     text = f"""Отвечай на русском языке. Ты ИИ-помощник анализа заключения связаного с проеркой рационализаторских предложений на уникальность.
 
@@ -47,11 +47,11 @@ def make_response_text(result, new_name):
 
     if max_sim > 0.99:
         status = "🔴 ПОЛНОЕ СХОДСТВО (ДУБЛИКАТ)"
-    elif max_sim > 0.95:
-        status = "🟠 ВЫСОКИЙ УРОВЕНЬ СХОДСТВА"
     elif max_sim > 0.85:
+        status = "🟠 ВЫСОКИЙ УРОВЕНЬ СХОДСТВА"
+    elif max_sim > 0.75:
         status = "🟡 ВОЗМОЖНОЕ СХОДСТВО"
-    elif max_sim > 0.8:
+    elif max_sim > 0.6:
         status = "🔵 СЛАБОЕ СХОДСТВО"
         name_max_sim = ""
     else:
@@ -87,7 +87,7 @@ def names_text_process(result):
         name = v["name"]
         similarity = v["similarity"]
         
-        if similarity > 0.85:
+        if similarity > 0.75:
             similarity_list.append(f"{i+1}. {name} - {similarity:.2%}")
     
     return "\n".join(similarity_list)

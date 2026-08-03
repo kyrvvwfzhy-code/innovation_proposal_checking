@@ -12,15 +12,16 @@ class Journal_logic:
     def __init__(self, parent, db):
         self.parent = parent
         self.db = db
+        self.all_data = None
         self.create_table()
+        self.thread = None
     
     def create_table(self):
         self.table = QTableWidget(self.parent)
         self.table_setup()
-        data = self.db.get_innovation_proposal_info()
-        if data:
-            self.add_data(data)
-
+        self.all_data = self.db.get_innovation_proposal_info()
+        if self.all_data:
+            self.add_data(self.all_data)
         self.table.itemDoubleClicked.connect(self.edit_item)
 
     def table_setup(self):
@@ -41,7 +42,6 @@ class Journal_logic:
             header.setSectionResizeMode(i, QHeaderView.Stretch)
     
     def edit_item(self, item):
-        """Редактирование при двойном клике на любую ячейку"""
         row = item.row()
         col = item.column()
         
@@ -79,6 +79,7 @@ class Journal_logic:
             self.db.delete_innovation_proposal(filename)
             self.table.removeRow(row)
             self.update_row_numbers()
+            self.all_data = self.db.get_innovation_proposal_info()
     
     def save_changes(self):
         try:
@@ -101,6 +102,7 @@ class Journal_logic:
 
             if saved_rows > 0:
                 info_message(self.parent, f"Данные успешно сохранены! Обновлено {saved_rows} записей.")
+                self.all_data = self.db.get_innovation_proposal_info()
             else:
                 critical_message(self.parent, "Изменений не обнаружено.")
                 
@@ -110,18 +112,54 @@ class Journal_logic:
     
     def update_table(self, loaded_documents):
         if loaded_documents is not None:
-                if hasattr(loaded_documents, 'table'):
-                    loaded_documents.table.setRowCount(0)
-                    data = self.db.get_innovation_proposal_info()
-                    if data:
-                        loaded_documents.add_data(data)
-                    logger.info("✅ Таблица обновлена")
-                    return
+            if hasattr(loaded_documents, 'table'):
+                loaded_documents.table.setRowCount(0)
+                self.all_data = self.db.get_innovation_proposal_info()
+                if self.all_data:
+                    loaded_documents.add_data(self.all_data)
+                logger.info("✅ Таблица обновлена")
+                return
+    
+    # ============ УПРОЩЕННЫЙ ПОИСК ============
+    def search_record(self):
+        text_to_search = self.parent.gui.lineEdit.text().strip()
+        
+        if not text_to_search:
+            print("Введите текст для поиска")
+            self.show_all_data()
+            return
+        
+
+        found_data = []
+        for record in self.all_data:
+            if any(text_to_search.lower() in str(field).lower() for field in record):
+                found_data.append(record)
+        
+        self.table.setRowCount(0)
+        
+        if found_data:
+            self.add_data(found_data)
+            print(f"Найдено строк: {len(found_data)}")
+        else:
+            critical_message(self.parent, f"По запросу '{text_to_search}' ничего не найдено")
+            self.show_all_data()
+    
+    def show_all_data(self):
+        """Показать все данные (сброс поиска)"""
+        self.table.setRowCount(0)
+        if self.all_data:
+            self.add_data(self.all_data)
+        print("Показаны все записи")
+    
+    def reset_search(self):
+        """Сброс поиска"""
+        self.parent.gui.lineEdit.clear()
+        self.show_all_data()
     
     def vector_update(self, filename, name):
         self.thread = Vectorization_Thread(self.parent, name)
         self.thread.vectorization_finished.connect(
-        lambda new_embedding: self.vectorization_finished(new_embedding, filename)
+            lambda new_embedding: self.vectorization_finished(new_embedding, filename)
         )
         self.thread.vectorization_error.connect(self.vectorization_error)
         self.thread.start()
@@ -129,20 +167,13 @@ class Journal_logic:
     def vectorization_finished(self, new_embedding, filename):
         self.db.update_innovation_proposal_embeddings(filename, new_embedding)
         logger.info(f"Эмбеддинг файла {filename} обновился в связи с изменениями в журнале")
-            
+        self.thread = None
+
     def vectorization_error(self, error):
         logger.error(f"ОШИБКА - Эмбеддинг файла не обновился. {error}")
         self.thread.deleteLater()
-        
+        self.thread = None
+
     def update_row_numbers(self):
         for row in range(self.table.rowCount()):
             self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))
-    
-    
-        
-        
-        
-
-
-        
-        

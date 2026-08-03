@@ -1,4 +1,4 @@
-from handlers.download.download_logic import Download_logic
+from handlers.base.download.download_logic import Download_logic
 
 class Download:
     def __init__(self, db, parent):

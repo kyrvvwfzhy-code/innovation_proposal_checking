@@ -95,7 +95,7 @@ QPushButton:!checked {
     </rect>
    </property>
    <property name="text">
-    <string>ЗАГРУЗИТЬ</string>
+    <string>ЗАГРУЗКА</string>
    </property>
    <property name="checkable">
     <bool>true</bool>

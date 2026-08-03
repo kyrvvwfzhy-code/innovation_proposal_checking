@@ -11,7 +11,7 @@ class Vectorization_Thread(QThread):
         self.parent = parent
         self.name = name
         self.description = description
-        self.model_name = "qwen-embed"  
+        self.model_name = "qwen3-embed"  
 
     def run(self):
         logger.info(f"Использую модель эмбеддингов: {self.model_name}")

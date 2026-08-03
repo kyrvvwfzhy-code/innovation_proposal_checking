@@ -1,4 +1,4 @@
-from handlers.settings.settings_logic import Settings_logic
+from handlers.base.settings.settings_logic import Settings_logic
 
 class Settings:
     def __init__(self, parent, db):

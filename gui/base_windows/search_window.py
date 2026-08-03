@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget
 
 from gui.ui.search import Ui_Form
 
-from handlers.search.search_main import Search
+from handlers.base.search.search_main import Search
 
 class Search_window(QWidget):
     def __init__(self, db):
@@ -17,6 +17,6 @@ class Search_window(QWidget):
 
     def signals(self):
         self.handler = Search(self, self.db)
-        self.gui.pushButton_2.clicked.connect(self.handler.search_by_text)
-        self.gui.pushButton.clicked.connect(self.handler.search_by_image)
+        self.gui.pushButton.clicked.connect(self.handler.search_by_text)
+        self.gui.pushButton_2.clicked.connect(self.handler.search_by_image)
 

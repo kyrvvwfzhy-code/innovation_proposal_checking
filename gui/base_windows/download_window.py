@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget
 from gui.ui.download import Ui_Form
 from gui.option_windows.edit_window import Edit_window
 
-from handlers.download.download_main import Download
+from handlers.base.download.download_main import Download
 
 class Download_window(QWidget):
     def __init__(self, db):

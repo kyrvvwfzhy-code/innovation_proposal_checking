@@ -1,5 +1,5 @@
-from handlers.engine.hand_searching.hand_searching_main import Hand_searching_main
-from handlers.engine.image_searching.image_searching_main import Image_serching_main
+from handlers.auxiliary.hand_searching.hand_searching_main import Hand_searching_main
+from handlers.auxiliary.image_searching.image_searching_main import Image_serching_main
 class Search_logic:
     def __init__(self, parent, db):
         self.parent = parent

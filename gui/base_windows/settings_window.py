@@ -5,7 +5,7 @@ from gui.ui.settings import Ui_Form
 from gui.option_windows.prompt_window import Prompt_window
 from gui.option_windows.progressbar_window import Progressbar_window
 
-from handlers.settings.settings_main import Settings
+from handlers.base.settings.settings_main import Settings
 
 class Settings_window(QWidget):
     def __init__(self, db):

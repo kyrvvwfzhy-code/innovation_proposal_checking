@@ -1,4 +1,4 @@
-from handlers.journal.journal_logic import Journal_logic
+from handlers.base.journal.journal_logic import Journal_logic
 
 class Journal:
     def __init__(self, parent, db):
@@ -14,5 +14,8 @@ class Journal:
     
     def update(self):
         self.logic.update_table(self.logic)
+
+    def search(self):
+        self.logic.search_record()
      
 

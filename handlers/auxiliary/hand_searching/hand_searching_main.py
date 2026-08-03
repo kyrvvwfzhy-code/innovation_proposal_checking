@@ -1,4 +1,4 @@
-from handlers.engine.hand_searching.searching import Searching_Thread
+from handlers.auxiliary.hand_searching.searching import Searching_Thread
 
 from handlers.engine.transformer.LLM import LLM_analys_Thread
 

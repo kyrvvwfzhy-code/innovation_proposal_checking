@@ -13,7 +13,7 @@ class Embedding_data_Thread(QThread):
         self.filename_list = filename_list
         self.names = names
         self.descriptions = descriptions
-        self.model_name = "qwen-embed"
+        self.model_name = "qwen3-embed"
 
     def run(self):
         try:

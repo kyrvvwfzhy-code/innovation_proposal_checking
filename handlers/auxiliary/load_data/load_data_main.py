@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
-from handlers.engine.load_data.load_files import Load_files
-from handlers.engine.load_data.conversion_data import Conversion_data_Thread
-from handlers.engine.load_data.processing_data import Processing_data_Thread
-from handlers.engine.load_data.recognition_data import Recognition_data_Thread
-from handlers.engine.load_data.embedding_data import Embedding_data_Thread
+from handlers.auxiliary.load_data.load_files import Load_files
+from handlers.auxiliary.load_data.conversion_data import Conversion_data_Thread
+from handlers.auxiliary.load_data.processing_data import Processing_data_Thread
+from handlers.auxiliary.load_data.recognition_data import Recognition_data_Thread
+from handlers.auxiliary.load_data.embedding_data import Embedding_data_Thread
 from handlers.options.progressbar.progressbar_thread import Progressbar_Thread
 from data.messagebox import critical_message
 import os

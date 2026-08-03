@@ -14,7 +14,7 @@ class Searching_Thread(QThread):
         self.db_embeddings_name = db_embeddings_name
         self.db_embeddings_description = db_embeddings_description
         self.db_embeddings_general = db_embeddings_general
-        self.model_name = "qwen-embed"
+        self.model_name = "qwen3-embed"
 
     def run(self):
         logger.info(f"Использую модель эмбеддингов: {self.model_name}")

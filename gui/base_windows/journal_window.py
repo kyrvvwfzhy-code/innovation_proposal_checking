@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget
 
 from gui.ui.journal import Ui_Form
 
-from handlers.journal.journal_main import Journal
+from handlers.base.journal.journal_main import Journal
 
 class Journal_window(QWidget):
     def __init__(self, db):
@@ -20,5 +20,6 @@ class Journal_window(QWidget):
         self.gui.pushButton.clicked.connect(self.handler.delete)
         self.gui.pushButton_2.clicked.connect(self.handler.save)
         self.gui.pushButton_3.clicked.connect(self.handler.update)
+        self.gui.lineEdit.returnPressed.connect(self.handler.search)
 
         

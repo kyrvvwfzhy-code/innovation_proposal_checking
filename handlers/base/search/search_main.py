@@ -1,4 +1,4 @@
-from handlers.search.search_logic import Search_logic
+from handlers.base.search.search_logic import Search_logic
 
 class Search:
     def __init__(self, parent, db):
