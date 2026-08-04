@@ -3,7 +3,7 @@ import ollama
 import numpy as np
 from log.logging import logger
 
-class Embedding_data_Thread(QThread):
+class Embedding_Thread(QThread):
     embedding_data_finished = pyqtSignal(str)
     embedding_data_error = pyqtSignal(str)
 

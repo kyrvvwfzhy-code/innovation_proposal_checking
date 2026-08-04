@@ -21,6 +21,7 @@ class Edit_logic:
         return edit_registered, edit_name
 
     def open_window(self):
+        self.parent.gui.pushButton_4.setEnabled(False)
         found_record = self.check_ki()
         if found_record:
             logger.debug(f"Нашлась существующая запись {found_record}")
@@ -32,6 +33,7 @@ class Edit_logic:
         self.parent.gui.pushButton_4.clicked.connect(self.save_db)
 
     def save_record(self):
+        self.parent.gui.pushButton_4.setEnabled(True)
         self.edit_registered, self.edit_name = self.save_data()
         logger.debug(f"Сохарнились измененные данные {self.edit_registered, self.edit_name}")
         text = ocr_result(self.edit_registered, self.edit_name, self.description)
@@ -40,6 +42,7 @@ class Edit_logic:
 
     def save_db(self):
         found_record = self.check_ki()
+        print(found_record)
         if found_record:
             self.db.update_innovation_proposal_info(self.filename[:-4], self.edit_registered, self.edit_name)
             logger.debug(f"В БД изменилась запись {found_record} на {self.edit_registered, self.edit_name}")

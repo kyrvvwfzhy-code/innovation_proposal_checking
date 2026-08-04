@@ -3,25 +3,50 @@ import os
 from data.messagebox import critical_message
 
 class Load_file:
-    def __init__(self, parent, db):
+    def __init__(self, db, level, parent = None):
         self.parent = parent
         self.db = db
+        self.level = level
     
     def start(self):
-        file_path, _ = QFileDialog.getOpenFileName(self.parent,
-                                                   "Выберите файл",
-                                                   "",
-                                                   "(*.pdf)"
-                                                   )
+        if self.level == "download":
 
-        if file_path:
-            filename = os.path.basename(file_path)
-            result = self.create_filename_label(filename, file_path)
-        else:
-            result = None
+            file_path, _ = QFileDialog.getOpenFileName(self.parent,
+                                                    "Выберите файл",
+                                                    "",
+                                                    "(*.pdf)"
+                                                    )
+
+            if file_path:
+                filename = os.path.basename(file_path)
+                result = self.create_filename_label(filename, file_path)
+            else:
+                result = None
+                return result
+                
             return result
-            
-        return result
+        
+        elif self.level == "settings":
+            try:
+                folder_path = QFileDialog.getExistingDirectory(
+                    None, 
+                    "Выберите папку",
+                    "",
+                    QFileDialog.ShowDirsOnly
+                )
+
+                if folder_path:
+                    filename_list = sorted(os.listdir(folder_path))
+                    for filenames in filename_list:
+                        file_paths = os.path.join(folder_path, filenames)
+                        self.db.add_innovation_proposal(filenames[:-4], file_paths)
+
+                    return filename_list
+                else:
+                    return None
+                
+            except Exception as e:
+                return f"Error - {e}"
     
     def create_filename_label(self, filename, file_path):
         if hasattr(self, 'parent') and hasattr(self.parent, 'gui') and hasattr(self.parent.gui, 'label_4') and self.parent.gui.label_4 is not None:

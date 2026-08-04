@@ -9,7 +9,7 @@ class Download_logic:
         self.parent = parent
         
     def ocr(self):
-        self.ocr_process = OCR_main(self.db, parent = self.parent, callback = self.on_ocr_finished)
+        self.ocr_process = OCR_main(db = self.db, parent = self.parent, level = "download", callback = self.on_ocr_finished)
         self.ocr_process.start()
         return 
 
@@ -20,7 +20,6 @@ class Download_logic:
 
     def on_ocr_finished(self, filename, registered, name, description):
         self.parent.gui.pushButton_3.setEnabled(True)
-        self.parent.gui.pushButton_4.setEnabled(True)
         self.filename = filename
         self.registered = registered
         self.name = name

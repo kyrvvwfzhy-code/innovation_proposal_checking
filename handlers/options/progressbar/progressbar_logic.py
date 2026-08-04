@@ -1,4 +1,4 @@
-from handlers.auxiliary.load_data.load_data_main import Load_data_main
+from handlers.engine.ocr.ocr_main import OCR_main
 
 class Progressbar_logic:
     def __init__(self, parent, db):
@@ -6,5 +6,5 @@ class Progressbar_logic:
         self.db = db
         
     def start_load(self):
-        self.load = Load_data_main(self.parent, self.db)
+        self.load = OCR_main(db = self.db, parent = self.parent, level = "settings")
         self.load.start()
