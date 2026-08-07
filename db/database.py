@@ -65,8 +65,9 @@ class DataBase:
             cursor.execute("INSERT INTO innovation_proposal (filename, filepath) VALUES (?, ?)",
                         (filename, filepath))
             conn.commit()
+            return True
         except sqlite3.IntegrityError as IntegrityError:
-            return f"DATABASE ERROR - {IntegrityError}"
+            return None
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     
@@ -208,6 +209,15 @@ class DataBase:
 
         except Exception as e:
             return f"DATABASE ERROR - {e}" 
+
+    def get_ready_innovation_proposal_embeddings(self):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("SELECT COUNT FROM innovation_proposal_embeddings")
+            result = cursor.fetchone()
+            return result
+        except Exception as e:
+            return f"DATABASE ERROR - {e}" 
     
     def update_innovation_proposal_embeddings(self, filename, embedding):
         conn, cursor = self._get_connection()
@@ -219,7 +229,6 @@ class DataBase:
                                     WHERE innovation_proposal.filename = ?""",
                                     (filename,))
             result = cursor.fetchone()
-            print(result)
     
             embedding_bytes = np.array(embedding, dtype=np.float32).tobytes()
             cursor.execute("""UPDATE innovation_proposal_embeddings 

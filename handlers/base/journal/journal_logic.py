@@ -85,7 +85,8 @@ class Journal_logic:
         try:
             saved_rows = 0
             unchanged_rows = 0
-            
+            edit_data = []
+
             for row in range(self.table.rowCount()):
                 filename = self.table.item(row, 1).text()
                 registration_date = self.table.item(row, 2).text()  
@@ -95,17 +96,19 @@ class Journal_logic:
                 
                 if result > 0:
                     saved_rows += 1
-                    self.vector_update(filename, name)
+                    general_edit = filename, name
+                    edit_data.append(general_edit)
                     logger.info(f"Строка {row} обновлена: {filename}")
                 else:
                     unchanged_rows += 1
 
-            if saved_rows > 0:
+            if edit_data and saved_rows > 0:
+                self.vector_update(edit_data)
                 info_message(self.parent, f"Данные успешно сохранены! Обновлено {saved_rows} записей.")
                 self.all_data = self.db.get_innovation_proposal_info()
             else:
                 critical_message(self.parent, "Изменений не обнаружено.")
-                
+
         except Exception as e:
             logger.error(f"Ошибка при сохранении: {e}")
             critical_message(self.parent, f"Ошибка при сохранении: {e}")
@@ -120,7 +123,6 @@ class Journal_logic:
                 logger.info("✅ Таблица обновлена")
                 return
     
-    # ============ УПРОЩЕННЫЙ ПОИСК ============
     def search_record(self):
         text_to_search = self.parent.gui.lineEdit.text().strip()
         
@@ -145,35 +147,38 @@ class Journal_logic:
             self.show_all_data()
     
     def show_all_data(self):
-        """Показать все данные (сброс поиска)"""
         self.table.setRowCount(0)
         if self.all_data:
             self.add_data(self.all_data)
-        print("Показаны все записи")
     
     def reset_search(self):
-        """Сброс поиска"""
         self.parent.gui.lineEdit.clear()
         self.show_all_data()
     
-    def vector_update(self, filename, name):
-        self.thread = Vectorization_Thread(self.parent, name)
-        self.thread.vectorization_finished.connect(
-            lambda new_embedding: self.vectorization_finished(new_embedding, filename)
-        )
+    def vector_update(self, new_data):
+        self.filenames = []
+        names = []
+        for i in new_data:
+            self.filenames.append(i[0])
+            names.append(i[1])
+        self.thread = Vectorization_Thread(self.parent, names, level = "vector_update")
+        self.thread.vectorization_finished.connect(self.vectorization_finished)
         self.thread.vectorization_error.connect(self.vectorization_error)
         self.thread.start()
     
-    def vectorization_finished(self, new_embedding, filename):
-        self.db.update_innovation_proposal_embeddings(filename, new_embedding)
-        logger.info(f"Эмбеддинг файла {filename} обновился в связи с изменениями в журнале")
-        self.thread = None
+    def vectorization_finished(self, new_embeddings):
+        try:
+            for filename, embedding in zip(self.filenames, new_embeddings):
+                self.db.update_innovation_proposal_embeddings(filename, embedding)
+                logger.info(f"Эмбеддинг файла {filename} обновился в связи с изменениями в журнале")
+        finally:
+            if self.thread:
+                self.thread.deleteLater()
+                self.thread = None
 
     def vectorization_error(self, error):
         logger.error(f"ОШИБКА - Эмбеддинг файла не обновился. {error}")
         self.thread.deleteLater()
-        self.thread = None
-
     def update_row_numbers(self):
         for row in range(self.table.rowCount()):
             self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))

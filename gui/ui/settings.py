@@ -62,10 +62,6 @@ class Ui_Form(object):
         self.label_6.setGeometry(QtCore.QRect(300, 300, 371, 51))
         self.label_6.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label_6.setObjectName("label_6")
-        self.label_7 = QtWidgets.QLabel(Form)
-        self.label_7.setGeometry(QtCore.QRect(330, 130, 291, 51))
-        self.label_7.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
-        self.label_7.setObjectName("label_7")
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(380, 190, 160, 51))
         self.pushButton.setObjectName("pushButton")
@@ -88,14 +84,18 @@ class Ui_Form(object):
         self.label_5.setGeometry(QtCore.QRect(430, 0, 141, 51))
         self.label_5.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
         self.label_5.setObjectName("label_5")
+        self.label_7 = QtWidgets.QLabel(Form)
+        self.label_7.setGeometry(QtCore.QRect(340, 130, 241, 51))
+        self.label_7.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
+        self.label_7.setObjectName("label_7")
         self.frame_3.raise_()
         self.frame_2.raise_()
         self.frame.raise_()
         self.label_6.raise_()
-        self.label_7.raise_()
         self.pushButton.raise_()
         self.pushButton_2.raise_()
         self.label_5.raise_()
+        self.label_7.raise_()
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -104,10 +104,10 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.label_6.setText(_translate("Form", "НАСТРОЙКИ ЯЗЫКОВОЙ МОДЕЛИ:"))
-        self.label_7.setText(_translate("Form", "НАСТРОЙКИ БАЗЫ ДАННЫХ:"))
         self.pushButton.setText(_translate("Form", "Загрузить базу"))
         self.pushButton_2.setText(_translate("Form", "Изменить промпт"))
         self.label_5.setText(_translate("Form", "НАСТРОЙКИ"))
+        self.label_7.setText(_translate("Form", "НАСТРОЙКИ ЖУРНАЛА:"))
 
 
 if __name__ == "__main__":

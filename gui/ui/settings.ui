@@ -88,22 +88,6 @@ QPushButton:!checked {
     <string>НАСТРОЙКИ ЯЗЫКОВОЙ МОДЕЛИ:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_7">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
-     <y>130</y>
-     <width>291</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
-   </property>
-   <property name="text">
-    <string>НАСТРОЙКИ БАЗЫ ДАННЫХ:</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
@@ -184,14 +168,30 @@ QPushButton:!checked {
     <string>НАСТРОЙКИ</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>130</y>
+     <width>241</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>НАСТРОЙКИ ЖУРНАЛА:</string>
+   </property>
+  </widget>
   <zorder>frame_3</zorder>
   <zorder>frame_2</zorder>
   <zorder>frame</zorder>
   <zorder>label_6</zorder>
-  <zorder>label_7</zorder>
   <zorder>pushButton</zorder>
   <zorder>pushButton_2</zorder>
   <zorder>label_5</zorder>
+  <zorder>label_7</zorder>
  </widget>
  <resources/>
  <connections/>
