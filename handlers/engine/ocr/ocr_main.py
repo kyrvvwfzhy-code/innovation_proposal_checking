@@ -11,7 +11,7 @@ from handlers.engine.ocr.embedding import Embedding_Thread
 from data.data import ocr_result
 from log.logging import logger
 
-class OCR_main:
+class OCR:
     def __init__(self, db, level, parent = None, callback = None):
         self.parent = parent
         self.db = db
@@ -32,17 +32,22 @@ class OCR_main:
         elif self.level == "settings":
             self.load_files = Load_file(db = self.db, level = self.level)
             self.filename_list = self.load_files.start()
-            if self.filename_list != None:
-                self.target = (len(self.filename_list) * 3)
-                self.start_progressbar()
-                self.conversion_thread(filename_list = self.filename_list)
-            else:
+            if self.filename_list == None:
                 critical_message(self.parent, "Выберите папку с файлами")
                 pass
+            elif len(self.filename_list) == 0:
+                critical_message(self.parent, "Выбранные документы уже выгружены")
+                pass
+
+            elif self.filename_list != None:
+                # self.target = (len(self.filename_list) * 3)
+                self.target = (len(self.filename_list))
+                self.start_progressbar()
+                self.conversion_thread(filename_list = self.filename_list)
 
     def start_progressbar(self):
         self.parent.show()
-        self.progressbar = Progressbar_Thread(self.parent, self.target)
+        self.progressbar = Progressbar_Thread(self.parent, self.db, self.target)
         self.progressbar.progress_update.connect(lambda : self.progressbar.deleteLater)
         self.progressbar.start()
     
@@ -188,6 +193,3 @@ class OCR_main:
                     paths.append(full_path)
                     os.remove(full_path)
         logger.info(f"'OCR_TMP' folder is clear")
-
-if __name__ == "__main__":
-    OCR_main()

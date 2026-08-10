@@ -1,4 +1,4 @@
-from handlers.engine.ocr.ocr_main import OCR_main
+from handlers.engine.ocr.ocr_main import OCR
 from handlers.engine.transformer.transformer_main import Transformer
 
 from log.logging import logger
@@ -9,13 +9,13 @@ class Download_logic:
         self.parent = parent
         
     def ocr(self):
-        self.ocr_process = OCR_main(db = self.db, parent = self.parent, level = "download", callback = self.on_ocr_finished)
+        self.ocr_process = OCR(db = self.db, parent = self.parent, level = "download", callback = self.on_ocr_finished)
         self.ocr_process.start()
         return 
 
     def transformer(self):
         self.parent.gui.plainTextEdit_2.clear()
-        self.check = Transformer(self.parent, self.db)
+        self.check = Transformer(parent = self.parent, db = self.db, level = "download")
         self.check.start()
 
     def on_ocr_finished(self, filename, registered, name, description):

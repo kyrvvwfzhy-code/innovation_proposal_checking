@@ -28,7 +28,6 @@ class Load_file:
         
         elif self.level == "settings":
             try:
-                uploaded_files = []
                 folder_path = QFileDialog.getExistingDirectory(
                     None, 
                     "Выберите папку",
@@ -37,15 +36,16 @@ class Load_file:
                 )
 
                 if folder_path:
+                    exist_files = []
                     filename_list = sorted(os.listdir(folder_path))
                     for filenames in filename_list:
                         file_paths = os.path.join(folder_path, filenames)
                         exist = self.db.add_innovation_proposal(filenames[:-4], file_paths)
-                        if exist != None:
-                            pass
-                        else:
-                            continue
-
+                        if exist == None:
+                            exist_files.append(filenames)
+                    for files in exist_files:
+                        critical_message(self.parent, f"Документ {files} уже выгружен")
+                        filename_list.remove(files)
                     return filename_list
                 else:
                     return None
@@ -67,7 +67,7 @@ class Load_file:
         exist = self.db.add_innovation_proposal(filename[:-4], file_path)
 
         if exist == None:
-            critical_message(self.parent, "Документ уже выгружен")
+            critical_message(self.parent, f"Документ {filename} уже выгружен")
             return False
         else:
             return True

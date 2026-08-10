@@ -213,9 +213,9 @@ class DataBase:
     def get_ready_innovation_proposal_embeddings(self):
         conn, cursor = self._get_connection()
         try:
-            cursor.execute("SELECT COUNT FROM innovation_proposal_embeddings")
+            cursor.execute("SELECT COUNT(name) FROM innovation_proposal_embeddings")
             result = cursor.fetchone()
-            return result
+            return result[0]
         except Exception as e:
             return f"DATABASE ERROR - {e}" 
     
