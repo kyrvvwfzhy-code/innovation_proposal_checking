@@ -1,7 +1,8 @@
 from PyQt5.QtCore import QThread, pyqtSignal
+
 from sklearn.metrics.pairwise import cosine_similarity
+
 import numpy as np
-from log.logging import logger
 
 class Semantic_deduplication_Thread(QThread):
     semantic_deduplication_finished = pyqtSignal(list)
@@ -27,11 +28,7 @@ class Semantic_deduplication_Thread(QThread):
                     'name': names[idx],
                     'similarity': float(similarities_general[idx])
                 })
-            
-            logger.info(f"Найдено {len(result)} похожих документов:")
-            for i, item in enumerate(result, 1):
-                logger.info(f"  {i}. {item['name']} - {item['similarity']:.4f} ({item['similarity']*100:.2f}%)")
-
+                
             self.semantic_deduplication_finished.emit(result)
         except Exception as e:
             self.semantic_deduplication_error.emit(f"Error - {e}")

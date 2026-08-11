@@ -1,8 +1,6 @@
 from handlers.engine.ocr.ocr_main import OCR
 from handlers.engine.transformer.transformer_main import Transformer
 
-from log.logging import logger
-
 class Download_logic:
     def __init__(self, db, parent):
         self.db = db
@@ -25,8 +23,6 @@ class Download_logic:
         self.name = name
         self.description = description
         self.change_data()
-        
-        logger.info(f"OCR FINISHED: {filename}, {registered}, {name}")
 
         return self.filename, self.registered, self.name, self.description
 

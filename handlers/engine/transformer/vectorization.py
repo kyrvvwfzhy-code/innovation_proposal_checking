@@ -1,6 +1,6 @@
-import ollama
 from PyQt5.QtCore import QThread, pyqtSignal
-from log.logging import logger
+
+import ollama
 
 class Vectorization_Thread(QThread):
     vectorization_finished = pyqtSignal(object)
@@ -14,9 +14,7 @@ class Vectorization_Thread(QThread):
         self.description = description
         self.model_name = "qwen3-embed"  
 
-    def run(self):
-        logger.info(f"Использую модель эмбеддингов: {self.model_name}")
-        
+    def run(self):   
         sentences_name = self.name
         sentences_description = self.description
 
@@ -39,7 +37,6 @@ class Vectorization_Thread(QThread):
                     self.vectorization_finished.emit(new_embeddings)
                 
             except Exception as e:
-                logger.error(f"Ошибка векторизации: {e}")
                 self.vectorization_error.emit(f"Error - {e}")      
         else:
             try:
@@ -69,5 +66,4 @@ class Vectorization_Thread(QThread):
                         self.vectorization_finished.emit(embeddings_result)
                         
             except Exception as e:
-                logger.error(f"Ошибка векторизации: {e}")
                 self.vectorization_error.emit(f"Error - {e}")

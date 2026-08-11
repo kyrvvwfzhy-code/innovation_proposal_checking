@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QThread, pyqtSignal
+
 import ollama
 
 from data.data import base_prompt_text

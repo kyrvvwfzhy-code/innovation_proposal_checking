@@ -16,7 +16,7 @@ class GUI_main(QWidget):
         self.init()
     
     def init(self):
-        self.top_window = Top_window(self.parent)
+        self.top_window = Top_window(self.parent, self.db)
         self.download_window = Download_window(self.db)
         self.journal_window = Journal_window(self.db)
         self.search_window = Search_window(self.db)

@@ -1,5 +1,7 @@
 from PyQt5.QtCore import QThread, pyqtSignal
+
 import cv2
+
 import os
 
 class Processing_Thread(QThread):

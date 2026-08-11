@@ -1,12 +1,15 @@
 from PyQt5.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QMessageBox
 from PyQt5 import QtCore
+
+from handlers.engine.transformer.vectorization import Vectorization_Thread
+
+from data.messagebox import delete_question_message
+from data.messagebox import info_message, critical_message
+
+from log.logging import logger
 import sys
 import os
 import subprocess
-from data.messagebox import delete_question_message
-from data.messagebox import info_message, critical_message
-from log.logging import logger
-from handlers.engine.transformer.vectorization import Vectorization_Thread
 
 class Journal_logic:
     def __init__(self, parent, db):
@@ -65,11 +68,15 @@ class Journal_logic:
             os.startfile(file_path[0])
         else:
             subprocess.call(['xdg-open', file_path[0]])
+
+        logger.info(f"JOURNAL | OPEN - {filename}")
+
     
     def delete_selected(self):
         row = self.table.currentRow()
         
         if row < 0:
+            logger.error(f"JOURNAL | DELETE - nothing selected")
             QMessageBox.warning(self.parent, "Ошибка", "Выберите запись для удаления.", QMessageBox.Ok)
             return
         
@@ -80,6 +87,7 @@ class Journal_logic:
             self.table.removeRow(row)
             self.update_row_numbers()
             self.all_data = self.db.get_innovation_proposal_info()
+            logger.info(f"JOURNAL | DELETE - {filename}")
     
     def save_changes(self):
         try:
@@ -98,19 +106,21 @@ class Journal_logic:
                     saved_rows += 1
                     general_edit = filename, name
                     edit_data.append(general_edit)
-                    logger.info(f"Строка {row} обновлена: {filename}")
+                    logger.info(f"JOURNAL | UPDATE - {row} : {filename}")
                 else:
                     unchanged_rows += 1
 
             if edit_data and saved_rows > 0:
                 self.vector_update(edit_data)
+                logger.info(f"JOURNAL | UPDATE - {saved_rows} rows")
                 info_message(self.parent, f"Данные успешно сохранены! Обновлено {saved_rows} записей.")
                 self.all_data = self.db.get_innovation_proposal_info()
             else:
+                logger.error(f"JOURNAL | NOT UPDATE raws")
                 critical_message(self.parent, "Изменений не обнаружено.")
 
         except Exception as e:
-            logger.error(f"Ошибка при сохранении: {e}")
+            logger.info(f"JOURNAL | NOT SAVE - {e}")
             critical_message(self.parent, f"Ошибка при сохранении: {e}")
     
     def update_table(self, loaded_documents):
@@ -120,15 +130,15 @@ class Journal_logic:
                 self.all_data = self.db.get_innovation_proposal_info()
                 if self.all_data:
                     loaded_documents.add_data(self.all_data)
-                logger.info("✅ Таблица обновлена")
+                    logger.info(f"JOURNAL | UPDATE - table")
                 return
     
     def search_record(self):
         text_to_search = self.parent.gui.lineEdit.text().strip()
         
         if not text_to_search:
-            print("Введите текст для поиска")
             self.show_all_data()
+            logger.info("JOURNAL | empty value")
             return
         
 
@@ -141,8 +151,8 @@ class Journal_logic:
         
         if found_data:
             self.add_data(found_data)
-            print(f"Найдено строк: {len(found_data)}")
         else:
+            logger.info(f"JOURNAL | NOT FOUND - {text_to_search}")
             critical_message(self.parent, f"По запросу '{text_to_search}' ничего не найдено")
             self.show_all_data()
     
@@ -170,13 +180,14 @@ class Journal_logic:
         try:
             for filename, embedding in zip(self.filenames, new_embeddings):
                 self.db.update_innovation_proposal_embeddings(filename, embedding)
-                logger.info(f"Эмбеддинг файла {filename} обновился в связи с изменениями в журнале")
+                logger.info(f"JOURNAL | UPDATE - {filename} embedding by journal edit")
         finally:
             if self.thread:
                 self.thread.deleteLater()
                 self.thread = None
 
     def vectorization_error(self, error):
+        logger.error(f"JOURNAL | NOT UPDATE - embedding : {error}")
         logger.error(f"ОШИБКА - Эмбеддинг файла не обновился. {error}")
         self.thread.deleteLater()
     def update_row_numbers(self):

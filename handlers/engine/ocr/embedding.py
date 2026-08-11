@@ -1,7 +1,8 @@
 from PyQt5.QtCore import QThread, pyqtSignal
+
 import ollama
+
 import numpy as np
-from log.logging import logger
 
 class Embedding_Thread(QThread):
     embedding_data_finished = pyqtSignal(str)
@@ -16,9 +17,7 @@ class Embedding_Thread(QThread):
         self.model_name = "qwen3-embed"
 
     def run(self):
-        try:
-            logger.info(f"Использую модель эмбеддингов: {self.model_name}")
-            
+        try: 
             def get_embedding(text):
                 if not text:
                     return None
@@ -49,7 +48,6 @@ class Embedding_Thread(QThread):
             self.embedding_data_finished.emit("Эмбеддинги созданы")
             
         except Exception as e:
-            logger.error(f"Ошибка создания эмбеддингов: {e}")
             self.embedding_data_error.emit(f"Error - {e}")
 
     def calculating_general(self, name, description):

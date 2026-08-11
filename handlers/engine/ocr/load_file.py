@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QFileDialog
-import os
+
 from data.messagebox import critical_message
+
+import os
 
 class Load_file:
     def __init__(self, db, level, parent = None):
@@ -70,6 +72,6 @@ class Load_file:
             critical_message(self.parent, f"Документ {filename} уже выгружен")
             return False
         else:
-            return True
+            return filename
 
     

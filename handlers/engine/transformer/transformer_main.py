@@ -2,12 +2,12 @@ from handlers.engine.transformer.vectorization import Vectorization_Thread
 from handlers.engine.transformer.semantic_deduplication import Semantic_deduplication_Thread
 from handlers.engine.transformer.searching import Searching_Thread
 from handlers.engine.transformer.LLM import LLM_analys_Thread
-from data.messagebox import critical_message, question_message
-import numpy as np
 
+from data.messagebox import critical_message, question_message
 from data.data import make_response_text, general_text
 
 from log.logging import logger
+import numpy as np
 
 class Transformer:
     def __init__(self, parent, db, level):
@@ -21,6 +21,7 @@ class Transformer:
     
     def vectorization_thread(self):
         if self.level == "download":
+            logger.info(f"TRANSFORMER | STARTING... - {self.level} level")
             filename = self.parent.gui.label_4.text()
             self.data = self.db.get_innovation_proposal_info(filename = filename)
             if self.data != None:
@@ -33,24 +34,27 @@ class Transformer:
             else:
                 pass
         elif self.level == "search":
-            logger.info("START - hand_searching")
-    
+            logger.info(f"TRANSFORMER | STARTING... - {self.level} level")
+
             db_embeddings_name = self.db.get_innovation_proposal_embeddings("name")
             db_embeddings_description = self.db.get_innovation_proposal_embeddings("description")
             db_embeddings_general = self.db.get_innovation_proposal_embeddings("general")
     
     
             if db_embeddings_name != None and db_embeddings_description != None:
+                logger.info("TRANSFORMER | START - Search")
+
                 self.thread = Searching_Thread(self.parent, db_embeddings_name, db_embeddings_description, db_embeddings_general)
                 self.parent.gui.pushButton_2.setEnabled(False)
                 self.thread.searching_finished.connect(self.searching_finished)
                 self.thread.searching_error.connect(self.searching_error)
                 self.thread.start()
             else:
-                logger.debug(f"EMBEDDINGS TABLE - {len(db_embeddings_name)} records")
+                pass
         
     def vectorization_finished(self, new_embedding):
         self.thread.deleteLater()
+        logger.info("TRANSFORMER | FINISHED - Vectorization")
         name = new_embedding[0]
         description = new_embedding[1]
         general = self.calculating_general(name, description)
@@ -78,10 +82,12 @@ class Transformer:
         return general_emb
 
     def vectorization_error(self, error):
-        print(f"erroremb - {error}")
+        logger.error(f"TRANSFORMER | FINISHED - Vectorization : {error}")
         self.thread.deleteLater()
 
     def semantic_deduplication_thread(self, general, db_embeddings):
+        logger.info("TRANSFORMER | START - Semantic deduplication")
+
         self.parent.gui.pushButton_2.setText("СЕМАНТИЧЕСКИЙ ПОИСК...")
         self.thread = Semantic_deduplication_Thread(general, db_embeddings)
         self.thread.semantic_deduplication_finished.connect(self.semantic_deduplication_finished)
@@ -89,6 +95,10 @@ class Transformer:
         self.thread.start()
     
     def semantic_deduplication_finished(self, result):
+        logger.error(f"TRANSFORMER | FINISHED - Semantic deduplication\n\nНайдено {len(result)} похожих документов:")
+        for i, item in enumerate(result, 1):
+            logger.info(f"  {i}. {item['name']} - {item['similarity']:.4f} ({item['similarity']*100:.2f}%)")
+            
         self.thread.deleteLater()
         response_text = make_response_text(result, self.data[0])
         general = general_text(response_text, "Формируется...")
@@ -96,11 +106,14 @@ class Transformer:
         self.LLM_analys(result)
 
     def semantic_deduplication_error(self, error):
-        print(f"errorsem - {error}")
+        logger.error(f"TRANSFORMER | FINISHED - Semantic deduplication : {error}")
         self.thread.deleteLater()
 
     def searching_finished(self, result):
             self.thread.deleteLater()
+            logger.info(f"Найдено {len(result[0])} похожих документов:")
+            for i, item in enumerate(result[0], 1):
+                logger.info(f"  {i}. {item['name']} - {item['similarity']:.4f} ({item['similarity']*100:.2f}%)")
             logger.info("SEARECHING is Ready")
             response_text = make_response_text(result[0], result[1])
             general = general_text(response_text, "Формируется...")
@@ -128,7 +141,7 @@ class Transformer:
         if self.level == "download":
             general = general_text(result[0], result[1])
             self.parent.gui.plainTextEdit_2.setPlainText(general)
-            reply = question_message(self.parent, "Добавить в базу", result[2])
+            reply = question_message(self.parent, "Добавить в журнал", result[2])
             if reply == False:
                 self.db.delete_innovation_proposal(self.filename[:-4])
             self.parent.gui.pushButton_2.setEnabled(True)
@@ -148,4 +161,3 @@ class Transformer:
         elif self.level == "search":
             logger.error(f"LLM_analys - {error}")
             self.thread.deleteLater()
-

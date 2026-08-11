@@ -1,8 +1,10 @@
 from PyQt5.QtCore import QThread, pyqtSignal
-from sklearn.metrics.pairwise import cosine_similarity
-from log.logging import logger
+
 import ollama
+
 import numpy as np
+
+from sklearn.metrics.pairwise import cosine_similarity
 
 class Searching_Thread(QThread):
     searching_finished = pyqtSignal(list)
@@ -17,31 +19,25 @@ class Searching_Thread(QThread):
         self.model_name = "qwen3-embed"
 
     def run(self):
-        logger.info(f"Использую модель эмбеддингов: {self.model_name}")
-        
         text_name = self.parent.gui.plainTextEdit.toPlainText()
         text_description = self.parent.gui.plainTextEdit_2.toPlainText()
 
         try:
             if len(text_name) == 0 and len(text_description) == 0:
-                logger.info(f"SEARCHING - Поля для поиска ПУСТЫЕ!")
                 pass
 
             elif len(text_name) > 0 and len(text_description) == 0:
-                logger.info(f"SEARCHING - Поиск по НАИМЕНОВАНИЮ!")
                 self.search("name", text_name, self.db_embeddings_name)
 
             elif len(text_description) > 0 and len(text_name) == 0:
-                logger.info(f"SEARCHING - Поиск по ОПИСАНИЮ!")
                 self.search("description", text_description, self.db_embeddings_description)
 
             elif len(text_name) > 0 and len(text_description) > 0:
-                logger.info(f"SEARCHING - Поиск по НАИМЕНОВАНИЮ и ОПИСАНИЮ!")
                 text = [text_name, text_description]
                 self.search("general", text, self.db_embeddings_general)
 
         except Exception as e:
-            self.searching_error.emit(logger.error(f"SEARCHING - {e}"))
+            self.searching_error.emit(f"SEARCHING ERROR - {e}")
 
     def search(self, value, text, db_embedding):
         if value == "name":
@@ -80,12 +76,6 @@ class Searching_Thread(QThread):
                     'name': names[idx],
                     'similarity': float(similarities[idx])
                 })
-                
-            logger.debug(f"LINEEDIT - {len(text)}")
-            logger.info(f"SEARCHING - {top_5}")
-            logger.info(f"Найдено {len(top_5)} похожих документов:")
-            for i, item in enumerate(top_5, 1):
-                logger.info(f"  {i}. {item['name']} - {item['similarity']:.4f} ({item['similarity']*100:.2f}%)")
             
             if value == "name":
                 result = [top_5, text]
@@ -119,10 +109,6 @@ class Searching_Thread(QThread):
                     'name': names[idx],
                     'similarity': float(similarities_general[idx])
                 })
-                        
-            logger.info(f"Найдено {len(top_5)} похожих документов:")
-            for i, item in enumerate(top_5, 1):
-                logger.info(f"  {i}. {item['name']} - {item['similarity']:.4f} ({item['similarity']*100:.2f}%)")
 
             result = [top_5, "ПОИСК ПО НАИМЕНОВАНИЮ И ОПИСАНИЮ"]
             self.searching_finished.emit(result)

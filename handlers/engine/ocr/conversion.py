@@ -1,6 +1,7 @@
-
 from PyQt5.QtCore import QThread, pyqtSignal
+
 from pdf2image import convert_from_path
+
 import os
 
 class Conversion_Thread(QThread):
