@@ -44,6 +44,7 @@ class DataBase:
                        embedding_name BLOB NOT NULL,
                        embedding_description BLOB NOT NULL,
                        embedding_general BLOB NOT NULL,
+                       embedding_image BLOB NOT NULL,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id) ON DELETE CASCADE
                        )""")
@@ -160,7 +161,7 @@ class DataBase:
 
 #--------------------------------------------innovation_proposal_embeddings--------------------------------------------
 
-    def add_innovation_proposal_embeddings(self, filename, embedding_name, embedding_description, embedding_general):
+    def add_innovation_proposal_embeddings(self, filename, embedding_name, embedding_description, embedding_general, embedding_image):
         conn, cursor = self._get_connection()
         try:
             cursor.execute("""SELECT innovation_proposal.id,
@@ -174,9 +175,10 @@ class DataBase:
             embedding_name_bytes = np.array(embedding_name, dtype=np.float32).tobytes()
             embedding_description_bytes = np.array(embedding_description, dtype=np.float32).tobytes()
             embedding_general_bytes = np.array(embedding_general, dtype=np.float32).tobytes()
+            embedding_image_bytes = np.array(embedding_image, dtype=np.float32).tobytes()
 
-            cursor.execute("INSERT OR IGNORE INTO innovation_proposal_embeddings (innovation_proposal_id, name, embedding_name, embedding_description, embedding_general) VALUES (?, ?, ?, ?, ?)",
-                               (result[0], result[1], embedding_name_bytes, embedding_description_bytes, embedding_general_bytes))
+            cursor.execute("INSERT OR IGNORE INTO innovation_proposal_embeddings (innovation_proposal_id, name, embedding_name, embedding_description, embedding_general, embedding_image) VALUES (?, ?, ?, ?, ?, ?)",
+                               (result[0], result[1], embedding_name_bytes, embedding_description_bytes, embedding_general_bytes, embedding_image_bytes))
             conn.commit()
         except Exception as e:
             return f"DATABASE ERROR - {e}"

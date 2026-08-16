@@ -34,6 +34,7 @@ class Conversion_Thread(QThread):
                         # total_images = len(images)
                         # last_page = min(9, total_images)
                         second_page = 2
+                        image_page = 3
 
             
                         for i, image in enumerate(images):
@@ -43,6 +44,9 @@ class Conversion_Thread(QThread):
                                 image.save(output_path, "PNG")
                             if page_number == second_page:
                                 output_path = os.path.join("OCR_TMP", f"2_second_page_{files[:-4]}.png")
+                                image.save(output_path, "PNG")
+                            if page_number == image_page:
+                                output_path = os.path.join("OCR_TMP", f"3_image_page_{files[:-4]}.png")
                                 image.save(output_path, "PNG")
                 self.conversion_finished.emit("Ready")
             except Exception as e:
@@ -56,6 +60,7 @@ class Conversion_Thread(QThread):
         #total_images = len(images)
         # last_page = min(9, total_images)
         second_page = 2
+        image_page = 3
 
         os.makedirs("OCR_TMP", exist_ok = True)
         for i, image in enumerate(images):
@@ -65,6 +70,9 @@ class Conversion_Thread(QThread):
                 image.save(output_path, "PNG")
             if page_number == second_page:
                 output_path = os.path.join("OCR_TMP", f"2_second_page_{self.level_data[:-4]}.png")
+                image.save(output_path, "PNG")
+            if page_number == image_page:
+                output_path = os.path.join("OCR_TMP", f"3_image_page_{self.level_data[:-4]}.png")
                 image.save(output_path, "PNG")
 
 if __name__ == "__main__":

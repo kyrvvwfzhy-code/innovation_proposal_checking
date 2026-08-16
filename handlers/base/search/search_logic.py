@@ -1,5 +1,7 @@
 from handlers.engine.transformer.transformer_main import Transformer
 
+from handlers.engine.image_searching.image_searching_main import Image_searching
+
 class Search_logic:
     def __init__(self, parent, db):
         self.parent = parent
@@ -10,7 +12,6 @@ class Search_logic:
         self.searching.start()
 
     def search_image(self):
-        pass
-        # self.searching = Image_serching_main(self.parent, self.db)
-        # self.searching.start()
+        self.searching = Image_searching(self.parent, self.db)
+        self.searching.start()
     

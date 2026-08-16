@@ -58,6 +58,7 @@ class Transformer:
         name = new_embedding[0]
         description = new_embedding[1]
         general = self.calculating_general(name, description)
+        image = new_embedding[2]
 
         db_embeddings = self.db.get_innovation_proposal_embeddings("general")
         if db_embeddings:
@@ -67,7 +68,7 @@ class Transformer:
             self.parent.gui.pushButton_2.setEnabled(True)
             self.parent.gui.pushButton_2.setText("Начать поиск")
         self.filename = self.parent.gui.label_4.text()
-        self.db.add_innovation_proposal_embeddings(self.filename, name, description, general)
+        self.db.add_innovation_proposal_embeddings(self.filename, name, description, general, image)
 
     def calculating_general(self, name, description):
         name_emb = np.array(name)
