@@ -19,6 +19,7 @@ class Ui_Form(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
+        Form.setFixedSize(393, 164)
         Form.setSizePolicy(sizePolicy)
         Form.setStyleSheet("QFrame {\n"
 "    border-radius: 10px;\n"

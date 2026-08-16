@@ -4,8 +4,6 @@ from handlers.engine.ocr.processing import Processing_Thread
 from handlers.engine.ocr.recognition import Recognition_Thread
 from handlers.engine.ocr.embedding import Embedding_Thread
 
-from handlers.options.progressbar.progressbar_thread import Progressbar_Thread
-
 from data.messagebox import critical_message
 from data.data import ocr_result
 
@@ -46,14 +44,7 @@ class OCR:
 
             elif self.filename_list != None:
                 self.target = (len(self.filename_list))
-                self.start_progressbar()
                 self.conversion_thread(filename_list = self.filename_list)
-
-    def start_progressbar(self):
-        self.parent.show()
-        self.progressbar = Progressbar_Thread(self.parent, self.db, self.target)
-        self.progressbar.progress_update.connect(lambda : self.progressbar.deleteLater)
-        self.progressbar.start()
     
     def conversion_thread(self, filename_list = None):
         logger.info("OCR | START - Conversion")
@@ -67,13 +58,14 @@ class OCR:
             self.thread.conversion_error.connect(self.conversion_error)
             self.thread.start()
         elif self.level == "settings":
+            self.parent.progressbar.open(self.target)
             self.thread = Conversion_Thread(db = self.db, level = self.level, level_data = filename_list)
             self.thread.conversion_finished.connect(self.conversion_finished)
             self.thread.conversion_error.connect(self.conversion_error)
             self.thread.start()
     
     def conversion_finished(self):
-        logger.info("OCR | FINISHED - Convesion")
+        logger.info("OCR | FINISHED - Conversion (SUCCESS)")
 
         if self.level == "download":
             self.parent.gui.pushButton.setText("ОБРАБОТКА...")
@@ -84,7 +76,7 @@ class OCR:
             self.processing_thread()
     
     def conversion_error(self, error):
-        logger.error(f"OCR | FINISHED - Conversion : {error}")
+        logger.error(f"OCR | FINISHED - Conversion (ERROR): {error}")
 
         if self.level == "download":
             self.thread.deleteLater()
@@ -106,7 +98,7 @@ class OCR:
             self.thread.start()
 
     def processing_finished(self):
-        logger.info("OCR | FINISHED - Processing")
+        logger.info("OCR | FINISHED - Processing (SUCCESS)")
 
         if self.level == "download":
             self.parent.gui.pushButton.setText("РАСПОЗНОВАНИЕ...")
@@ -117,7 +109,7 @@ class OCR:
             self.recognition_thread()
 
     def processing_error(self, error):
-        logger.error(f"OCR | FINISHED - Processing : {error}")
+        logger.error(f"OCR | FINISHED - Processing (ERROR): {error}")
         if self.level == "download":
             self.thread.deleteLater()
         elif self.level == "settings":
@@ -138,7 +130,7 @@ class OCR:
             self.thread.start()
     
     def recognition_finished(self, result):
-        logger.info("OCR | FINISHED - Recognition")
+        logger.info("OCR | FINISHED - Recognition (SUCCESS)")
 
         if self.level == "download":
             self.parent.gui.pushButton.setEnabled(True)
@@ -162,7 +154,7 @@ class OCR:
             self.embedding_data_thread(result)
 
     def recognition_error(self, error):
-        logger.error(f"OCR | FINISHED - Recognition : {error}")
+        logger.error(f"OCR | FINISHED - Recognition (ERROR): {error}")
 
         if self.level == "download":
             self.thread.deleteLater()
@@ -178,12 +170,12 @@ class OCR:
             self.thread.start()
 
     def embedding_data_finished(self):
-        logger.info("OCR | FINISHED - Embedding")
+        logger.info("OCR | FINISHED - Embedding (SUCCESS)")
         self.clear_folder()
         self.thread.deleteLater()
 
     def embedding_data_error(self, error):
-        logger.error(f"OCR | FINISHED - Embedding : {error}")
+        logger.error(f"OCR | FINISHED - Embedding (ERROR): {error}")
         self.thread.deleteLater()
 
     def clear_folder(self):

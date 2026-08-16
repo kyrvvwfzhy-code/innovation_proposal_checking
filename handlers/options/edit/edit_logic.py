@@ -24,10 +24,10 @@ class Edit_logic:
         self.parent.gui.pushButton_4.setEnabled(False)
         found_record = self.check_ki()
         if found_record:
-            logger.debug(f"Нашлась существующая запись {found_record}")
+            logger.debug(f"EDIT | Existing record has been found - {found_record}")
             self.filling_data(found_record[1], found_record[2])
         else:
-            logger.debug(f"Нашлась только распознанная запись {self.registered, self.name}")
+            logger.debug(f"EDIT | Recognized entry has been found - {self.registered, self.name}")
             self.filling_data(self.registered, self.name)
         self.parent.edit.gui.pushButton.clicked.connect(self.save_record)
         self.parent.gui.pushButton_4.clicked.connect(self.save_db)
@@ -35,7 +35,7 @@ class Edit_logic:
     def save_record(self):
         self.parent.gui.pushButton_4.setEnabled(True)
         self.edit_registered, self.edit_name = self.save_data()
-        logger.debug(f"Сохарнились измененные данные {self.edit_registered, self.edit_name}")
+        logger.debug(f"EDIT | Modified data has been preserved - {self.edit_registered, self.edit_name}")
         text = ocr_result(self.edit_registered, self.edit_name, self.description)
         self.parent.gui.plainTextEdit.setPlainText(text)
         self.parent.edit.close()
@@ -45,10 +45,10 @@ class Edit_logic:
         print(found_record)
         if found_record:
             self.db.update_innovation_proposal_info(self.filename[:-4], self.edit_registered, self.edit_name)
-            logger.debug(f"В БД изменилась запись {found_record} на {self.edit_registered, self.edit_name}")
+            logger.debug(f"DOWNLOAD | In the DB, entry {found_record} was changed to entry {self.edit_registered, self.edit_name}")
         else:
             self.db.add_innovation_proposal_info(self.filename[:-4], self.edit_registered, self.edit_name, self.description)
-            logger.debug(f"В БД сохранилась новая запись {self.edit_registered, self.edit_name}")
+            logger.debug(f"DOWNLOAD | A new record has been saved in the database - {self.edit_registered, self.edit_name}")
         
         self.parent.gui.pushButton_2.setEnabled(True)
     

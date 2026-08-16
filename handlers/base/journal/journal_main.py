@@ -7,7 +7,7 @@ class Journal:
         self.logic = Journal_logic(self.parent, self.db)
 
     def delete(self):
-        self.logic.delete_selected()
+        self.logic.delete_selected_records()
     
     def save(self):
         self.logic.save_changes()

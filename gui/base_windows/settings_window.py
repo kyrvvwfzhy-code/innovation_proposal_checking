@@ -19,7 +19,7 @@ class Settings_window(QWidget):
         return self
     
     def signals(self):
-        self.progressbar = Progressbar_window(self.db)
+        self.progressbar = Progressbar_window()
         self.prompt = Prompt_window(self.db)
         
         self.handler = Settings(self, self.db)

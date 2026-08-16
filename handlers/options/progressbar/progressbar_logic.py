@@ -1,10 +1,34 @@
-from handlers.engine.ocr.ocr_main import OCR
+from PyQt5.QtCore import QThread, pyqtSignal, QTimer
+import os
 
-class Progressbar_logic:
-    def __init__(self, parent, db):
+class Progressbar_logic(QThread):
+    progress_update = pyqtSignal(str)
+    progress_error = pyqtSignal(str)
+
+    def __init__(self, parent, target):
+        super().__init__()
         self.parent = parent
-        self.db = db
+        self.target = target
+
+    def run(self):
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.check_path)
+        self.timer.start(1000)
+        self.exec_()
+
+    def check_path(self):
+        files = [i for i in os.listdir("OCR_TMP")]
+        current_count = len(files)
+
+        progress = int((current_count * 100) / self.target)
+        if progress > 100:
+            progress = 100
         
-    def start_load(self):
-        self.load = OCR(db = self.db, parent = self.parent, level = "settings")
-        self.load.start()
+        self.parent.gui.progressBar.setValue(progress)
+        self.parent.gui.label.setText(f"{current_count} из {self.target}")
+
+        if current_count >= self.target:
+            self.parent.gui.progressBar.setValue(100)
+            self.parent.gui.label.setText(f"✅ ГОТОВО! {current_count} файлов")
+            self.timer.stop()
+            self.quit()

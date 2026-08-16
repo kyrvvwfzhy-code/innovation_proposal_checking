@@ -11,37 +11,64 @@ def ocr_result(registered, name, description):
     )
     return text
 
-def prompt_text(conclution = None):
-    text = f"""Отвечай на русском языке. Ты ИИ-помощник анализа заключения связаного с проеркой рационализаторских предложений на уникальность.
+def default_prompt(conclusion=None):
+    prompt = f"""
+            Ты — ИИ-ассистент, специализирующийся на анализе заключений по проверке рационализаторских предложений на уникальность.
 
-                    У тебя на входе текст с заключением:
-                    {conclution}
+            На вход подаётся текст заключения:
+            {conclusion}
 
-                    ОТВЕТЬ НЕ ПОВТОРЯЯ ТО ЧТО В ЗАКЛЮЧЕНИИ, с каким больше всего по смыслу похоже новое решение из ТОП ПОХОЖИХ ДКУМЕНТОВ (2-3 предложения)
+            Задача: на основе заключения выдели 2–3 предложения, которые наиболее точно описывают суть нового решения из списка похожих документов.
 
-                    Не повторяй одно и тоже, ничего не выдймай, строго по заключению.
-                    """
+            Требования:
+            - Не копируй и не пересказывай текст заключения дословно.
+            - Не добавляй домыслов и лишней информации.
+            - Опирайся исключительно на факты из заключения.
+            - Избегай повторов и шаблонных формулировок.
+
+            Ответ дай на русском языке.
+            """
+    return prompt
+
+def conclution(new_name, top5, max_sim, name_max_sim, status):
+    text = (f"ПРОВЕРКА УНИКАЛЬНОСТИ РАЦИОНАЛИЗАТОРСКОГО ПРЕДЛОЖЕНИЯ\n"
+            "----------------------------------------------------------\n\n"
+
+            f"{new_name}\n\n"
+
+            "----------------------------------------------------------\n\n"
+
+            f"ТОП ПОХОЖИХ ДОКУМЕНТОВ:\n{top5}\n\n"
+
+            "----------------------------------------------------------\n\n"
+
+            f"Сходство: {max_sim:.2%}{name_max_sim}\n\n"
+            "----------------------------------------------------------\n\n"
+
+            f"Результат: {status}\n\n"
+
+            )
+
     return text
 
-def base_prompt_text(result, new_name):
+def conclusion_with_AI_analys(result, new_name):
     if result is None and new_name is None:
         response_text = "None"
     else:
-        response_text = make_response_text(result, new_name)
+        response_text = conclusion_forming(result, new_name)
 
     template = db.get_innovation_proposal_prompt()
     prompt = template.replace('{conclution}', response_text)
     
     return response_text, prompt
 
-
-def general_text(response_text, base_prompt_text):
-    general = (f"{response_text}"
-               f"АНАЛИЗ НЕЙРОСЕТИ:\n\n{base_prompt_text}")
+def transformer_result(response_text, conclusion_with_AI_analys):
+    text = (f"{response_text}"
+               f"АНАЛИЗ НЕЙРОСЕТИ:\n\n{conclusion_with_AI_analys}")
     
-    return general
+    return text
 
-def make_response_text(result, new_name):
+def conclusion_forming(result, new_name):
     name_max_sim = f' - {result[0]["name"]}'
     max_sim = result[0]["similarity"]
 
@@ -58,30 +85,12 @@ def make_response_text(result, new_name):
         status = "✅ УНИКАЛЬНОЕ РЕШЕНИЕ"
         name_max_sim = ""
 
-    names_text =  names_text_process(result)
+    top5 =  top5_rules_process(result)
 
-    
-    text = (f"ПРОВЕРКА УНИКАЛЬНОСТИ РАЦИОНАЛИЗАТОРСКОГО ПРЕДЛОЖЕНИЯ\n"
-            "----------------------------------------------------------\n\n"
-
-            f"{new_name}\n\n"
-
-            "----------------------------------------------------------\n\n"
-
-            f"ТОП ПОХОЖИХ ДОКУМЕНТОВ:\n{names_text}\n\n"
-
-            "----------------------------------------------------------\n\n"
-
-            f"Сходство: = {max_sim:.2%}{name_max_sim}\n\n"
-            "----------------------------------------------------------\n\n"
-
-            f"Результат: {status}\n\n"
-
-            )
-
+    text = conclution(new_name, top5, max_sim, name_max_sim, status)
     return text
 
-def names_text_process(result):
+def top5_rules_process(result):
     similarity_list = []
     for i, v  in enumerate(result):
         name = v["name"]

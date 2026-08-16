@@ -5,15 +5,14 @@ from gui.ui.progressbar import Ui_Form
 from handlers.options.progressbar.progressbar_main import Progressbar
 
 class Progressbar_window(QWidget):
-    def __init__(self, db):
+    def __init__(self):
         super().__init__()
-        self.db = db
 
-    def open(self):
+    def open(self, target):
         self.gui = Ui_Form()
         self.gui.setupUi(self)
-        self.signals()
+        self.signals(target)
+        self.show()
 
-    def signals(self):
-        self.handler = Progressbar(self, self.db)
-        self.handler.start()
+    def signals(self, target):
+        self.handler = Progressbar(self, target)

@@ -1,10 +1,10 @@
 from handlers.base.download.download_logic import Download_logic
 
 class Download:
-    def __init__(self, db, parent):
-        self.db = db
+    def __init__(self, parent, db):
         self.parent = parent
-        self.logic = Download_logic(self.db, self.parent)
+        self.db = db
+        self.logic = Download_logic(self.parent, self.db)
     
     def download(self):
         self.logic.ocr()
@@ -14,6 +14,3 @@ class Download:
 
     def edit(self):
         self.logic.change_data()
-
-    def save(self):
-        self.logic.save_data()

@@ -22,10 +22,10 @@ class Journal_logic:
     def create_table(self):
         self.table = QTableWidget(self.parent)
         self.table_setup()
+
         self.all_data = self.db.get_innovation_proposal_info()
         if self.all_data:
-            self.add_data(self.all_data)
-        self.table.itemDoubleClicked.connect(self.edit_item)
+            self.add_record(self.all_data)
 
     def table_setup(self):
         self.table.setGeometry(QtCore.QRect(20, 80, 860,520))
@@ -43,6 +43,7 @@ class Journal_logic:
         header = self.table.horizontalHeader()
         for i in range(2, self.table.columnCount()):  
             header.setSectionResizeMode(i, QHeaderView.Stretch)
+        self.table.itemDoubleClicked.connect(self.edit_item)
     
     def edit_item(self, item):
         row = item.row()
@@ -54,7 +55,7 @@ class Journal_logic:
         
         self.table.editItem(item)
 
-    def add_data(self, data):
+    def add_record(self, data):
         self.table.setRowCount(len(data))
         for row, record in enumerate(data):
             self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))
@@ -72,9 +73,13 @@ class Journal_logic:
         logger.info(f"JOURNAL | OPEN - {filename}")
 
     
-    def delete_selected(self):
+    def delete_selected_records(self):
         row = self.table.currentRow()
-        
+        print(row)
+
+        for i in self.table.selectedItems():
+            print(i)
+            
         if row < 0:
             logger.error(f"JOURNAL | DELETE - nothing selected")
             QMessageBox.warning(self.parent, "Ошибка", "Выберите запись для удаления.", QMessageBox.Ok)
@@ -87,7 +92,7 @@ class Journal_logic:
             self.table.removeRow(row)
             self.update_row_numbers()
             self.all_data = self.db.get_innovation_proposal_info()
-            logger.info(f"JOURNAL | DELETE - {filename}")
+            logger.info(f"JOURNAL | DELETE - \"{filename}\"")
     
     def save_changes(self):
         try:
@@ -129,7 +134,7 @@ class Journal_logic:
                 loaded_documents.table.setRowCount(0)
                 self.all_data = self.db.get_innovation_proposal_info()
                 if self.all_data:
-                    loaded_documents.add_data(self.all_data)
+                    loaded_documents.add_record(self.all_data)
                     logger.info(f"JOURNAL | UPDATE - table")
                 return
     
@@ -137,10 +142,9 @@ class Journal_logic:
         text_to_search = self.parent.gui.lineEdit.text().strip()
         
         if not text_to_search:
-            self.show_all_data()
+            self.show_all_records()
             logger.info("JOURNAL | empty value")
             return
-        
 
         found_data = []
         for record in self.all_data:
@@ -150,20 +154,20 @@ class Journal_logic:
         self.table.setRowCount(0)
         
         if found_data:
-            self.add_data(found_data)
+            self.add_record(found_data)
         else:
             logger.info(f"JOURNAL | NOT FOUND - {text_to_search}")
             critical_message(self.parent, f"По запросу '{text_to_search}' ничего не найдено")
-            self.show_all_data()
+            self.show_all_records()
     
-    def show_all_data(self):
+    def show_all_records(self):
         self.table.setRowCount(0)
         if self.all_data:
-            self.add_data(self.all_data)
+            self.add_record(self.all_data)
     
     def reset_search(self):
         self.parent.gui.lineEdit.clear()
-        self.show_all_data()
+        self.show_all_records()
     
     def vector_update(self, new_data):
         self.filenames = []
@@ -190,6 +194,7 @@ class Journal_logic:
         logger.error(f"JOURNAL | NOT UPDATE - embedding : {error}")
         logger.error(f"ОШИБКА - Эмбеддинг файла не обновился. {error}")
         self.thread.deleteLater()
+
     def update_row_numbers(self):
         for row in range(self.table.rowCount()):
             self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))

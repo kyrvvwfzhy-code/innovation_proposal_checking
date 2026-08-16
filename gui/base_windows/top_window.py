@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget
 
 from gui.ui.top import Ui_Form
 
-from data.data import prompt_text
+from data.data import default_prompt
 
 class Top_window(QWidget):
     def __init__(self, parent, db):
@@ -18,7 +18,7 @@ class Top_window(QWidget):
     def init_prompt(self):
         exist = self.db.get_innovation_proposal_prompt()
         if exist == None:
-            prompt = prompt_text("{conclution}")
+            prompt = default_prompt("{conclution}")
             self.db.add_innovation_proposal_prompt(prompt)
         else:
             pass

@@ -2,7 +2,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 import ollama
 
-from data.data import base_prompt_text
+from data.data import conclusion_with_AI_analys
 
 class LLM_analys_Thread(QThread):
     LLM_analys_finished = pyqtSignal(list)
@@ -16,7 +16,7 @@ class LLM_analys_Thread(QThread):
     def run(self):
         try:
             model = "qwen2.5:7b"
-            response_text, prompt = base_prompt_text(self.result, self.new_name)
+            response_text, prompt = conclusion_with_AI_analys(self.result, self.new_name)
 
             response = ollama.chat(
                 model=model,
