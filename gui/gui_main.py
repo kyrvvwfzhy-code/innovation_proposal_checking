@@ -17,7 +17,7 @@ class GUI_main(QWidget):
     
     def init(self):
         self.top_window = Top_window(self.parent, self.db)
-        self.download_window = Download_window(self.db)
+        self.download_window = Download_window(self.top_window, self.db)
         self.journal_window = Journal_window(self.db)
         self.search_window = Search_window(self.db)
         self.settings_window = Settings_window(self.db)
@@ -35,17 +35,17 @@ class GUI_main(QWidget):
         self.top_window.gui.pushButton_3.clicked.connect(self.goto_settings_window)
 
     def goto_download_window(self):
-        logger.info("OPEN - download_window")
+        logger.info("MAIN | OPEN - download_window")
         self.top_window.gui.stackedWidget.setCurrentIndex(0)
     
     def goto_journal_window(self):
-        logger.info("OPEN - journal_window")
+        logger.info("MAIN | OPEN - journal_window")
         self.top_window.gui.stackedWidget.setCurrentIndex(1)
     
     def goto_search_window(self):
-        logger.info("OPEN - search_window")
+        logger.info("MAIN | OPEN - search_window")
         self.top_window.gui.stackedWidget.setCurrentIndex(2)
     
     def goto_settings_window(self):
-        logger.info("OPEN - settings_window")
+        logger.info("MAIN | OPEN - settings_window")
         self.top_window.gui.stackedWidget.setCurrentIndex(3)

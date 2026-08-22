@@ -186,16 +186,27 @@ class DataBase:
     def get_innovation_proposal_embeddings(self, value):
         conn, cursor = self._get_connection()
         try:
-            result = cursor.execute("SELECT name, embedding_name, embedding_description, embedding_general FROM innovation_proposal_embeddings")
+            result = cursor.execute("""SELECT innovation_proposal_embeddings.name,
+                                    innovation_proposal_embeddings.embedding_name, 
+                                    innovation_proposal_embeddings.embedding_description, 
+                                    innovation_proposal_embeddings.embedding_general,
+                                    innovation_proposal_embeddings.embedding_image,
+                                    innovation_proposal.filepath
+                                    FROM innovation_proposal_embeddings
+                                    LEFT JOIN innovation_proposal ON innovation_proposal.id = innovation_proposal_embeddings.innovation_proposal_id""")
             embedding_list = []
             for i in result.fetchall():
                 name = i[0]
                 embedding_name_bytes = i[1]
                 embedding_description_bytes = i[2]
                 embedding_general_bytes = i[3]
+                embedding_image_bytes = i[4]
+                filepath = i[5]
                 embedding_name_numpy = np.frombuffer(embedding_name_bytes, dtype=np.float32)
                 embedding_description_numpy = np.frombuffer(embedding_description_bytes, dtype=np.float32)
                 embedding_general_numpy = np.frombuffer(embedding_general_bytes, dtype=np.float32)
+                embedding_image_numpy = np.frombuffer(embedding_image_bytes, dtype=np.float32)
+
 
                 if value == "name":
                     embedding_list.append([name, embedding_name_numpy])
@@ -203,6 +214,9 @@ class DataBase:
                     embedding_list.append([name, embedding_description_numpy])
                 elif value == "general":
                     embedding_list.append([name, embedding_general_numpy])
+                elif value == "image":
+                    embedding_list.append([name, embedding_image_numpy, filepath])
+
                     
             if embedding_list == []:
                 return None

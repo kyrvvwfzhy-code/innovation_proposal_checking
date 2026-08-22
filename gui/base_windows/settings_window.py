@@ -23,7 +23,10 @@ class Settings_window(QWidget):
         self.prompt = Prompt_window(self.db)
         
         self.handler = Settings(self, self.db)
-        
+
+        # Загрузка массивистых данных
         self.gui.pushButton.clicked.connect(self.handler.download)
+
+        # Настройки инструкций LLM модели
         self.gui.pushButton_2.clicked.connect(self.handler.prompt)
 

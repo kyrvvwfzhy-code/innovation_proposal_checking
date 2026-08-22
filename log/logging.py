@@ -10,8 +10,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(log_dir / "app.log", encoding='utf-8')
+        logging.FileHandler(log_dir / "IPC.log", encoding='utf-8')
     ]
 )
-
-logger = logging.getLogger("MyApp")
+logger = logging.getLogger("IPC")

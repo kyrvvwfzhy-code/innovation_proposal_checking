@@ -17,6 +17,10 @@ class Search_window(QWidget):
 
     def signals(self):
         self.handler = Search(self, self.db)
+
+        #Семантический поиск (Наименования, Описание, Наименование + Описание)
         self.gui.pushButton.clicked.connect(self.handler.search_by_text)
+
+        #Поиск по изображению
         self.gui.pushButton_2.clicked.connect(self.handler.search_by_image)
 

@@ -2,21 +2,23 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 import ollama
 
-from data.data import conclusion_with_AI_analys
+from data.output_message import conclusion_AI_forming
 
 class LLM_analys_Thread(QThread):
     LLM_analys_finished = pyqtSignal(list)
     LLM_analys_error = pyqtSignal(str)
     
-    def __init__(self, result, new_name):
+    def __init__(self, db, result, new_name):
         super().__init__()
+        self.db = db
         self.result = result
         self.new_name = new_name
 
     def run(self):
         try:
             model = "qwen2.5:7b"
-            response_text, prompt = conclusion_with_AI_analys(self.result, self.new_name)
+            prompt_text = self.db.get_innovation_proposal_prompt()
+            response_text, prompt = conclusion_AI_forming(prompt_text, self.result, self.new_name)
 
             response = ollama.chat(
                 model=model,

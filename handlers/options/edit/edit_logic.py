@@ -1,5 +1,5 @@
 from log.logging import logger
-from data.data import ocr_result
+from data.output_message import text_recognition_output
 
 class Edit_logic:
     def __init__(self, parent, db, filename, registered, name, description):
@@ -33,10 +33,11 @@ class Edit_logic:
         self.parent.gui.pushButton_4.clicked.connect(self.save_db)
 
     def save_record(self):
+        self.parent.gui.pushButton.setEnabled(False)
         self.parent.gui.pushButton_4.setEnabled(True)
         self.edit_registered, self.edit_name = self.save_data()
         logger.debug(f"EDIT | Modified data has been preserved - {self.edit_registered, self.edit_name}")
-        text = ocr_result(self.edit_registered, self.edit_name, self.description)
+        text = text_recognition_output(self.edit_registered, self.edit_name, self.description)
         self.parent.gui.plainTextEdit.setPlainText(text)
         self.parent.edit.close()
 

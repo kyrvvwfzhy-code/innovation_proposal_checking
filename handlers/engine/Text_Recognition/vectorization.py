@@ -6,9 +6,9 @@ from PIL import Image
 import torch
 from transformers import CLIPProcessor, CLIPModel
 
-class Embedding_Thread(QThread):
-    embedding_data_finished = pyqtSignal(str)
-    embedding_data_error = pyqtSignal(str)
+class Vectorization_Thread(QThread):
+    vectorization_data_finished = pyqtSignal(str)
+    vectorization_data_error = pyqtSignal(str)
 
     def __init__(self, db, filename_list, names, descriptions):
         super().__init__()
@@ -18,6 +18,7 @@ class Embedding_Thread(QThread):
         self.descriptions = descriptions
         self.model_name = "qwen3-embed"
         self.load_image_model()
+        self.all_image_embeddings = self.get_image_embedding()
 
     def run(self):
         try: 
@@ -41,7 +42,7 @@ class Embedding_Thread(QThread):
                 
                 new_embedding_general = self.calculating_general(embeddings_name, embeddings_description)
                 
-                embedding_image = self.get_image_embedding()
+                embedding_image = self.all_image_embeddings[idx]
 
                 self.db.add_innovation_proposal_embeddings(
                     filename, 
@@ -51,10 +52,10 @@ class Embedding_Thread(QThread):
                     embedding_image
                 )
     
-            self.embedding_data_finished.emit("Эмбеддинги созданы")
+            self.vectorization_data_finished.emit("Эмбеддинги созданы")
             
         except Exception as e:
-            self.embedding_data_error.emit(f"Error - {e}")
+            self.vectorization_data_error.emit(f"Error - {e}")
 
     def calculating_general(self, name, description):
         name_emb = np.array(name)
@@ -76,23 +77,28 @@ class Embedding_Thread(QThread):
         if os.path.exists(folder_path):
             paths = []
             for filename in os.listdir(folder_path):
-                if filename.endswith('_processed.png'):
+                if filename.startswith('3'):
                     full_path = os.path.join(folder_path, filename)
                     if os.path.isfile(full_path):
                         paths.append(full_path)
-        file = sorted(paths)
+            file = sorted(paths)
 
-        if len(file) >= 2:
-            image = Image.open(file[3]).convert("RGB")
-            inputs = self.processor(images=image, return_tensors="pt")
-            with torch.no_grad():
-                output = self.model.get_image_features(**inputs)
-                embedding = output.pooler_output
-                result = embedding.detach().cpu().numpy().flatten().tolist()
-            return result
+            result_list = []
+
+            for paths in file:
+                if os.path.basename(paths).startswith('3'): 
+                    image = Image.open(paths).convert("RGB")
+                    inputs = self.processor(images=image, return_tensors="pt")
+                    with torch.no_grad():
+                        output = self.model.get_image_features(**inputs)
+                        embedding = output.pooler_output
+                        result = embedding.detach().cpu().numpy().flatten().tolist()
+                    result_list.append(result)
+
+            return result_list
     
     def load_image_model(self):
-        model_path = r"C:\CLIP"
+        model_path = r"/home/niyazabiy/Рабочий стол/AI models/ENCODER/CLIP"
         self.processor = CLIPProcessor.from_pretrained(
                     model_path,
                     local_files_only=True

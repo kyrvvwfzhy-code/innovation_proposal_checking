@@ -1,7 +1,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 
 import cv2
-
 import os
 
 class Processing_Thread(QThread):
@@ -36,8 +35,6 @@ class Processing_Thread(QThread):
                         self.process_first_page(file_path = file_path)
                     elif filename.startswith('2'):
                         self.process_second_page(file_path = file_path)
-                    elif filename.startswith('3'):
-                        self.process_image_page(file_path = file_path)
                         
                 self.processing_finished.emit("Ready")
             except Exception as e:
@@ -55,8 +52,6 @@ class Processing_Thread(QThread):
         file = sorted(paths)
         self.process_first_page(file = file)
         self.process_second_page(file = file)
-        self.process_image_page(file = file)
-
 
     def process_first_page(self, file = None, file_path = None):
         if self.level == "download":
@@ -116,27 +111,6 @@ class Processing_Thread(QThread):
             result = cv2.bitwise_not(black_white)
             cropped = result[400:1700, 0:2000]
             final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_description_processed.png")
-            cv2.imwrite(final_path, cropped)
-    
-    def process_image_page(self, file = None, file_path = None):
-        if self.level == "download":
-            image = file[2]
-            filename = os.path.basename(image)
-            process_image = cv2.imread(image)
-            gray = cv2.cvtColor(process_image, cv2.COLOR_BGR2GRAY)
-            _, black_white = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-            result = cv2.bitwise_not(black_white)
-            cropped = result[0:2500, 0:2000]
-            final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_image_processed.png")
-            cv2.imwrite(final_path, cropped)
-        elif self.level == "settings":
-            filename = os.path.basename(file_path)
-            process_image = cv2.imread(file_path)
-            gray = cv2.cvtColor(process_image, cv2.COLOR_BGR2GRAY)
-            _, black_white = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-            result = cv2.bitwise_not(black_white)
-            cropped = result[0:2500, 0:2000]
-            final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_image_processed.png")
             cv2.imwrite(final_path, cropped)
 
 if __name__ == "__main__":

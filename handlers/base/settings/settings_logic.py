@@ -1,4 +1,4 @@
-from handlers.engine.ocr.ocr_main import OCR
+from handlers.engine.Text_Recognition.Recognition_main import Text_Recognition_main
 
 class Settings_logic:
     def __init__(self, parent, db):
@@ -6,9 +6,8 @@ class Settings_logic:
         self.db = db
 
     def load_data(self):
-        self.load_process = OCR(parent = self.parent, db = self.db, level = "settings")
+        self.load_process = Text_Recognition_main(parent = self.parent, db = self.db, level = "settings")
         self.load_process.start()
-        # self.parent.progressbar.open()
 
     def prompt_settings(self):
         self.parent.prompt.open()

@@ -74,27 +74,26 @@ class Vectorization_Thread(QThread):
                 self.vectorization_error.emit(f"Error - {e}")
 
     def get_image_embedding(self):
+        image_path = None
         folder_path = "OCR_TMP"
         if os.path.exists(folder_path):
-            paths = []
             for filename in os.listdir(folder_path):
-                if filename.endswith('_processed.png'):
+                if filename.startswith('3'):
                     full_path = os.path.join(folder_path, filename)
                     if os.path.isfile(full_path):
-                        paths.append(full_path)
-        file = sorted(paths)
+                        image_path = full_path
+                        break
 
-        if len(file) >= 2:
-            image = Image.open(file[3]).convert("RGB")
-            inputs = self.processor(images=image, return_tensors="pt")
-            with torch.no_grad():
-                output = self.model.get_image_features(**inputs)
-                embedding = output.pooler_output
-                result = embedding.detach().cpu().numpy().flatten().tolist()
-            return result
+        image = Image.open(image_path).convert("RGB")
+        inputs = self.processor(images=image, return_tensors="pt")
+        with torch.no_grad():
+            output = self.model.get_image_features(**inputs)
+            embedding = output.pooler_output
+            result = embedding.detach().cpu().numpy().flatten().tolist()
+        return result
               
     def load_image_model(self):
-        model_path = r"C:\CLIP"
+        model_path = r"/home/niyazabiy/Рабочий стол/AI models/ENCODER/CLIP"
         self.processor = CLIPProcessor.from_pretrained(
                     model_path,
                     local_files_only=True

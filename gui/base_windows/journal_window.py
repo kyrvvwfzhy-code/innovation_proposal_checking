@@ -17,9 +17,17 @@ class Journal_window(QWidget):
     
     def signals(self):
         self.handler = Journal(self, self.db)
+
+        #Удаление записи
         self.gui.pushButton.clicked.connect(self.handler.delete)
+
+        #Сохранение измененных записей
         self.gui.pushButton_2.clicked.connect(self.handler.save)
+
+        #Обновление таблицы
         self.gui.pushButton_3.clicked.connect(self.handler.update)
+
+        #Поиск по таблице
         self.gui.lineEdit.returnPressed.connect(self.handler.search)
 
         

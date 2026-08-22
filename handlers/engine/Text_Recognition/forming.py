@@ -2,7 +2,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import pytesseract
 import os
 
-class Recognition_Thread(QThread):
+class Forming_Thread(QThread):
     recognition_finished = pyqtSignal(list)
     recognition_error = pyqtSignal(str)
 
@@ -97,9 +97,3 @@ class Recognition_Thread(QThread):
     
     def clean_text(self, text):
         return ' '.join(str(text).replace('\n', ' ').replace('\x0c', ' ').split()).strip()
-    
-if __name__ == "__main__":
-    start = Recognition_Thread()
-    start.recognition_finished.connect(lambda dg: print(f"recognition_finished {dg}"))
-    start.recognition_error.connect(lambda dw: print(f"recognition_error {dw}"))
-    start.run()

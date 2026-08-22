@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget
 
 from gui.ui.top import Ui_Form
 
-from data.data import default_prompt
+from data.LLM_prompt import default_prompt
 
 class Top_window(QWidget):
     def __init__(self, parent, db):

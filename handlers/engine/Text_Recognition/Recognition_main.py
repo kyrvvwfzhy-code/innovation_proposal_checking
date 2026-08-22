@@ -1,31 +1,33 @@
-from handlers.engine.ocr.load_file import Load_file
-from handlers.engine.ocr.conversion import Conversion_Thread
-from handlers.engine.ocr.processing import Processing_Thread
-from handlers.engine.ocr.recognition import Recognition_Thread
-from handlers.engine.ocr.embedding import Embedding_Thread
+from handlers.engine.Text_Recognition.load_file import Load_file
+from handlers.engine.Text_Recognition.conversion import Conversion_Thread
+from handlers.engine.Text_Recognition.processing import Processing_Thread
+from handlers.engine.Text_Recognition.forming import Forming_Thread
+from handlers.engine.Text_Recognition.vectorization import Vectorization_Thread
 
 from data.messagebox import critical_message
-from data.data import ocr_result
+from data.output_message import text_recognition_output
 
 from log.logging import logger
 import os
 
 
-class OCR:
+class Text_Recognition_main:
     def __init__(self, db, level, parent = None, callback = None):
         self.parent = parent
         self.db = db
         self.level = level
-        self.thread = None
         self.callback = callback
+        self.thread = None
     
     def start(self):
-        logger.info(f"OCR | STARTING... - {self.level} level")
+        logger.info(f"TEXT RECOGNITION | STARTING... - {self.level} level")
+        self.clear_folder()
+        
         if self.level == "download":
             self.load_file = Load_file(db = self.db, level = self.level, parent = self.parent)
             filename = self.load_file.start()
-            logger.info(f"OCR | FILE - \"{filename}\" selected")
             if filename:
+                logger.info(f"TEXT RECOGNITION | SELECT - \"{filename}\" is select")
                 self.conversion_thread()
             elif filename == None:
                 pass
@@ -34,11 +36,11 @@ class OCR:
             self.load_files = Load_file(db = self.db, level = self.level)
             self.filename_list = self.load_files.start()
             if self.filename_list == None:
-                logger.info("OCR | FOLDER - not selected")
+                logger.info("TEXT RECOGNITION | SELECT - path not selected")
                 critical_message(self.parent, "Выберите папку с файлами")
                 pass
             elif len(self.filename_list) == 0:
-                logger.info("OCR | FILE - is loaded yet")
+                logger.info("TEXT RECOGNITION | SELECT - file is loaded yet")
                 critical_message(self.parent, "Выбранные документы уже выгружены")
                 pass
 
@@ -47,7 +49,7 @@ class OCR:
                 self.conversion_thread(filename_list = self.filename_list)
     
     def conversion_thread(self, filename_list = None):
-        logger.info("OCR | START - Conversion")
+        logger.info("TEXT RECOGNITION | START - Conversion")
 
         if self.level == "download":
             self.parent.gui.pushButton.setEnabled(False)
@@ -65,7 +67,7 @@ class OCR:
             self.thread.start()
     
     def conversion_finished(self):
-        logger.info("OCR | FINISHED - Conversion (SUCCESS)")
+        logger.info("TEXT RECOGNITION | FINISHED - Conversion (SUCCESS)")
 
         if self.level == "download":
             self.parent.gui.pushButton.setText("ОБРАБОТКА...")
@@ -76,7 +78,7 @@ class OCR:
             self.processing_thread()
     
     def conversion_error(self, error):
-        logger.error(f"OCR | FINISHED - Conversion (ERROR): {error}")
+        logger.error(f"TEXT RECOGNITION | FINISHED - Conversion (ERROR): {error}")
 
         if self.level == "download":
             self.thread.deleteLater()
@@ -84,7 +86,7 @@ class OCR:
             self.thread.deleteLater()
 
     def processing_thread(self):
-        logger.info("OCR | START - Processing")
+        logger.info("TEXT RECOGNITION | START - Processing")
 
         if self.level == "download":
             self.thread = Processing_Thread(level = self.level)
@@ -98,7 +100,7 @@ class OCR:
             self.thread.start()
 
     def processing_finished(self):
-        logger.info("OCR | FINISHED - Processing (SUCCESS)")
+        logger.info("TEXT RECOGNITION | FINISHED - Processing (SUCCESS)")
 
         if self.level == "download":
             self.parent.gui.pushButton.setText("РАСПОЗНОВАНИЕ...")
@@ -109,28 +111,28 @@ class OCR:
             self.recognition_thread()
 
     def processing_error(self, error):
-        logger.error(f"OCR | FINISHED - Processing (ERROR): {error}")
+        logger.error(f"TEXT RECOGNITION | FINISHED - Processing (ERROR): {error}")
         if self.level == "download":
             self.thread.deleteLater()
         elif self.level == "settings":
             self.thread.deleteLater()
 
     def recognition_thread(self):
-        logger.info("OCR | START - Recognition")
+        logger.info("TEXT RECOGNITION | START - Recognition")
 
         if self.level == "download":
-            self.thread = Recognition_Thread(level = self.level)
+            self.thread = Forming_Thread(level = self.level)
             self.thread.recognition_finished.connect(self.recognition_finished)
             self.thread.recognition_error.connect(self.recognition_error)
             self.thread.start()
         elif self.level == "settings":
-            self.thread = Recognition_Thread(db = self.db, level = self.level, filename_list = self.filename_list)
+            self.thread = Forming_Thread(db = self.db, level = self.level, filename_list = self.filename_list)
             self.thread.recognition_finished.connect(self.recognition_finished)
             self.thread.recognition_error.connect(self.recognition_error)
             self.thread.start()
     
     def recognition_finished(self, result):
-        logger.info("OCR | FINISHED - Recognition (SUCCESS)")
+        logger.info("TEXT RECOGNITION | FINISHED - Recognition (SUCCESS)")
 
         if self.level == "download":
             self.parent.gui.pushButton.setEnabled(True)
@@ -141,45 +143,42 @@ class OCR:
             self.name = result[1]
             self.description = result[2]
 
-            text = ocr_result(self.registered, self.name, self.description)
+            text = text_recognition_output(self.registered, self.name, self.description)
             self.parent.gui.plainTextEdit.setPlainText(text)
 
             self.thread.deleteLater()
-            self.clear_folder()
 
             if self.callback:
                 self.callback(self.filename, self.registered, self.name, self.description)
         elif self.level == "settings":
             self.thread.deleteLater()
-            self.embedding_data_thread(result)
+            self.vectorization_data_thread(result)
 
     def recognition_error(self, error):
-        logger.error(f"OCR | FINISHED - Recognition (ERROR): {error}")
+        logger.error(f"TEXT RECOGNITION | FINISHED - Recognition (ERROR): {error}")
 
         if self.level == "download":
             self.thread.deleteLater()
-            self.clear_folder()
         elif self.level == "settings":
             self.thread.deleteLater()
 
-    def embedding_data_thread(self, result):
-            logger.info("OCR | START - Embedding")
-            self.thread = Embedding_Thread(self.db, self.filename_list, result[0], result[1])
-            self.thread.embedding_data_finished.connect(self.embedding_data_finished)
-            self.thread.embedding_data_error.connect(self.embedding_data_error)
+    def vectorization_data_thread(self, result):
+            logger.info("TEXT RECOGNITION | START - vectorization")
+            self.thread = Vectorization_Thread(self.db, self.filename_list, result[0], result[1])
+            self.thread.vectorization_data_finished.connect(self.vectorization_data_finished)
+            self.thread.vectorization_data_error.connect(self.vectorization_data_error)
             self.thread.start()
 
-    def embedding_data_finished(self):
-        logger.info("OCR | FINISHED - Embedding (SUCCESS)")
-        self.clear_folder()
+    def vectorization_data_finished(self):
+        logger.info("TEXT RECOGNITION | FINISHED - vectorization (SUCCESS)")
         self.thread.deleteLater()
 
-    def embedding_data_error(self, error):
-        logger.error(f"OCR | FINISHED - Embedding (ERROR): {error}")
+    def vectorization_data_error(self, error):
+        logger.error(f"TEXT RECOGNITION | FINISHED - vectorization (ERROR): {error}")
         self.thread.deleteLater()
 
     def clear_folder(self):
-        logger.info("OCR | CLEAN - tmp folder")
+        logger.info("TEXT RECOGNITION | CLEAN - tmp folder")
         folder_path = "OCR_TMP"
         if os.path.exists(folder_path):
             paths = []

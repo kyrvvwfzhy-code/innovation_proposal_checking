@@ -1,10 +1,9 @@
 from PyQt5.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QMessageBox
 from PyQt5 import QtCore
 
-from handlers.engine.transformer.vectorization import Vectorization_Thread
+from handlers.engine.Semantic_Search.vectorization import Vectorization_Thread
 
-from data.messagebox import delete_question_message
-from data.messagebox import info_message, critical_message
+from data.messagebox import delete_question_message, info_message, critical_message
 
 from log.logging import logger
 import sys
@@ -16,8 +15,8 @@ class Journal_logic:
         self.parent = parent
         self.db = db
         self.all_data = None
-        self.create_table()
         self.thread = None
+        self.create_table()
     
     def create_table(self):
         self.table = QTableWidget(self.parent)
@@ -26,7 +25,8 @@ class Journal_logic:
         self.all_data = self.db.get_innovation_proposal_info()
         if self.all_data:
             self.add_record(self.all_data)
-
+            
+#Настройки таблицы
     def table_setup(self):
         self.table.setGeometry(QtCore.QRect(20, 80, 860,520))
         headers = ["№", "Имя файла", "Зарегестрирован", "Наименование"]
@@ -44,7 +44,16 @@ class Journal_logic:
         for i in range(2, self.table.columnCount()):  
             header.setSectionResizeMode(i, QHeaderView.Stretch)
         self.table.itemDoubleClicked.connect(self.edit_item)
-    
+
+#Добавление записей
+    def add_record(self, data):
+        self.table.setRowCount(len(data))
+        for row, record in enumerate(data):
+            self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))
+            for col, value in enumerate(record, start=1):
+                self.table.setItem(row, col, QTableWidgetItem(str(value)))
+
+#Открытие файлов
     def edit_item(self, item):
         row = item.row()
         col = item.column()
@@ -55,13 +64,6 @@ class Journal_logic:
         
         self.table.editItem(item)
 
-    def add_record(self, data):
-        self.table.setRowCount(len(data))
-        for row, record in enumerate(data):
-            self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))
-            for col, value in enumerate(record, start=1):
-                self.table.setItem(row, col, QTableWidgetItem(str(value)))
-    
     def open_file(self, row):
         filename = self.table.item(row, 1).text()
         file_path = self.db.get_filepath_from_innovation_proposal(filename)
@@ -69,31 +71,41 @@ class Journal_logic:
             os.startfile(file_path[0])
         else:
             subprocess.call(['xdg-open', file_path[0]])
-
         logger.info(f"JOURNAL | OPEN - {filename}")
 
-    
+#Удаление записей
     def delete_selected_records(self):
-        row = self.table.currentRow()
-        print(row)
-
-        for i in self.table.selectedItems():
-            print(i)
-            
-        if row < 0:
-            logger.error(f"JOURNAL | DELETE - nothing selected")
-            QMessageBox.warning(self.parent, "Ошибка", "Выберите запись для удаления.", QMessageBox.Ok)
+        selected_rows = sorted(set(item.row() for item in self.table.selectedItems()), reverse=True)
+        
+        if not selected_rows:
+            logger.error(f"JOURNAL | FILE - nothing selected to delete")
+            QMessageBox.warning(self.parent, "Ошибка", "Выберите записи для удаления.", QMessageBox.Ok)
             return
         
-        filename = self.table.item(row, 1).text()
-        reply = delete_question_message(self.parent, "Удалить запись", filename)
+        filenames = [self.table.item(row, 1).text() for row in selected_rows]
+        
+        if len(filenames) == 1:
+            msg = f"Удалить запись?"
+            value = filenames[0]
+        else:
+            msg = f"Удалить следующие записи?"
+            value = f"\n".join(filenames[:5])
+            if len(filenames) > 5:
+                msg += f"\n..."
+                value += f" и ещё {len(filenames) - 5}"
+        reply = delete_question_message(self.parent, msg, value)
+        
         if reply == True:
-            self.db.delete_innovation_proposal(filename)
-            self.table.removeRow(row)
+            for row in sorted(selected_rows, reverse=True):
+                filename = self.table.item(row, 1).text()
+                self.db.delete_innovation_proposal(filename)
+                self.table.removeRow(row)
+                logger.info(f"JOURNAL | FILE - \"{filename}\" delete")
+            
             self.update_row_numbers()
             self.all_data = self.db.get_innovation_proposal_info()
-            logger.info(f"JOURNAL | DELETE - \"{filename}\"")
-    
+
+#Сохранение изменений   
     def save_changes(self):
         try:
             saved_rows = 0
@@ -127,7 +139,34 @@ class Journal_logic:
         except Exception as e:
             logger.info(f"JOURNAL | NOT SAVE - {e}")
             critical_message(self.parent, f"Ошибка при сохранении: {e}")
-    
+
+    def vector_update(self, new_data):
+        self.filenames = []
+        names = []
+        for i in new_data:
+            self.filenames.append(i[0])
+            names.append(i[1])
+        self.thread = Vectorization_Thread(self.parent, names, level = "vector_update")
+        self.thread.vectorization_finished.connect(self.vectorization_finished)
+        self.thread.vectorization_error.connect(self.vectorization_error)
+        self.thread.start()
+
+    def vectorization_finished(self, new_embeddings):
+        try:
+            for filename, embedding in zip(self.filenames, new_embeddings):
+                self.db.update_innovation_proposal_embeddings(filename, embedding)
+                logger.info(f"JOURNAL | UPDATE - {filename} embedding by journal edit")
+        finally:
+            if self.thread:
+                self.thread.deleteLater()
+                self.thread = None
+
+    def vectorization_error(self, error):
+        logger.error(f"JOURNAL | NOT UPDATE - embedding : {error}")
+        logger.error(f"ОШИБКА - Эмбеддинг файла не обновился. {error}")
+        self.thread.deleteLater()
+
+#Обновление таблицы
     def update_table(self, loaded_documents):
         if loaded_documents is not None:
             if hasattr(loaded_documents, 'table'):
@@ -137,7 +176,12 @@ class Journal_logic:
                     loaded_documents.add_record(self.all_data)
                     logger.info(f"JOURNAL | UPDATE - table")
                 return
-    
+            
+    def update_row_numbers(self):
+        for row in range(self.table.rowCount()):
+            self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))
+
+#Поиск
     def search_record(self):
         text_to_search = self.parent.gui.lineEdit.text().strip()
         
@@ -168,33 +212,4 @@ class Journal_logic:
     def reset_search(self):
         self.parent.gui.lineEdit.clear()
         self.show_all_records()
-    
-    def vector_update(self, new_data):
-        self.filenames = []
-        names = []
-        for i in new_data:
-            self.filenames.append(i[0])
-            names.append(i[1])
-        self.thread = Vectorization_Thread(self.parent, names, level = "vector_update")
-        self.thread.vectorization_finished.connect(self.vectorization_finished)
-        self.thread.vectorization_error.connect(self.vectorization_error)
-        self.thread.start()
-    
-    def vectorization_finished(self, new_embeddings):
-        try:
-            for filename, embedding in zip(self.filenames, new_embeddings):
-                self.db.update_innovation_proposal_embeddings(filename, embedding)
-                logger.info(f"JOURNAL | UPDATE - {filename} embedding by journal edit")
-        finally:
-            if self.thread:
-                self.thread.deleteLater()
-                self.thread = None
-
-    def vectorization_error(self, error):
-        logger.error(f"JOURNAL | NOT UPDATE - embedding : {error}")
-        logger.error(f"ОШИБКА - Эмбеддинг файла не обновился. {error}")
-        self.thread.deleteLater()
-
-    def update_row_numbers(self):
-        for row in range(self.table.rowCount()):
-            self.table.setItem(row, 0, QTableWidgetItem(str(row + 1)))
+ 
