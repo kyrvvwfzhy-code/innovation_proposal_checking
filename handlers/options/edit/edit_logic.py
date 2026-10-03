@@ -33,7 +33,6 @@ class Edit_logic:
         self.parent.gui.pushButton_4.clicked.connect(self.save_db)
 
     def save_record(self):
-        self.parent.gui.pushButton.setEnabled(False)
         self.parent.gui.pushButton_4.setEnabled(True)
         self.edit_registered, self.edit_name = self.save_data()
         logger.debug(f"EDIT | Modified data has been preserved - {self.edit_registered, self.edit_name}")
@@ -43,7 +42,6 @@ class Edit_logic:
 
     def save_db(self):
         found_record = self.check_ki()
-        print(found_record)
         if found_record:
             self.db.update_innovation_proposal_info(self.filename[:-4], self.edit_registered, self.edit_name)
             logger.debug(f"DOWNLOAD | In the DB, entry {found_record} was changed to entry {self.edit_registered, self.edit_name}")

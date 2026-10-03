@@ -6,10 +6,11 @@ from gui.option_windows.edit_window import Edit_window
 from handlers.base.download.download_main import Download
 
 class Download_window(QWidget):
-    def __init__(self, top_window, db):
+    def __init__(self, top_window, db, model):
         super().__init__()
         self.top_window = top_window
         self.db = db
+        self.model = model
 
     def open(self):
         self.gui = Ui_Form()
@@ -18,7 +19,7 @@ class Download_window(QWidget):
         return self
     
     def signals(self):
-        self.handler = Download(self.top_window, self, self.db)
+        self.handler = Download(self.top_window, self, self.db, self.model)
         self.edit = Edit_window(self)
 
         #Распознование текста

@@ -3,7 +3,6 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
-
 class Searching_thread(QThread):
     image_searching_finished = pyqtSignal(dict)
     image_searching_error = pyqtSignal(str)

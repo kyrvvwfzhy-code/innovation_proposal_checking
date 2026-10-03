@@ -1,10 +1,10 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 
-import ollama
+from sklearn.metrics.pairwise import cosine_similarity
 
 import numpy as np
 
-from sklearn.metrics.pairwise import cosine_similarity
+import ollama
 
 class Searching_Thread(QThread):
     searching_finished = pyqtSignal(list)

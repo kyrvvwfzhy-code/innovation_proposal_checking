@@ -24,8 +24,6 @@ class Load_file:
                 result = self.create_filename_label(filename, file_path)
             else:
                 result = None
-                return result
-                
             return result
         
         elif self.level == "settings":
@@ -43,7 +41,7 @@ class Load_file:
                     for filenames in filename_list:
                         file_paths = os.path.join(folder_path, filenames)
                         exist = self.db.add_innovation_proposal(filenames[:-4], file_paths)
-                        if exist == None:
+                        if exist == True:
                             exist_files.append(filenames)
                     for files in exist_files:
                         critical_message(self.parent, f"Документ {files} уже выгружен")
@@ -68,8 +66,7 @@ class Load_file:
     def check_exist(self, filename, file_path):
         exist = self.db.add_innovation_proposal(filename[:-4], file_path)
 
-        if exist == None:
-            critical_message(self.parent, f"Документ {filename} уже выгружен")
+        if exist == True:
             return False
         else:
             return filename

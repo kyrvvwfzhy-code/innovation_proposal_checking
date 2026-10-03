@@ -1,8 +1,8 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 
-import ollama
-
 from data.output_message import conclusion_AI_forming
+
+import ollama
 
 class LLM_analys_Thread(QThread):
     LLM_analys_finished = pyqtSignal(list)

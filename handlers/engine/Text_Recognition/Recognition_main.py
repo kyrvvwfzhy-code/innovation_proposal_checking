@@ -10,13 +10,13 @@ from data.output_message import text_recognition_output
 from log.logging import logger
 import os
 
-
 class Text_Recognition_main:
-    def __init__(self, db, level, parent = None, callback = None):
+    def __init__(self, db, level, model, parent = None, callback = None):
         self.parent = parent
         self.db = db
         self.level = level
         self.callback = callback
+        self.model = model
         self.thread = None
     
     def start(self):
@@ -29,7 +29,10 @@ class Text_Recognition_main:
             if filename:
                 logger.info(f"TEXT RECOGNITION | SELECT - \"{filename}\" is select")
                 self.conversion_thread()
-            elif filename == None:
+            elif filename == False:
+                critical_message(self.parent, f"Данный документ уже выгружен")
+                self.parent.gui.label_4.clear()
+            else:
                 pass
 
         elif self.level == "settings":
@@ -56,86 +59,72 @@ class Text_Recognition_main:
             self.parent.gui.pushButton.setText("КОНВЕРТАЦИЯ...")
             filename = self.parent.gui.label_4.text()
             self.thread = Conversion_Thread(db = self.db, level = self.level, level_data = filename)
-            self.thread.conversion_finished.connect(self.conversion_finished)
-            self.thread.conversion_error.connect(self.conversion_error)
-            self.thread.start()
+        
         elif self.level == "settings":
             self.parent.progressbar.open(self.target)
             self.thread = Conversion_Thread(db = self.db, level = self.level, level_data = filename_list)
-            self.thread.conversion_finished.connect(self.conversion_finished)
-            self.thread.conversion_error.connect(self.conversion_error)
-            self.thread.start()
-    
+
+        self.thread.conversion_finished.connect(self.conversion_finished)
+        self.thread.conversion_error.connect(self.conversion_error)
+        self.thread.start()
+
     def conversion_finished(self):
         logger.info("TEXT RECOGNITION | FINISHED - Conversion (SUCCESS)")
+        self.thread.deleteLater()
 
         if self.level == "download":
             self.parent.gui.pushButton.setText("ОБРАБОТКА...")
-            self.thread.deleteLater()
-            self.processing_thread()
-        elif self.level == "settings":
-            self.thread.deleteLater()
-            self.processing_thread()
+
+        self.processing_thread()
     
     def conversion_error(self, error):
         logger.error(f"TEXT RECOGNITION | FINISHED - Conversion (ERROR): {error}")
-
-        if self.level == "download":
-            self.thread.deleteLater()
-        elif self.level == "settings":
-            self.thread.deleteLater()
+        self.thread.deleteLater()
 
     def processing_thread(self):
         logger.info("TEXT RECOGNITION | START - Processing")
 
         if self.level == "download":
             self.thread = Processing_Thread(level = self.level)
-            self.thread.processing_finished.connect(self.processing_finished)
-            self.thread.processing_error.connect(self.processing_error)
-            self.thread.start()
+     
         elif self.level == "settings":
             self.thread = Processing_Thread(level = self.level)
-            self.thread.processing_finished.connect(self.processing_finished)
-            self.thread.processing_error.connect(self.processing_error)
-            self.thread.start()
+
+        self.thread.processing_finished.connect(self.processing_finished)
+        self.thread.processing_error.connect(self.processing_error)
+        self.thread.start()
 
     def processing_finished(self):
         logger.info("TEXT RECOGNITION | FINISHED - Processing (SUCCESS)")
+        self.thread.deleteLater()
 
         if self.level == "download":
             self.parent.gui.pushButton.setText("РАСПОЗНОВАНИЕ...")
-            self.thread.deleteLater()
-            self.recognition_thread()
-        elif self.level == "settings":
-            self.thread.deleteLater()
-            self.recognition_thread()
+
+        self.recognition_thread()
 
     def processing_error(self, error):
         logger.error(f"TEXT RECOGNITION | FINISHED - Processing (ERROR): {error}")
-        if self.level == "download":
-            self.thread.deleteLater()
-        elif self.level == "settings":
-            self.thread.deleteLater()
+        self.thread.deleteLater()
 
     def recognition_thread(self):
         logger.info("TEXT RECOGNITION | START - Recognition")
 
         if self.level == "download":
             self.thread = Forming_Thread(level = self.level)
-            self.thread.recognition_finished.connect(self.recognition_finished)
-            self.thread.recognition_error.connect(self.recognition_error)
-            self.thread.start()
+
         elif self.level == "settings":
             self.thread = Forming_Thread(db = self.db, level = self.level, filename_list = self.filename_list)
-            self.thread.recognition_finished.connect(self.recognition_finished)
-            self.thread.recognition_error.connect(self.recognition_error)
-            self.thread.start()
+
+        self.thread.recognition_finished.connect(self.recognition_finished)
+        self.thread.recognition_error.connect(self.recognition_error)
+        self.thread.start()
     
     def recognition_finished(self, result):
         logger.info("TEXT RECOGNITION | FINISHED - Recognition (SUCCESS)")
+        self.thread.deleteLater()
 
         if self.level == "download":
-            self.parent.gui.pushButton.setEnabled(True)
             self.parent.gui.pushButton.setText("Загрузить документ")
             
             self.filename = self.parent.gui.label_4.text()
@@ -146,25 +135,20 @@ class Text_Recognition_main:
             text = text_recognition_output(self.registered, self.name, self.description)
             self.parent.gui.plainTextEdit.setPlainText(text)
 
-            self.thread.deleteLater()
-
             if self.callback:
                 self.callback(self.filename, self.registered, self.name, self.description)
+            logger.info("TEXT RECOGNITION | SUCCESSFULL FINISHED")
+                
         elif self.level == "settings":
-            self.thread.deleteLater()
             self.vectorization_data_thread(result)
 
     def recognition_error(self, error):
         logger.error(f"TEXT RECOGNITION | FINISHED - Recognition (ERROR): {error}")
-
-        if self.level == "download":
-            self.thread.deleteLater()
-        elif self.level == "settings":
-            self.thread.deleteLater()
+        self.thread.deleteLater()
 
     def vectorization_data_thread(self, result):
             logger.info("TEXT RECOGNITION | START - vectorization")
-            self.thread = Vectorization_Thread(self.db, self.filename_list, result[0], result[1])
+            self.thread = Vectorization_Thread(self.db, self.filename_list, result[0], result[1], self.model)
             self.thread.vectorization_data_finished.connect(self.vectorization_data_finished)
             self.thread.vectorization_data_error.connect(self.vectorization_data_error)
             self.thread.start()
@@ -172,6 +156,7 @@ class Text_Recognition_main:
     def vectorization_data_finished(self):
         logger.info("TEXT RECOGNITION | FINISHED - vectorization (SUCCESS)")
         self.thread.deleteLater()
+        logger.info("DATA LOAD | SUCCESSFULL FINISHED)")
 
     def vectorization_data_error(self, error):
         logger.error(f"TEXT RECOGNITION | FINISHED - vectorization (ERROR): {error}")

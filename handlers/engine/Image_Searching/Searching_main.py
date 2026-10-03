@@ -6,32 +6,41 @@ from data.output_message import image_conclusion_output
 from log.logging import logger
 
 import subprocess
+import sys
+import os
 
 class Image_searching_main:
 
-    def __init__(self, parent, db):
+    def __init__(self, parent, db, model):
         self.parent = parent
         self.db = db
+        self.model = model
         self.thread = None
 
     def start(self):
         logger.info(f"IMAGE SEARCHING | STARTING...")
+        self.clear_fields()
+        
         self.load_image = Load_image(self.parent)
         self.image_path = self.load_image.start()
         if self.image_path != None:
             logger.info(f"IMAGE SEARCHING | FILE - \"{self.image_path}\" selected")
             self.vectorization_thread()
+            self.search_buttons_status(bool = False)
+        else:
+            logger.info("IMAGE SEARCHING | FILE - image not selected")
+            pass
 
     def vectorization_thread(self):
-        logger.error(f"IMAGE SEARCHING | START - Vectorization")
-        self.thread = Vectorization_thread(self.image_path)
+        logger.info(f"IMAGE SEARCHING | START - Vectorization")
+        self.thread = Vectorization_thread(self.image_path, self.model)
         self.thread.vectorization_finished.connect(self.vectorization_finished)
         self.thread.vectorization_error.connect(self.vectorization_error)
         self.thread.start()
 
     def vectorization_finished(self, image_embedding):
         self.thread.deleteLater()
-        logger.error(f"IMAGE SEARCHING | FINISHED - Vectorization (SUCCESS)")
+        logger.info(f"IMAGE SEARCHING | FINISHED - Vectorization (SUCCESS)")
         self.searching_thread(image_embedding)
 
     def vectorization_error(self, error):
@@ -52,9 +61,26 @@ class Image_searching_main:
         image_conclusion = image_conclusion_output(data['name'], data['similarity'])
         self.parent.gui.plainTextEdit_3.setPlainText(image_conclusion)
 
-        subprocess.call(['xdg-open', self.image_path])
-        subprocess.call(['xdg-open', data['filepath']])
+        if sys.platform == 'win32':
+            os.startfile(self.image_path)
+            os.startfile(data['filepath'])
+        else:
+            subprocess.call(['xdg-open', self.image_path])
+            subprocess.call(['xdg-open', data['filepath']])
+        logger.info(f"IMAGE SEARCHING | SUCCESSFULL FINISHED")
+        self.search_buttons_status(bool = True)
 
     def searhing_error(self, error):
         self.thread.deleteLater()
         logger.error(f"IMAGE SEARCHING | FINISHED - ERROR: {error}")
+        self.search_buttons_status(bool = True)
+
+    def search_buttons_status(self, bool):
+        self.parent.gui.pushButton.setEnabled(bool)
+        self.parent.gui.pushButton_2.setEnabled(bool)
+
+    def clear_fields(self):
+        self.parent.gui.plainTextEdit.clear()
+        self.parent.gui.plainTextEdit_2.clear()
+        self.parent.gui.plainTextEdit_3.clear()
+

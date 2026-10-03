@@ -48,13 +48,13 @@ class DataBase:
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (innovation_proposal_id) REFERENCES innovation_proposal (id) ON DELETE CASCADE
                        )""")
-        conn.commit()
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS innovation_proposal_prompt (
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        prompt TEXT,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                        )""")
+        
         conn.commit()
         
 #--------------------------------------------innovation_proposal--------------------------------------------
@@ -66,9 +66,9 @@ class DataBase:
             cursor.execute("INSERT INTO innovation_proposal (filename, filepath) VALUES (?, ?)",
                         (filename, filepath))
             conn.commit()
-            return True
-        except sqlite3.IntegrityError as IntegrityError:
             return None
+        except sqlite3.IntegrityError as IntegrityError:
+            return True
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     

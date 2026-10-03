@@ -1,11 +1,12 @@
 from handlers.base.download.download_logic import Download_logic
 
 class Download:
-    def __init__(self, top_window, parent, db):
+    def __init__(self, top_window, parent, db, model):
         self.top_window = top_window
         self.parent = parent
         self.db = db
-        self.logic = Download_logic(self.top_window, self.parent, self.db)
+        self.model = model
+        self.logic = Download_logic(self.top_window, self.parent, self.db, self.model)
     
     def download(self):
         self.logic.recognition()

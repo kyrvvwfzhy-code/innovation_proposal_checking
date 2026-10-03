@@ -2,46 +2,29 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 from PIL import Image
 import torch
-from transformers import CLIPProcessor, CLIPModel
 
 class Vectorization_thread(QThread):
     vectorization_finished = pyqtSignal(list)
     vectorization_error = pyqtSignal(str)
 
-    def __init__(self, image_path):
+    def __init__(self, image_path, model):
         super().__init__()
         self.image_path = image_path
-        self.load_CLIP_model()
+        self.model = model
 
     def run(self):
         try:
             image = Image.open(self.image_path).convert("RGB")
-            inputs = self.processor(images=image, return_tensors="pt")
+            new_size = (224, 224)
+            image = image.resize(new_size, Image.Resampling.LANCZOS)
             with torch.no_grad():
-                output = self.model.get_image_features(**inputs)
-                embedding = output.pooler_output
-                image_embedding = embedding.detach().cpu().numpy().flatten().tolist()
-        
+                embedding = self.model.encode(
+                [image],
+                normalize_embeddings=True,
+                batch_size=1,
+                convert_to_numpy=True
+                )
+                image_embedding = embedding[0].flatten().tolist()
             self.vectorization_finished.emit(image_embedding)
         except Exception as e:
             self.vectorization_error.emit(str(e))
-
-    def load_CLIP_model(self):
-            model_path = r"/home/niyazabiy/Рабочий стол/AI models/ENCODER/CLIP"
-            self.processor = CLIPProcessor.from_pretrained(
-                        model_path,
-                        local_files_only=True
-                    )
-    
-            self.model = CLIPModel.from_pretrained(
-                        model_path,
-                        local_files_only=True
-                    )
-    
-            self.model.eval()
-    
-            self.device = torch.device(
-                        "cuda" if torch.cuda.is_available() else "cpu"
-                    )
-    
-            self.model.to(self.device)

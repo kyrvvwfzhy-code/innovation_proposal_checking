@@ -2,19 +2,20 @@ from handlers.engine.Text_Recognition.Recognition_main import Text_Recognition_m
 from handlers.engine.Semantic_Search.Search_main import Semantic_search_main
 
 class Download_logic:
-    def __init__(self, top_window, parent, db):
+    def __init__(self, top_window, parent, db, model):
         self.top_window = top_window
         self.parent = parent
         self.db = db
+        self.model = model
         
     def recognition(self):
-        self.recognition_process = Text_Recognition_main(parent = self.parent, db = self.db, level = "download", callback = self.recognition_finished)
+        self.recognition_process = Text_Recognition_main(parent = self.parent, db = self.db, level = "download", callback = self.recognition_finished, model = None)
         self.recognition_process.start()
         return 
 
     def searching(self):
         self.parent.gui.plainTextEdit_2.clear()
-        self.searching_process = Semantic_search_main(top_window = self.top_window, parent = self.parent, db = self.db, level = "download")
+        self.searching_process = Semantic_search_main(parent = self.parent, db = self.db, level = "download", model = self.model, top_window = self.top_window)
         self.searching_process.start()
 
     def change_data(self):
