@@ -8,11 +8,12 @@ class Conversion_Thread(QThread):
     conversion_finished = pyqtSignal(str)
     conversion_error = pyqtSignal(str)
 
-    def __init__(self, db, level, level_data):
+    def __init__(self, db, level, level_data, tmp_path):
         super().__init__()
         self.db = db
         self.level = level
         self.level_data = level_data
+        self.tmp_path = tmp_path
 
     def run(self):
         if self.level == "download":
@@ -23,8 +24,6 @@ class Conversion_Thread(QThread):
                 self.conversion_error.emit(f"Error - {e}")
         elif self.level == "settings":
             try:
-                os.makedirs("OCR_TMP", exist_ok = True)
-
                 for files in self.level_data:
                     pdf_path = self.db.get_filepath_from_innovation_proposal(files[:-4])
                     for paths in pdf_path:
@@ -40,13 +39,13 @@ class Conversion_Thread(QThread):
                         for i, image in enumerate(images):
                             page_number = i+1
                             if page_number == first_page:
-                                output_path = os.path.join("OCR_TMP", f"1_first_page_{files[:-4]}.png")
+                                output_path = os.path.join(self.tmp_path, f"1_first_page_{files[:-4]}.png")
                                 image.save(output_path, "PNG")
                             if page_number == second_page:
-                                output_path = os.path.join("OCR_TMP", f"2_second_page_{files[:-4]}.png")
+                                output_path = os.path.join(self.tmp_path, f"2_second_page_{files[:-4]}.png")
                                 image.save(output_path, "PNG")
                             if page_number == image_page:
-                                output_path = os.path.join("OCR_TMP", f"3_image_page_{files[:-4]}.png")
+                                output_path = os.path.join(self.tmp_path, f"3_image_page_{files[:-4]}.png")
                                 image.save(output_path, "PNG")
                 self.conversion_finished.emit("Ready")
             except Exception as e:
@@ -62,17 +61,17 @@ class Conversion_Thread(QThread):
         second_page = 2
         image_page = 3
 
-        os.makedirs("OCR_TMP", exist_ok = True)
+        os.makedirs(self.tmp_path, exist_ok = True)
         for i, image in enumerate(images):
             page_number = i+1
             if page_number == first_page:
-                output_path = os.path.join("OCR_TMP", f"1_first_page_{self.level_data[:-4]}.png")
+                output_path = os.path.join(self.tmp_path, f"1_first_page_{self.level_data[:-4]}.png")
                 image.save(output_path, "PNG")
             if page_number == second_page:
-                output_path = os.path.join("OCR_TMP", f"2_second_page_{self.level_data[:-4]}.png")
+                output_path = os.path.join(self.tmp_path, f"2_second_page_{self.level_data[:-4]}.png")
                 image.save(output_path, "PNG")
             if page_number == image_page:
-                output_path = os.path.join("OCR_TMP", f"3_image_page_{self.level_data[:-4]}.png")
+                output_path = os.path.join(self.tmp_path, f"3_image_page_{self.level_data[:-4]}.png")
                 image.save(output_path, "PNG")
 
 if __name__ == "__main__":

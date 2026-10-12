@@ -1,5 +1,4 @@
 from PyQt5.QtCore import QThread, pyqtSignal
-
 import cv2
 import os
 
@@ -7,10 +6,11 @@ class Processing_Thread(QThread):
     processing_finished = pyqtSignal(str)
     processing_error = pyqtSignal(str)
 
-    def __init__(self, level):
+    def __init__(self, level, tmp_path = None):
         super().__init__()
         self.level = level
-
+        self.tmp_path = tmp_path
+            
     def run(self):
         if self.level == "download":
             try:
@@ -20,7 +20,7 @@ class Processing_Thread(QThread):
                 self.processing_error.emit(f"Error - {e}")
         elif self.level == "settings":
             try:
-                folder_path = "OCR_TMP"
+                folder_path = self.tmp_path
                 if os.path.exists(folder_path):
                     paths = []
                     for filename in os.listdir(folder_path):
@@ -41,7 +41,7 @@ class Processing_Thread(QThread):
                 self.processing_error.emit(f"Error - {e}")
             
     def processing(self):
-        folder_path = "OCR_TMP"
+        folder_path = self.tmp_path
         if os.path.exists(folder_path):
             paths = []
             for filename in os.listdir(folder_path):
@@ -75,21 +75,21 @@ class Processing_Thread(QThread):
     def process_registered(self,result, filename):
         if self.level == "download":
             cropped = result[670:920, 100:750]
-            final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_registered_processed.png")
+            final_path = os.path.join(self.tmp_path, f"{filename[:-4]}_registered_processed.png")
             cv2.imwrite(final_path, cropped)
         elif self.level == "settings":
             cropped = result[670:920, 100:750]
-            final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_registered_processed.png")
+            final_path = os.path.join(self.tmp_path, f"{filename[:-4]}_registered_processed.png")
             cv2.imwrite(final_path, cropped)
 
     def process_name(self, result, filename):
         if self.level == "download":
             cropped = result[1477:1600, 0:2000]
-            final_path = os.path.join("OCR_TMP", f"2_{filename[2:][:-4]}_name_processed.png")
+            final_path = os.path.join(self.tmp_path, f"2_{filename[2:][:-4]}_name_processed.png")
             cv2.imwrite(final_path, cropped)
         elif self.level == "settings":
             cropped = result[1477:1600, 0:2000]
-            final_path = os.path.join("OCR_TMP", f"2_{filename[2:][:-4]}_name_processed.png")
+            final_path = os.path.join(self.tmp_path, f"2_{filename[2:][:-4]}_name_processed.png")
             cv2.imwrite(final_path, cropped)
         
     def process_second_page(self, file = None, file_path = None):
@@ -101,7 +101,7 @@ class Processing_Thread(QThread):
             _, black_white = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
             result = cv2.bitwise_not(black_white)
             cropped = result[400:1700, 0:2000]
-            final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_description_processed.png")
+            final_path = os.path.join(self.tmp_path, f"{filename[:-4]}_description_processed.png")
             cv2.imwrite(final_path, cropped)
         elif self.level == "settings":
             filename = os.path.basename(file_path)
@@ -110,7 +110,7 @@ class Processing_Thread(QThread):
             _, black_white = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
             result = cv2.bitwise_not(black_white)
             cropped = result[400:1700, 0:2000]
-            final_path = os.path.join("OCR_TMP", f"{filename[:-4]}_description_processed.png")
+            final_path = os.path.join(self.tmp_path, f"{filename[:-4]}_description_processed.png")
             cv2.imwrite(final_path, cropped)
 
 if __name__ == "__main__":

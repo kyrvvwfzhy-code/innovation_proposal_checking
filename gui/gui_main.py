@@ -9,19 +9,21 @@ from gui.base_windows.settings_window import Settings_window
 from log.logging import logger
 
 class GUI_main(QWidget):
-    def __init__(self, parent, db, model):
+    def __init__(self, parent, db, image_encoder_model, text_embedding_model, instruct_model):
         super().__init__(parent)
         self.parent = parent
         self.db = db
-        self.model = model
+        self.image_encoder_model = image_encoder_model
+        self.text_embedding_model = text_embedding_model
+        self.instruct_model = instruct_model
         self.init()
     
     def init(self):
         self.top_window = Top_window(self.parent, self.db)
-        self.download_window = Download_window(self.top_window, self.db, self.model)
+        self.download_window = Download_window(self.top_window, self.db, self.image_encoder_model, self.text_embedding_model, self.instruct_model)
         self.journal_window = Journal_window(self.db)
-        self.search_window = Search_window(self.db, self.model)
-        self.settings_window = Settings_window(self.db, self.model)
+        self.search_window = Search_window(self.db, self.image_encoder_model, self.text_embedding_model, self.instruct_model)
+        self.settings_window = Settings_window(self.db, self.image_encoder_model, self.text_embedding_model)
         self.top_window_signals()
 
     def top_window_signals(self):

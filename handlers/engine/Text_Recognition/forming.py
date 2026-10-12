@@ -6,12 +6,13 @@ class Forming_Thread(QThread):
     recognition_finished = pyqtSignal(list)
     recognition_error = pyqtSignal(str)
 
-    def __init__(self, level, db = None, filename_list = None):
+    def __init__(self, level, db = None, filename_list = None, tmp_path = None):
         super().__init__()
         self.level = level
         self.db = db
         self.filename_list = filename_list
-
+        self.tmp_path = tmp_path
+        
     def run(self):
         if self.level == "download":
             try:
@@ -21,7 +22,7 @@ class Forming_Thread(QThread):
                 self.recognition_error.emit(f"Error - {e}")
         elif self.level == "settings":
             try:
-                folder_path = "OCR_TMP"
+                folder_path = self.tmp_path
                 if os.path.exists(folder_path):
                     paths = []
                     for filename in os.listdir(folder_path):
@@ -74,7 +75,7 @@ class Forming_Thread(QThread):
         return ' '.join(str(elements).replace('\n', ' ').replace('\x0c', ' ').split()).strip()
 
     def recognition(self):
-        folder_path = "OCR_TMP"
+        folder_path = self.tmp_path
         if os.path.exists(folder_path):
             paths = []
             for filename in os.listdir(folder_path):

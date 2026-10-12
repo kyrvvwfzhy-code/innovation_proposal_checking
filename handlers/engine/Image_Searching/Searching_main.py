@@ -11,10 +11,10 @@ import os
 
 class Image_searching_main:
 
-    def __init__(self, parent, db, model):
+    def __init__(self, parent, db, image_encoder_model):
         self.parent = parent
         self.db = db
-        self.model = model
+        self.image_encoder_model = image_encoder_model
         self.thread = None
 
     def start(self):
@@ -33,7 +33,7 @@ class Image_searching_main:
 
     def vectorization_thread(self):
         logger.info(f"IMAGE SEARCHING | START - Vectorization")
-        self.thread = Vectorization_thread(self.image_path, self.model)
+        self.thread = Vectorization_thread(self.image_path, self.image_encoder_model)
         self.thread.vectorization_finished.connect(self.vectorization_finished)
         self.thread.vectorization_error.connect(self.vectorization_error)
         self.thread.start()

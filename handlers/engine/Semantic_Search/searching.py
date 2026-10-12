@@ -4,19 +4,17 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 import numpy as np
 
-import ollama
-
 class Searching_Thread(QThread):
     searching_finished = pyqtSignal(list)
     searching_error = pyqtSignal(str)
 
-    def __init__(self, parent, db_embeddings_name, db_embeddings_description, db_embeddings_general):
+    def __init__(self, parent, db_embeddings_name, db_embeddings_description, db_embeddings_general, text_embedding_model = None):
         super().__init__()
         self.parent = parent
         self.db_embeddings_name = db_embeddings_name
         self.db_embeddings_description = db_embeddings_description
         self.db_embeddings_general = db_embeddings_general
-        self.model_name = "qwen3-embed"
+        self.text_embedding_model = text_embedding_model
 
     def run(self):
         text_name = self.parent.gui.plainTextEdit.toPlainText()
@@ -51,11 +49,8 @@ class Searching_Thread(QThread):
         def get_embedding(text):
             if not text:
                 return None
-            response = ollama.embeddings(
-                model=self.model_name,
-                prompt=text
-            )
-            return response["embedding"]
+            response = self.text_embedding_model.create_embedding(text)
+            return response["data"][0]["embedding"]
 
         if value == "name" or value == "description":
             embedding_result = get_embedding(text)

@@ -5,6 +5,8 @@ from db.database import DataBase
 from gui.gui_main import GUI_main
 
 from neuro.models import image_encoder
+from neuro.models import text_embedding
+from neuro.models import instruct
 
 from log.logging import logger
 import sys
@@ -16,10 +18,12 @@ class IPC(QMainWindow):
     
     def init(self):
         logger.info("APPLICATION - Running...")
-        self.model = image_encoder()
+        self.image_encoder_model = image_encoder()
+        self.text_embedding_model = text_embedding()
+        self.instruct_model = instruct()
         self.db = DataBase()
         self.db.create_tables()
-        self.main = GUI_main(self, self.db, self.model)
+        self.main = GUI_main(self, self.db, self.image_encoder_model, self.text_embedding_model, self.instruct_model)
         self.setWindowTitle("Проверка рационализаторских предложений")
         self.setFixedSize(1104, 701)
     

@@ -7,10 +7,10 @@ class Vectorization_thread(QThread):
     vectorization_finished = pyqtSignal(list)
     vectorization_error = pyqtSignal(str)
 
-    def __init__(self, image_path, model):
+    def __init__(self, image_path, image_encoder_model):
         super().__init__()
         self.image_path = image_path
-        self.model = model
+        self.image_encoder_model = image_encoder_model
 
     def run(self):
         try:
@@ -18,7 +18,7 @@ class Vectorization_thread(QThread):
             new_size = (224, 224)
             image = image.resize(new_size, Image.Resampling.LANCZOS)
             with torch.no_grad():
-                embedding = self.model.encode(
+                embedding = self.image_encoder_model.encode(
                 [image],
                 normalize_embeddings=True,
                 batch_size=1,

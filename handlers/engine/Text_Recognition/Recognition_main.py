@@ -11,12 +11,14 @@ from log.logging import logger
 import os
 
 class Text_Recognition_main:
-    def __init__(self, db, level, model, parent = None, callback = None):
+    def __init__(self, db, level, image_encoder_model, text_embedding_model, parent = None, callback = None, tmp_path = None):
         self.parent = parent
         self.db = db
         self.level = level
         self.callback = callback
-        self.model = model
+        self.image_encoder_model = image_encoder_model
+        self.text_embedding_model = text_embedding_model
+        self.tmp_path = tmp_path
         self.thread = None
     
     def start(self):
@@ -58,7 +60,7 @@ class Text_Recognition_main:
             self.parent.gui.pushButton.setEnabled(False)
             self.parent.gui.pushButton.setText("КОНВЕРТАЦИЯ...")
             filename = self.parent.gui.label_4.text()
-            self.thread = Conversion_Thread(db = self.db, level = self.level, level_data = filename)
+            self.thread = Conversion_Thread(db = self.db, level = self.level, level_data = filename, tmp_path = self.tmp_path)
         
         elif self.level == "settings":
             self.parent.progressbar.open(self.target)
@@ -85,10 +87,10 @@ class Text_Recognition_main:
         logger.info("TEXT RECOGNITION | START - Processing")
 
         if self.level == "download":
-            self.thread = Processing_Thread(level = self.level)
+            self.thread = Processing_Thread(level = self.level, tmp_path = self.tmp_path)
      
         elif self.level == "settings":
-            self.thread = Processing_Thread(level = self.level)
+            self.thread = Processing_Thread(level = self.level, tmp_path = self.tmp_path)
 
         self.thread.processing_finished.connect(self.processing_finished)
         self.thread.processing_error.connect(self.processing_error)
@@ -111,10 +113,10 @@ class Text_Recognition_main:
         logger.info("TEXT RECOGNITION | START - Recognition")
 
         if self.level == "download":
-            self.thread = Forming_Thread(level = self.level)
+            self.thread = Forming_Thread(level = self.level, tmp_path = self.tmp_path)
 
         elif self.level == "settings":
-            self.thread = Forming_Thread(db = self.db, level = self.level, filename_list = self.filename_list)
+            self.thread = Forming_Thread(db = self.db, level = self.level, filename_list = self.filename_list, tmp_path = self.tmp_path)
 
         self.thread.recognition_finished.connect(self.recognition_finished)
         self.thread.recognition_error.connect(self.recognition_error)
@@ -147,11 +149,11 @@ class Text_Recognition_main:
         self.thread.deleteLater()
 
     def vectorization_data_thread(self, result):
-            logger.info("TEXT RECOGNITION | START - vectorization")
-            self.thread = Vectorization_Thread(self.db, self.filename_list, result[0], result[1], self.model)
-            self.thread.vectorization_data_finished.connect(self.vectorization_data_finished)
-            self.thread.vectorization_data_error.connect(self.vectorization_data_error)
-            self.thread.start()
+        logger.info("TEXT RECOGNITION | START - vectorization")
+        self.thread = Vectorization_Thread(self.db, self.filename_list, result[0], result[1], self.image_encoder_model, self.text_embedding_model, tmp_path = self.tmp_path)
+        self.thread.vectorization_data_finished.connect(self.vectorization_data_finished)
+        self.thread.vectorization_data_error.connect(self.vectorization_data_error)
+        self.thread.start()
 
     def vectorization_data_finished(self):
         logger.info("TEXT RECOGNITION | FINISHED - vectorization (SUCCESS)")
@@ -164,7 +166,7 @@ class Text_Recognition_main:
 
     def clear_folder(self):
         logger.info("TEXT RECOGNITION | CLEAN - tmp folder")
-        folder_path = "OCR_TMP"
+        folder_path = self.tmp_path
         if os.path.exists(folder_path):
             paths = []
             for filename in os.listdir(folder_path):

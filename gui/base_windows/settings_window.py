@@ -8,10 +8,11 @@ from gui.option_windows.progressbar_window import Progressbar_window
 from handlers.base.settings.settings_main import Settings
 
 class Settings_window(QWidget):
-    def __init__(self, db, model):
+    def __init__(self, db, image_encoder_model, text_embedding_model):
         super().__init__()
         self.db = db
-        self.model = model
+        self.image_encoder_model = image_encoder_model
+        self.text_embedding_model = text_embedding_model
 
     def open(self):
         self.gui = Ui_Form()
@@ -23,7 +24,7 @@ class Settings_window(QWidget):
         self.progressbar = Progressbar_window()
         self.prompt = Prompt_window(self.db)
         
-        self.handler = Settings(self, self.db, self.model)
+        self.handler = Settings(self, self.db, self.image_encoder_model, self.text_embedding_model)
 
         # Загрузка массивистых данных
         self.gui.pushButton.clicked.connect(self.handler.download)

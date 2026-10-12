@@ -1,5 +1,4 @@
 from PyQt5.QtCore import QThread, pyqtSignal
-import ollama
 from PIL import Image
 import torch
 import os
@@ -8,14 +7,15 @@ class Vectorization_Thread(QThread):
     vectorization_finished = pyqtSignal(object)
     vectorization_error = pyqtSignal(str)
 
-    def __init__(self, parent, name, level = None, description = None, model = None):
+    def __init__(self, parent, name, level = None, description = None, image_encoder_model = None, text_embedding_model = None, tmp_path = None):
         super().__init__()
         self.parent = parent
         self.name = name
         self.level = level
         self.description = description
-        self.model = model
-        self.model_name = "qwen3-embed"
+        self.image_encoder_model = image_encoder_model
+        self.text_embedding_model = text_embedding_model
+        self.tmp_path = tmp_path
 
     def run(self):   
         sentences_name = self.name
@@ -26,11 +26,8 @@ class Vectorization_Thread(QThread):
                 def get_embedding(text):
                     if not text:
                         return None
-                    response = ollama.embeddings(
-                        model=self.model_name,
-                        prompt=text 
-                    )
-                    return response["embedding"] 
+                    response = self.text_embedding_model.create_embedding(text)
+                    return response["data"][0]["embedding"] 
                 if sentences_name != None:
                     new_embeddings = []
                     for names in sentences_name:
@@ -46,11 +43,8 @@ class Vectorization_Thread(QThread):
                 def get_embedding(text):
                     if not text:
                         return None
-                    response = ollama.embeddings(
-                        model=self.model_name,
-                        prompt=text 
-                    )
-                    return response["embedding"] 
+                    response = self.text_embedding_model.create_embedding(text)
+                    return response["data"][0]["embedding"]
 
                 if sentences_description is None:
                     embeddings_name = get_embedding(sentences_name)
@@ -74,7 +68,7 @@ class Vectorization_Thread(QThread):
 
     def get_image_embedding(self):
         image_path = None
-        folder_path = "OCR_TMP"
+        folder_path = self.tmp_path
         if os.path.exists(folder_path):
             for filename in os.listdir(folder_path):
                 if filename.startswith('3'):
@@ -87,7 +81,7 @@ class Vectorization_Thread(QThread):
         new_size = (224, 224)
         image = image.resize(new_size, Image.Resampling.LANCZOS)
         with torch.no_grad():
-            embedding = self.model.encode(
+            embedding = self.image_encoder_model.encode(
             [image],
             normalize_embeddings=True,
             batch_size=1,

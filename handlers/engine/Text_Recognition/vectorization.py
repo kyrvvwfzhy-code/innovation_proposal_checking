@@ -1,5 +1,4 @@
 from PyQt5.QtCore import QThread, pyqtSignal
-import ollama
 import numpy as np
 import os
 from PIL import Image
@@ -9,14 +8,15 @@ class Vectorization_Thread(QThread):
     vectorization_data_finished = pyqtSignal(str)
     vectorization_data_error = pyqtSignal(str)
 
-    def __init__(self, db, filename_list, names, descriptions, model):
+    def __init__(self, db, filename_list, names, descriptions, image_encoder_model, text_embedding_model, tmp_path = None):
         super().__init__()
         self.db = db
         self.filename_list = filename_list
         self.names = names
         self.descriptions = descriptions
-        self.model = model
-        self.model_name = "qwen3-embed"
+        self.image_encoder_model = image_encoder_model
+        self.text_embedding_model = text_embedding_model
+        self.tmp_path = tmp_path
 
     def run(self):
         try:
@@ -25,11 +25,8 @@ class Vectorization_Thread(QThread):
             def get_embedding(text):
                 if not text:
                     return None
-                response = ollama.embeddings(
-                    model=self.model_name,
-                    prompt=text
-                )
-                return response["embedding"]
+                response = self.text_embedding_model.create_embedding(text)
+                return response["data"][0]["embedding"]
 
             for idx, filename in enumerate(self.filename_list):
                 name = self.names[idx]
@@ -73,7 +70,7 @@ class Vectorization_Thread(QThread):
         return ' '.join(str(elements).replace('\n', ' ').replace('\x0c', ' ').split()).strip()
 
     def get_image_embedding(self):
-        folder_path = "OCR_TMP"
+        folder_path = self.tmp_path
 
         if os.path.exists(folder_path):
             paths = []
@@ -93,7 +90,7 @@ class Vectorization_Thread(QThread):
                 new_size = (224, 224)
                 image = image.resize(new_size, Image.Resampling.LANCZOS)
                 with torch.no_grad():
-                    embedding = self.model.encode(
+                    embedding = self.image_encoder_model.encode(
                         [image],
                         normalize_embeddings=True,
                         batch_size=1,

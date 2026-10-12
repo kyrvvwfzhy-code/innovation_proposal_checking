@@ -13,12 +13,15 @@ from log.logging import logger
 import numpy as np
 
 class Semantic_search_main:
-    def __init__(self, parent, db, level, model, top_window = None):
+    def __init__(self, parent, db, level, image_encoder_model, text_embedding_model, instruct_model, top_window = None, tmp_path = None):
         self.top_window = top_window
         self.parent = parent
         self.db = db
         self.level = level
-        self.model = model
+        self.image_encoder_model = image_encoder_model
+        self.text_embedding_model = text_embedding_model
+        self.instruct_model = instruct_model
+        self.tmp_path = tmp_path
         self.thread = None
 
     def start(self):
@@ -32,7 +35,7 @@ class Semantic_search_main:
             filename = self.parent.gui.label_4.text()
             self.data = self.db.get_innovation_proposal_info(filename = filename)
             if self.data != None:
-                self.thread = Vectorization_Thread(parent = self.parent, name = self.data[0], description = self.data[1], model = self.model)
+                self.thread = Vectorization_Thread(parent = self.parent, name = self.data[0], description = self.data[1], image_encoder_model = self.image_encoder_model, text_embedding_model = self.text_embedding_model, tmp_path = self.tmp_path)
                 self.parent.gui.pushButton_2.setText("ВЕКТОРИЗАЦИЯ...")
                 self.thread.vectorization_finished.connect(self.vectorization_finished)
                 self.thread.vectorization_error.connect(self.vectorization_error)
@@ -68,7 +71,7 @@ class Semantic_search_main:
                     self.search_buttons_status(bool = False)
 
 
-                self.thread = Searching_Thread(self.parent, db_embeddings_name, db_embeddings_description, db_embeddings_general)
+                self.thread = Searching_Thread(self.parent, db_embeddings_name, db_embeddings_description, db_embeddings_general, text_embedding_model = self.text_embedding_model)
                 self.thread.searching_finished.connect(self.searching_finished)
                 self.thread.searching_error.connect(self.searching_error)
                 self.thread.start()
@@ -156,10 +159,10 @@ class Semantic_search_main:
 
         if self.level == "download":
             self.parent.gui.pushButton_2.setText("АНАЛИЗ ЯЗЫКОВОЙ МОДЕЛИ...")
-            self.thread = LLM_analys_Thread(self.db, result, self.data[0])
+            self.thread = LLM_analys_Thread(self.db, result, self.data[0], self.instruct_model)
 
         elif self.level == "search":
-            self.thread = LLM_analys_Thread(self.db, result[0], result[1])
+            self.thread = LLM_analys_Thread(self.db, result[0], result[1], self.instruct_model)
 
         self.thread.LLM_analys_finished.connect(self.LLM_analys_finished)
         self.thread.LLM_analys_error.connect(self.LLM_analys_error)
