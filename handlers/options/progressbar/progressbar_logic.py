@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QThread, pyqtSignal, QTimer
+import tempfile
 import os
 
 class Progressbar_logic(QThread):
@@ -9,6 +10,12 @@ class Progressbar_logic(QThread):
         super().__init__()
         self.parent = parent
         self.target = target
+        self.init_tmp()
+
+    def init_tmp(self):
+        tmp_dir = tempfile.gettempdir()
+        self.tmp_path = os.path.join(tmp_dir, "ipc_tmp")
+        os.makedirs(self.tmp_path, exist_ok = True)
 
     def run(self):
         self.timer = QTimer()
@@ -17,7 +24,7 @@ class Progressbar_logic(QThread):
         self.exec_()
 
     def check_path(self):
-        files = [i for i in os.listdir("OCR_TMP")]
+        files = [i for i in os.listdir(self.tmp_path)]
         current_count = len(files)
 
         progress = int((current_count * 100) / self.target)

@@ -2,8 +2,8 @@ import logging
 import sys
 from pathlib import Path
 
-log_dir = Path(__file__).parent.parent / "logs"
-log_dir.mkdir(exist_ok=True)
+log_dir = Path.home() / "ipc"
+log_dir.mkdir(parents = True, exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -13,4 +13,4 @@ logging.basicConfig(
         logging.FileHandler(log_dir / "IPC.log", encoding='utf-8')
     ]
 )
-logger = logging.getLogger("IPC")
+logger = logging.getLogger("logs")

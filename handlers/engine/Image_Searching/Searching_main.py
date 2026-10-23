@@ -59,7 +59,7 @@ class Image_searching_main:
         self.thread.deleteLater()
         logger.info(f"IMAGE SEARCHING | FINISHED - Searching (SUCCESS)")
         image_conclusion = image_conclusion_output(data['name'], data['similarity'])
-        self.parent.gui.plainTextEdit_3.setPlainText(image_conclusion)
+        self.parent.gui.textBrowser_3.setHtml(image_conclusion)
 
         if sys.platform == 'win32':
             os.startfile(self.image_path)
@@ -67,6 +67,7 @@ class Image_searching_main:
         else:
             subprocess.call(['xdg-open', self.image_path])
             subprocess.call(['xdg-open', data['filepath']])
+            
         logger.info(f"IMAGE SEARCHING | SUCCESSFULL FINISHED")
         self.search_buttons_status(bool = True)
 
@@ -82,5 +83,5 @@ class Image_searching_main:
     def clear_fields(self):
         self.parent.gui.plainTextEdit.clear()
         self.parent.gui.plainTextEdit_2.clear()
-        self.parent.gui.plainTextEdit_3.clear()
+        self.parent.gui.textBrowser_3.clear()
 

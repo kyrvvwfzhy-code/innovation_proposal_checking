@@ -64,7 +64,7 @@ class Text_Recognition_main:
         
         elif self.level == "settings":
             self.parent.progressbar.open(self.target)
-            self.thread = Conversion_Thread(db = self.db, level = self.level, level_data = filename_list)
+            self.thread = Conversion_Thread(db = self.db, level = self.level, level_data = filename_list, tmp_path = self.tmp_path)
 
         self.thread.conversion_finished.connect(self.conversion_finished)
         self.thread.conversion_error.connect(self.conversion_error)

@@ -24,8 +24,8 @@ class Download_logic:
         return 
 
     def searching(self):
-        self.parent.gui.plainTextEdit_2.clear()
-        self.searching_process = Semantic_search_main(parent = self.parent, db = self.db, level = "download", image_encoder_model = self.image_encoder_model, text_embedding_model = self.self.text_embedding_model, instruct_model = self.instruct_model, top_window = self.top_window, tmp_path = self.tmp_path)
+        self.parent.gui.textBrowser_2.clear()
+        self.searching_process = Semantic_search_main(parent = self.parent, db = self.db, level = "download", image_encoder_model = self.image_encoder_model, text_embedding_model = self.text_embedding_model, instruct_model = self.instruct_model, top_window = self.top_window, tmp_path = self.tmp_path)
         self.searching_process.start()
 
     def change_data(self):

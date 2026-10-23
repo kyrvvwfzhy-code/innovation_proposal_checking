@@ -1,5 +1,8 @@
 from PyQt5.QtWidgets import QPushButton 
 from PyQt5 import QtCore 
+import sys
+import subprocess
+import os
 
 from handlers.engine.Semantic_Search.vectorization import Vectorization_Thread
 from handlers.engine.Semantic_Search.semantic_deduplication import Semantic_deduplication_Thread
@@ -44,7 +47,7 @@ class Semantic_search_main:
                 pass
 
         elif self.level == "search":
-            self.parent.gui.plainTextEdit_3.clear()
+            self.parent.gui.textBrowser_3.clear()
 
             db_embeddings_name = self.db.get_innovation_proposal_embeddings("name")
             db_embeddings_description = self.db.get_innovation_proposal_embeddings("description")
@@ -71,7 +74,7 @@ class Semantic_search_main:
                     self.search_buttons_status(bool = False)
 
 
-                self.thread = Searching_Thread(self.parent, db_embeddings_name, db_embeddings_description, db_embeddings_general, text_embedding_model = self.text_embedding_model)
+                self.thread = Searching_Thread(self.parent, db_embeddings_name, db_embeddings_description, db_embeddings_general, self.db, text_embedding_model = self.text_embedding_model)
                 self.thread.searching_finished.connect(self.searching_finished)
                 self.thread.searching_error.connect(self.searching_error)
                 self.thread.start()
@@ -119,7 +122,7 @@ class Semantic_search_main:
         logger.info("SEARCH | START - Semantic deduplication")
 
         self.parent.gui.pushButton_2.setText("СЕМАНТИЧЕСКИЙ ПОИСК...")
-        self.thread = Semantic_deduplication_Thread(general, db_embeddings)
+        self.thread = Semantic_deduplication_Thread(general, db_embeddings, self.db)
         self.thread.semantic_deduplication_finished.connect(self.semantic_deduplication_finished)
         self.thread.semantic_deduplication_error.connect(self.semantic_deduplication_error)
         self.thread.start()
@@ -132,7 +135,8 @@ class Semantic_search_main:
 
         response_text = conclusion_rules_forming(result, self.data[0])
         general = conclusion_AI_output(response_text, "Формируется...")
-        self.parent.gui.plainTextEdit_2.setPlainText(general)
+        self.parent.gui.textBrowser_2.setHtml(general)
+        self.parent.gui.textBrowser_2.anchorClicked.connect(self.open_file_by_url)
         self.LLM_analys(result)
 
     def semantic_deduplication_error(self, error):
@@ -147,7 +151,8 @@ class Semantic_search_main:
 
         response_text = conclusion_rules_forming(result[0], result[1])
         general = conclusion_AI_output(response_text, "Формируется...")
-        self.parent.gui.plainTextEdit_3.setPlainText(general)
+        self.parent.gui.textBrowser_3.setHtml(general)
+        self.parent.gui.textBrowser_3.anchorClicked.connect(self.open_file_by_url)
         self.LLM_analys(result)
         
     def searching_error(self, error):
@@ -175,13 +180,13 @@ class Semantic_search_main:
         if self.level == "download":
             general = conclusion_AI_output(result[0], result[1])
             self.new_proposal = result[2]
-            self.parent.gui.plainTextEdit_2.setPlainText(general)
+            self.parent.gui.textBrowser_2.setHtml(general)
             self.parent.gui.pushButton_2.setText("Начать поиск")
             self.create_reply_conclusion()
 
         elif self.level == "search":
             general = conclusion_AI_output(result[0], result[1])
-            self.parent.gui.plainTextEdit_3.setPlainText(general)
+            self.parent.gui.textBrowser_3.setHtml(general)
             self.search_buttons_status(bool = True)
 
         logger.info(f"SEARCH | SUCCESSFULL FINISHED")
@@ -200,6 +205,7 @@ class Semantic_search_main:
 
     def user_conclusion(self):
         reply = conclusion_question(self.parent, "Признать рационализаторское предложение уникальным?", self.new_proposal[0])
+        print(reply)
         if reply == False:
             self.db.delete_innovation_proposal(self.filename[:-4])
         self.download_buttons_status(status = "USER_CONCLUSION")
@@ -230,9 +236,19 @@ class Semantic_search_main:
 
     def clear_fields(self):
         self.parent.gui.plainTextEdit.clear()
-        self.parent.gui.plainTextEdit_2.clear()
+        self.parent.gui.textBrowser_2.clear()
         self.parent.gui.label_4.clear()
 
     def search_buttons_status(self, bool):
         self.parent.gui.pushButton.setEnabled(bool)
         self.parent.gui.pushButton_2.setEnabled(bool)
+
+    def open_file_by_url(self, url):
+        path = url.toLocalFile()
+        if not path or not os.path.isfile(path):
+            print("Файл не найден:", path)
+            return
+        if sys.platform == 'win32':
+            os.startfile(path)
+        else:
+            subprocess.call(['xdg-open', path])

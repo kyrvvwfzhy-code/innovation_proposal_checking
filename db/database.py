@@ -1,9 +1,12 @@
 import sqlite3
 import numpy as np
+from pathlib import Path
 
 class DataBase:
-    def __init__(self, db_path="IPC.db"):
-        self.db_path = db_path
+    def __init__(self, db_name= "data.db"):
+        self.log_dir = Path.home() / "ipc"
+        self.log_dir.mkdir(parents = True, exist_ok = True)
+        self.db_path = self.log_dir / db_name
         self.connection = sqlite3.connect(
             self.db_path,
             timeout=10,  
@@ -126,6 +129,18 @@ class DataBase:
                                         """)
                 data = result.fetchall()
                 return data
+        except Exception as e:
+            return f"DATABASE ERROR - {e}"
+
+    def get_filepath_from_innovation_proposal_by_name(self, name):
+        conn, cursor = self._get_connection()
+        try:
+            cursor.execute("""SELECT filepath FROM innovation_proposal
+                           LEFT JOIN innovation_proposal_info ON innovation_proposal.id = innovation_proposal_info.innovation_proposal_id
+                            WHERE innovation_proposal_info.name = ?""",
+                           (name,))
+            filepath = cursor.fetchone()
+            return filepath[0] if filepath else None
         except Exception as e:
             return f"DATABASE ERROR - {e}"
     

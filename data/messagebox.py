@@ -16,7 +16,9 @@ def conclusion_question(parent, message, value):
             QMessageBox.No
             )
             
-    if reply == QMessageBox.No:
+    if reply == QMessageBox.Yes:
+        return True
+    else:
         return False
 
 #JOURNAL

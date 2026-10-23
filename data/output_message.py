@@ -1,39 +1,31 @@
 # DOWNLOAD
 def text_recognition_output(registered, name, description):
-    text = f"""Рационализаторское предложение: {registered}\n
-Наименование: {name}\n
-Описание: {description}
-            """
+    text = f"""Рационализаторское предложение: {registered}\n\n
+Наименование: {name}\n\n
+Описание: {description}"""
     return text
 
 # DOWNLOAD AND SEARCH
 def conclution_output(new_name, top5, max_sim, name_max_sim, status):
-    text = f"""ПРОВЕРКА УНИКАЛЬНОСТИ РАЦИОНАЛИЗАТОРСКОГО ПРЕДЛОЖЕНИЯ\n
-----------------------------------------------------------\n
-{new_name}\n
-{top5}\n
-Сходство: {max_sim:.2%}{name_max_sim}\n
-----------------------------------------------------------\n
-Результат: {status}"""
+    text = f"""<p><b>ОЦЕНКА УНИКАЛЬНОСТИ РАЦИОНАЛИЗАТОРСКОГО ПРЕДЛОЖЕНИЯ</b></p>
+    <p>{new_name}</p>
+    <p>{top5}</p>
+    <p><b>Сходство:</b> {max_sim:.2%} {name_max_sim}</p>
+    <p><b>Результат:</b> {status}</p>"""
     return text
 
 def conclusion_AI_output(response_text, conclusion_with_AI_analys):
-    text = f"""{response_text}\n
-АНАЛИЗ НЕЙРОСЕТИ:\n
-{conclusion_with_AI_analys}
-            """
+    text = f"""<p>{response_text}</p>
+    <p><b>АНАЛИЗ НЕЙРОСЕТИ:</b></p>
+    {conclusion_with_AI_analys}"""
     return text
 
 def image_conclusion_output(name, similarity):
-    text = f"""ПРОВЕРКА УНИКАЛЬНОСТИ РАЦИОНАЛИЗАТОРСКОГО ПРЕДЛОЖЕНИЯ\n
-----------------------------------------------------------\n
-ПО ИЗОБРАЖЕНИЮ\n
-----------------------------------------------------------\n
-ПОХОЖИЙ ДОКУМЕНТ:\n
-{name}\n
-----------------------------------------------------------\n
-Сходство: {similarity:.2%}
-            """
+    text = f"""<p><b>ОЦЕНКА УНИКАЛЬНОСТИ РАЦИОНАЛИЗАТОРСКОГО ПРЕДЛОЖЕНИЯ</b></p>
+    <p><b>ПО ИЗОБРАЖЕНИЮ</b></p>
+    <p><b>ПОХОЖИЙ ДОКУМЕНТ:</b></p>
+    <p>{name}</p>
+    <p><b>Сходство:</b> {similarity:.2%}</p>"""
     return text
 
 # internal functions
@@ -67,12 +59,17 @@ def conclusion_rules_forming(result, new_name):
 def top5_rules_forming(result):
     similarity_list = []
     for i, v  in enumerate(result):
+        url = v["url"]
         name = v["name"]
         similarity = v["similarity"]   
         if similarity > 0.75:
-            similarity_list.append(f"{i+1}. {name} - {similarity:.2%}")
+            similarity_list.append(f"""{i+1}. <a href="{url}">{name}</a> - {color(f"{similarity:.2%}", "red")}""")
     if len(similarity_list) == 0:
-        return "----------------------------------------------------------"
+        return ""
     else:
         text_el = "\n\n".join(similarity_list)
-        return f"----------------------------------------------------------\n\nТОП ПОХОЖИХ ДОКУМЕНТОВ:\n\n{text_el}\n\n----------------------------------------------------------"
+        return f"""<p><b>ТОП ПОХОЖИХ ДОКУМЕНТОВ:</b></p>
+        <p>{text_el}</p>"""
+
+def color(text, c):
+    return f'<span style="color:{c};">{text}</span>'

@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QUrl
 
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -8,12 +9,13 @@ class Searching_Thread(QThread):
     searching_finished = pyqtSignal(list)
     searching_error = pyqtSignal(str)
 
-    def __init__(self, parent, db_embeddings_name, db_embeddings_description, db_embeddings_general, text_embedding_model = None):
+    def __init__(self, parent, db_embeddings_name, db_embeddings_description, db_embeddings_general, db, text_embedding_model = None):
         super().__init__()
         self.parent = parent
         self.db_embeddings_name = db_embeddings_name
         self.db_embeddings_description = db_embeddings_description
         self.db_embeddings_general = db_embeddings_general
+        self.db = db
         self.text_embedding_model = text_embedding_model
 
     def run(self):
@@ -67,9 +69,13 @@ class Searching_Thread(QThread):
                     
             top_5 = []
             for idx in top_indices:
+                name = names[idx]
+                file_path = self.db.get_filepath_from_innovation_proposal_by_name(name)
+                url = QUrl.fromLocalFile(str(file_path)).toString() if file_path else "" 
                 top_5.append({
-                    'name': names[idx],
-                    'similarity': float(similarities[idx])
+                    'name': name,
+                    'similarity': float(similarities[idx]),
+                    'url': url,
                 })
             
             if value == "name":
@@ -100,8 +106,11 @@ class Searching_Thread(QThread):
                         
             top_5 = []
             for idx in top_indices:
+                name = names[idx]
+                file_path = self.db.get_filepath_from_innovation_proposal_by_name(name)   # ← добавить
+                url = QUrl.fromLocalFile(str(file_path)).toString() if file_path else ""  # ← добавить
                 top_5.append({
-                    'name': names[idx],
+                    'name': name,
                     'similarity': float(similarities_general[idx])
                 })
 
