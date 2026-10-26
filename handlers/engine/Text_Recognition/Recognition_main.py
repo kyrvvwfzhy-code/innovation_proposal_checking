@@ -158,7 +158,7 @@ class Text_Recognition_main:
     def vectorization_data_finished(self):
         logger.info("TEXT RECOGNITION | FINISHED - vectorization (SUCCESS)")
         self.thread.deleteLater()
-        logger.info("DATA LOAD | SUCCESSFULL FINISHED)")
+        logger.info("DATA LOAD | FINISHED (SUCCESS)")
 
     def vectorization_data_error(self, error):
         logger.error(f"TEXT RECOGNITION | FINISHED - vectorization (ERROR): {error}")

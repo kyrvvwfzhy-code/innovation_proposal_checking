@@ -9,6 +9,7 @@ from log.logging import logger
 import sys
 import os
 import subprocess
+from pathlib import Path
 
 class Journal_logic:
     def __init__(self, parent, db):
@@ -83,7 +84,7 @@ class Journal_logic:
             return
         
         filenames = [self.table.item(row, 1).text() for row in selected_rows]
-        
+        proposals_dir = Path.home() / "ipc_app" / "proposals"
         if len(filenames) == 1:
             msg = f"Удалить запись?"
             value = filenames[0]
@@ -98,6 +99,8 @@ class Journal_logic:
         if reply == True:
             for row in sorted(selected_rows, reverse=True):
                 filename = self.table.item(row, 1).text()
+                file_path = proposals_dir / f"{filename}.pdf"
+                file_path.unlink()
                 self.db.delete_innovation_proposal(filename)
                 self.table.removeRow(row)
                 logger.info(f"JOURNAL | FILE - \"{filename}\" delete")

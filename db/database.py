@@ -4,9 +4,9 @@ from pathlib import Path
 
 class DataBase:
     def __init__(self, db_name= "data.db"):
-        self.log_dir = Path.home() / "ipc"
-        self.log_dir.mkdir(parents = True, exist_ok = True)
-        self.db_path = self.log_dir / db_name
+        self.app_dir = Path.home() / "ipc_app"
+        self.app_dir.mkdir(parents = True, exist_ok = True)
+        self.db_path = self.app_dir / db_name
         self.connection = sqlite3.connect(
             self.db_path,
             timeout=10,  
