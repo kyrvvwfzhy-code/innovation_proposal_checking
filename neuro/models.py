@@ -1,13 +1,16 @@
 import torch
 from sentence_transformers import SentenceTransformer
 from llama_cpp import Llama
+from log.logging import logger
 
 def image_encoder():
     try:
-        model_path = r"C:\IPC_models\qwen_image_encoder"  
+        model_path = r"C:\IPC_models\qwen_image_encoder"
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info(f"Модель загружена через - {device}")
         model = SentenceTransformer(
             model_path,
-            device="cpu"
+            device=device
         )
         model.eval()
         return model

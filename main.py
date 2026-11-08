@@ -24,7 +24,7 @@ class IPC(QMainWindow):
         self.db = DataBase()
         self.db.create_tables()
         self.main = GUI_main(self, self.db, self.image_encoder_model, self.text_embedding_model, self.instruct_model)
-        self.setWindowTitle("Проверка рационализаторских предложений")
+        self.setWindowTitle("Оценка уникальности рационализаторских предложений")
         self.setFixedSize(1104, 701)
     
     def closeEvent(self, event):
