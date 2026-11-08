@@ -1,5 +1,7 @@
 import torch
 from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtGui import QIcon
+import os
 
 from db.database import DataBase
 from gui.gui_main import GUI_main
@@ -24,6 +26,7 @@ class IPC(QMainWindow):
         self.db = DataBase()
         self.db.create_tables()
         self.main = GUI_main(self, self.db, self.image_encoder_model, self.text_embedding_model, self.instruct_model)
+        self.setWindowIcon(QIcon('icon.png'))
         self.setWindowTitle("Оценка уникальности рационализаторских предложений")
         self.setFixedSize(1104, 701)
     

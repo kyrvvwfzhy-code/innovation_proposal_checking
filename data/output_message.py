@@ -63,7 +63,7 @@ def top5_rules_forming(result):
         name = v["name"]
         similarity = v["similarity"]   
         if similarity > 0.75:
-            similarity_list.append(f"""{i+1}. <a href="{url}">{name}</a> - {color(f"{similarity:.2%}", "red")}""")
+            similarity_list.append(f"""{i+1}. <a href="{url}">{name}</a> - {color(f"{similarity:.2%}", "red")}<br>""")
     if len(similarity_list) == 0:
         return ""
     else:
